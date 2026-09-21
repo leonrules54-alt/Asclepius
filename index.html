@@ -159,6 +159,8 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
 .rpe-ref li.on{background:var(--yellow);color:var(--ink)}
 
 @media(max-width:680px){
+  .nav{flex-wrap:wrap;gap:8px 14px;padding:12px 16px}
+  #welcomeText{display:none}
   .nav-links{display:none}
   .stats{grid-template-columns:1fr}
   .row2{grid-template-columns:1fr}
@@ -251,7 +253,7 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
       <div class="z"><i style="background:var(--red)"></i><div><b>&ge; 1.5</b><span>High risk — seriously consider a rest day.</span></div></div>
     </div>
     <h2>Try it yourself</h2>
-    <p>Log a session and watch the ACWR respond instantly. A marathon-grade effort — say, <b>360 minutes at intensity 8</b> — will push you straight into the red. Lay off the next day and you’ll watch the ratio climb back down.</p>
+    <p>Log a session and watch the ACWR respond instantly. Once you’ve built a baseline — a steady stretch of practice — one marathon-grade effort, say <b>360 minutes at intensity 8</b>, spikes your ratio into the red. Take a rest day and you’ll watch it climb back down.</p>
   </div>
 
   <div class="w-footer">
@@ -321,7 +323,7 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
   <section class="card" id="log">
     <div class="card-title">
       <h2>Log a Session</h2>
-      <span class="meta">Duration × intensity</span>
+      <span class="meta">Duration × Intensity</span>
     </div>
     <form id="workoutForm" novalidate>
       <div class="row2">
@@ -334,7 +336,7 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
           <input type="number" id="durationInput" min="1" max="600" step="1" placeholder="e.g. 60" required>
         </div>
       </div>
-      <label for="rpeInput">intensity — 1 to 10</label>
+      <label for="rpeInput">Intensity — 1 to 10</label>
       <div class="range-row">
         <input type="range" id="rpeInput" min="1" max="10" step="1" value="5">
         <span class="rpe-val" id="rpeVal">5</span>
@@ -758,7 +760,7 @@ function renderTable(){
   for(const r of restDays)rows.push({kind:'r',date:r.date,created:r.created,ref:r});
   rows.sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created);
   if(!rows.length){
-    histBody.innerHTML='<tr><td colspan="5" class="empty">Nothing logged yet — add a workout above or log a rest day</td></tr>';
+    histBody.innerHTML='<tr><td colspan="5" class="empty">Nothing logged yet — add a workout above, log a rest day, or <button type="button" id="loadSampleBtn" class="del" style="color:var(--ink)">load a sample season</button></td></tr>';
   }else{
     for(const row of rows){
       const tr=document.createElement('tr');
@@ -812,7 +814,7 @@ form.addEventListener('submit',e=>{
   const rpe=parseInt(rpeInput.value,10);
   if(!date){flashMsg('Please pick a date.',true);return;}
     if(!duration||duration<1){flashMsg('Enter a duration of at least 1 minute.',true);return;}
-  if(!rpe||rpe<1||rpe>10){flashMsg('intensity must be between 1 and 10.',true);return;}
+  if(!rpe||rpe<1||rpe>10){flashMsg('Intensity must be between 1 and 10.',true);return;}
   workouts.push({id:uid(),date,duration,rpe,notes:'',created:Date.now()});
   persist();
   render();
@@ -837,7 +839,19 @@ function syncRpe(){
 }
 rpeInput.addEventListener('input',syncRpe);
 
+function loadSampleSeason(){
+  if(workouts.length||restDays.length){flashMsg('Sample data can only be loaded on an empty tracker.',true);return;}
+  for(let i=28;i>=1;i--){
+    const d=addDays(new Date(),-i);
+    if(d.getDay()===0)continue;
+    workouts.push({id:uid(),date:toISO(d),duration:90,rpe:5,notes:'Practice',created:Date.now()-i*86400000});
+  }
+  persist();render();
+  flashMsg('Sample season loaded — '+workouts.length+' practices. Clear anytime with Clear All Data.');
+}
+
 histBody.addEventListener('click',e=>{
+  if(e.target.closest('#loadSampleBtn')){loadSampleSeason();return;}
   const btn=e.target.closest('button[data-del]');
   if(btn){
     workouts=workouts.filter(w=>w.id!==btn.dataset.del);
