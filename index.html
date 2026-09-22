@@ -211,6 +211,14 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 .stats-row .zone{font-size:.58rem;margin-top:6px;gap:5px}
 .stats-row .zone i{width:8px;height:8px;border-width:1.5px}
 .ddot{width:8px;height:8px;border:1.5px solid var(--ink);display:inline-block;margin-right:6px;vertical-align:0}
+.recent-row{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid rgba(28,28,28,.08);font-size:.8rem}
+.recent-row:last-child{border-bottom:0}
+.rdot{width:10px;height:10px;border:2px solid var(--ink);flex:none}
+.recent-row .rr-date{font-weight:700;width:88px;flex:none}
+.recent-row .rr-detail{color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-row .rr-acwr{font-weight:700;font-variant-numeric:tabular-nums}
+.load-explain{font-size:.68rem;color:var(--muted);margin:0 0 14px}
+.load-explain b{color:var(--ink)}
 .guest-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:2px solid var(--ink);background:var(--yellow);padding:10px 14px;font-size:.78rem;font-weight:600;margin-bottom:14px}
 .guest-banner .btn{padding:6px 10px;font-size:.68rem}
 .demo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px dashed var(--ink);background:#fff;padding:10px 14px;margin-bottom:14px}
@@ -398,7 +406,7 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
       <div class="score-row">
         <div class="score" id="readinessNum">—</div>
         <div class="score-side">
-          <div class="score-lbl">Readiness</div>
+          <div class="score-lbl">Strain score</div>
           <div class="zone-chip" id="homeZoneChip" style="background:var(--grey)">—</div>
         </div>
       </div>
@@ -413,21 +421,22 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 
     <section class="stats-row">
       <div class="stat">
-        <div class="lbl">Recent Load</div>
+        <div class="lbl">Recent load</div>
         <div class="num" id="hAcuteVal">0</div>
-        <div class="sub">pts · last 7 days</div>
+        <div class="sub">last 7 days</div>
       </div>
       <div class="stat">
-        <div class="lbl">Usual Load</div>
+        <div class="lbl">Usual load</div>
         <div class="num" id="hChronicVal">0</div>
-        <div class="sub">pts · last 28 days</div>
+        <div class="sub">last 28 days</div>
       </div>
       <div class="stat">
-        <div class="lbl">Push or Rest?</div>
-        <div class="num" id="hAcwrVal">—</div>
-        <div class="zone"><i id="hZoneDot" style="background:#fff"></i><span id="hZoneText">Not enough data</span></div>
+        <div class="lbl">7-day trend</div>
+        <div class="num" id="hTrendVal">—</div>
+        <div class="sub">vs last week</div>
       </div>
     </section>
+    <p class="load-explain">Load = <b>minutes × intensity</b> — a 90-min practice at intensity 5 scores <b>450</b>. Strain score = recent ÷ usual load.</p>
 
     <section class="card" id="homeAdvice">
       <div class="card-title">
@@ -437,6 +446,14 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
       <p id="hRecoveryHeadline" class="recovery-headline"></p>
       <p id="hRecoveryDetail" class="recovery-detail"></p>
       <div id="hRiceSteps" class="rice-steps" hidden></div>
+    </section>
+
+    <section class="card" id="recentCard" hidden>
+      <div class="card-title">
+        <h2>Your last workouts</h2>
+        <span class="meta">colored by that day's zone</span>
+      </div>
+      <div id="recentList"></div>
     </section>
 
     <button class="log-btn" id="homeLogBtn" type="button">＋ Log a workout</button>
@@ -474,7 +491,7 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
       </div>
     </section>
 
-    <p class="foot-note">Readiness is your ACWR, reskinned · monitoring guide, not medical advice</p>
+    <p class="foot-note">Strain score = recent ÷ usual load (ACWR) · monitoring guide, not medical advice</p>
   </section>
 
   <!-- ================= STATS TAB ================= -->
@@ -828,28 +845,14 @@ function renderRecovery(series){
   if(riceHtml){hRice.innerHTML=riceHtml;hRice.hidden=false;}else{hRice.hidden=true;hRice.innerHTML='';}
   $('hAcuteVal').textContent=Math.round(today.acute);
   $('hChronicVal').textContent=Math.round(today.chronic);
-  $('hAcwrVal').textContent=today.acwr==null?'—':today.acwr.toFixed(2);
-  $('hZoneDot').style.background=z.key==='na'?'#fff':z.color;
-  $('hZoneText').textContent=z.label;
 }
 
 /* ===== Home & Stats tab rendering (presentation only — same data & math) ===== */
 const homeTab=$('homeTab'),statsTab=$('statsTab'),advancedTab=$('advancedTab');
-const READINESS_ANCHORS=[[0.5,70],[0.8,82],[1.0,97],[1.05,98],[1.3,80],[1.5,58],[1.7,38],[2.0,22]];
-function readinessOf(a){
-  if(a==null)return null;
-  if(a<=READINESS_ANCHORS[0][0])return READINESS_ANCHORS[0][1];
-  for(let i=1;i<READINESS_ANCHORS.length;i++){
-    if(a<=READINESS_ANCHORS[i][0]){
-      const[x0,y0]=READINESS_ANCHORS[i-1],[x1,y1]=READINESS_ANCHORS[i];
-      return Math.round(y0+(y1-y0)*(a-x0)/(x1-x0));
-    }
-  }
-  return READINESS_ANCHORS[READINESS_ANCHORS.length-1][1];
-}
+function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function pickHomeMessage(series){
   const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
-  if(today.acwr==null)return{h:'Log your first workout to see your readiness.',sub:'Every session sharpens the picture.'};
+  if(today.acwr==null)return{h:'Log your first workout to see your strain score.',sub:'Every session sharpens the picture.'};
   const z=zoneOf(today.acwr);
   const trend=computeTrend(series);
   const ms=monotonyAndStrain();
@@ -857,13 +860,13 @@ function pickHomeMessage(series){
   const highMono=ms.monotony!==null&&ms.monotony>2;
   const unplanned=rest.unplanned;
   const pct=Math.round((today.acwr-1)*100);
-  if(z.key==='high')return{h:'That was a big spike — take today off, seriously.',sub:'ACWR '+today.acwr.toFixed(2)+' · '+pct+'% above your usual'};
-  if(z.key==='elevated'&&unplanned>0)return{h:'Rough week — make sure you get real rest.',sub:'ACWR '+today.acwr.toFixed(2)+' · '+unplanned+' unplanned rest day'+(unplanned===1?'':'s')+' logged'};
-  if(z.key==='elevated'&&trend!==null&&trend>20)return{h:'You’ve been ramping up fast — easy today.',sub:'ACWR '+today.acwr.toFixed(2)+' · load up '+trend+'% this week'};
-  if(z.key==='elevated')return{h:'Running a little hot — consider easing off.',sub:'ACWR '+today.acwr.toFixed(2)+' · above your baseline'};
-  if(highMono)return{h:'Same grind every day — mix it up or breathe.',sub:'ACWR '+today.acwr.toFixed(2)+' · very repetitive week'};
-  if(z.key==='under')return{h:'Fresh and ready — good window to push.',sub:'ACWR '+today.acwr.toFixed(2)+' · lighter than your baseline'};
-  return{h:'Good rhythm — keep it up. 💪',sub:'ACWR '+today.acwr.toFixed(2)+' · right at your baseline'};
+  if(z.key==='high')return{h:'That was a big spike — take today off, seriously.',sub:pct+'% above your usual load'};
+  if(z.key==='elevated'&&unplanned>0)return{h:'Rough week — make sure you get real rest.',sub:unplanned+' unplanned rest day'+(unplanned===1?'':'s')+' logged this week'};
+  if(z.key==='elevated'&&trend!==null&&trend>20)return{h:'You’ve been ramping up fast — easy today.',sub:'load up '+trend+'% this week'};
+  if(z.key==='elevated')return{h:'Running a little hot — consider easing off.',sub:'above your usual load'};
+  if(highMono)return{h:'Same grind every day — mix it up or breathe.',sub:'very repetitive week — vary session sizes'};
+  if(z.key==='under')return{h:'Fresh and ready — good window to push.',sub:'lighter than your usual load'};
+  return{h:'Good rhythm — keep it up. 💪',sub:'right at your usual load'};
 }
 function showTab(name){
   homeTab.hidden=name!=='home';
@@ -885,10 +888,16 @@ function renderHomeTab(series){
   const first=(signedInName||'athlete').split(' ')[0];
   $('greetLine').textContent='Hey '+first+' 👋';
   $('greetDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
-  const r=readinessOf(today.acwr);
   const z=zoneOf(today.acwr);
-  $('readinessNum').textContent=r==null?'':r;
-  $('readinessNum').style.color=(r==null||z.key==='under'||z.key==='na')?'var(--ink)':z.color;
+  $('readinessNum').textContent=today.acwr==null?'—':today.acwr.toFixed(2);
+  $('readinessNum').style.color=(today.acwr==null||z.key==='under'||z.key==='na')?'var(--ink)':z.color;
+  const tv=$('hTrendVal');
+  const trend=computeTrend(series);
+  if(trend===null){tv.textContent='—';tv.style.color='var(--ink)';}
+  else{
+    tv.textContent=(trend>0?'▲ +':trend<0?'▼ −':'± ')+Math.abs(trend)+'%';
+    tv.style.color=trend>35?'var(--red)':trend>10?'var(--orange)':'var(--green)';
+  }
   const chip=$('homeZoneChip');
   chip.textContent=z.key==='na'?'No data yet':z.label;
   chip.style.background=z.key==='na'?'var(--grey)':z.color;
@@ -898,6 +907,26 @@ function renderHomeTab(series){
   const msg=pickHomeMessage(series);
   $('homeMsg').textContent=msg.h;
   $('homeMsgSub').textContent=msg.sub;
+  const entries=[
+    ...workouts.map(w=>({kind:'w',date:w.date,created:w.created,ref:w})),
+    ...restDays.map(r=>({kind:'r',date:r.date,created:r.created,ref:r}))
+  ].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created).slice(0,5);
+  const rc2=$('recentCard');
+  if(!entries.length){rc2.hidden=true;}
+  else{
+    rc2.hidden=false;
+    $('recentList').innerHTML=entries.map(e=>{
+      const d=fromISO(e.date).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+      if(e.kind==='w'){
+        const a=amap[e.date];
+        const z2=zoneOf(a);
+        const dot=a==null?'var(--grey)':z2.color;
+        return '<div class="recent-row"><span class="rdot" style="background:'+dot+'"></span><span class="rr-date">'+escHtml(d)+'</span><span class="rr-detail">'+escHtml((e.ref.notes?e.ref.notes+' · ':'')+e.ref.duration+' min × intensity '+e.ref.rpe)+'</span><span class="rr-acwr" style="color:'+(a==null?'var(--muted)':z2.color)+'">'+(a==null?'—':a.toFixed(2))+'</span></div>';
+      }
+      const reason=e.ref.reason==='soreness'?'Soreness':e.ref.reason==='injury'?'Injury':'Planned';
+      return '<div class="recent-row"><span class="rdot" style="background:rgba(119,119,119,.35)"></span><span class="rr-date">'+escHtml(d)+'</span><span class="rr-detail">Rest day · '+reason+'</span><span class="rr-acwr"></span></div>';
+    }).join('');
+  }
   const wdays=['S','M','T','W','T','F','S'];
   let weekHtml='';
   for(let i=6;i>=0;i--){
