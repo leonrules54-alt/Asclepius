@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Asclepius — Tendon Load Tracker</title>
 <meta name="theme-color" content="#FFD600">
 <link rel="manifest" href="manifest.webmanifest">
@@ -23,6 +23,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{
   margin:0;
@@ -167,6 +168,13 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
   .row3{grid-template-columns:1fr}
   .rest-cta .btn{width:100%}
   .chart-wrap{height:260px}
+  main{padding:20px 14px 110px}
+  .card{padding:16px}
+  .status-card{padding:14px}
+  .score{font-size:3.3rem}
+  .log-btn{padding:15px;font-size:.95rem}
+  .greet h1{font-size:1.45rem}
+  .home-msg{font-size:.95rem}
 }
 
 /* ===== Home & Stats tabs ===== */
@@ -195,6 +203,14 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 .chip{width:100%;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.78rem;padding:9px;cursor:pointer;margin-bottom:6px;text-align:center}
 .chip:hover{background:var(--yellow)}
 .chip[hidden]{display:none}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stats-row .stat{padding:12px 10px}
+.stats-row .stat .lbl{font-size:.56rem;margin-bottom:6px;letter-spacing:.09em}
+.stats-row .num{font-size:1.5rem}
+.stats-row .sub{font-size:.55rem;margin-top:5px;letter-spacing:.03em}
+.stats-row .zone{font-size:.58rem;margin-top:6px;gap:5px}
+.stats-row .zone i{width:8px;height:8px;border-width:1.5px}
+.ddot{width:8px;height:8px;border:1.5px solid var(--ink);display:inline-block;margin-right:6px;vertical-align:0}
 .guest-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:2px solid var(--ink);background:var(--yellow);padding:10px 14px;font-size:.78rem;font-weight:600;margin-bottom:14px}
 .guest-banner .btn{padding:6px 10px;font-size:.68rem}
 .demo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px dashed var(--ink);background:#fff;padding:10px 14px;margin-bottom:14px}
@@ -233,7 +249,7 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 .stats-title{font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.5rem;margin:0 0 14px;letter-spacing:-.01em}
 .stats-chart{width:100%;height:auto;display:block}
 .foot-note{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin:6px 0 0}
-.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:45;display:flex;background:var(--paper);border-top:2px solid var(--ink)}
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:45;display:flex;background:var(--paper);border-top:2px solid var(--ink);padding-bottom:env(safe-area-inset-bottom)}
 .tabbar button{flex:1;border:none;background:none;font-family:inherit;font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;padding:9px 4px 10px;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
 .tabbar button .tico{font-size:1.1rem;line-height:1}
 .tabbar button.on{color:var(--ink);background:var(--yellow)}
@@ -372,9 +388,9 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 
     <div class="demo-bar" id="demoBar" hidden>
       <span class="demo-tag">Demo data</span>
-      <button type="button" class="dchip" data-demo="recovered">Fully recovered</button>
-      <button type="button" class="dchip" data-demo="semi">Ramping up</button>
-      <button type="button" class="dchip" data-demo="rest">Needs a rest day</button>
+      <button type="button" class="dchip" data-demo="recovered"><span class="ddot" style="background:var(--green)"></span>Fully recovered</button>
+      <button type="button" class="dchip" data-demo="semi"><span class="ddot" style="background:var(--orange)"></span>Ramping up</button>
+      <button type="button" class="dchip" data-demo="rest"><span class="ddot" style="background:var(--red)"></span>Needs a rest day</button>
       <button type="button" class="dchip" id="demoExitBtn" style="margin-left:auto;color:var(--red)">✕ Exit demo</button>
     </div>
 
@@ -393,6 +409,34 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
       <div class="gauge-labels"><span>0</span><span>1.0</span><span>2.0</span></div>
       <p class="home-msg" id="homeMsg"></p>
       <p class="home-msg-sub" id="homeMsgSub"></p>
+    </section>
+
+    <section class="stats-row">
+      <div class="stat">
+        <div class="lbl">Recent Load</div>
+        <div class="num" id="hAcuteVal">0</div>
+        <div class="sub">pts · last 7 days</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">Usual Load</div>
+        <div class="num" id="hChronicVal">0</div>
+        <div class="sub">pts · last 28 days</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">Push or Rest?</div>
+        <div class="num" id="hAcwrVal">—</div>
+        <div class="zone"><i id="hZoneDot" style="background:#fff"></i><span id="hZoneText">Not enough data</span></div>
+      </div>
+    </section>
+
+    <section class="card" id="homeAdvice">
+      <div class="card-title">
+        <h2>Advice for today</h2>
+        <span class="meta" id="hRecoveryMeta"></span>
+      </div>
+      <p id="hRecoveryHeadline" class="recovery-headline"></p>
+      <p id="hRecoveryDetail" class="recovery-detail"></p>
+      <div id="hRiceSteps" class="rice-steps" hidden></div>
     </section>
 
     <button class="log-btn" id="homeLogBtn" type="button">＋ Log a workout</button>
@@ -759,23 +803,34 @@ function computeTrend(series){
   if(!prior||prior.acute<=0)return null;
   return Math.round((today.acute-prior.acute)/prior.acute*100);
 }
+function buildRiceHtml(out){
+  if(!out.rice)return null;
+  const steps=out.rice==='full'?RICE_STEPS:RICE_STEPS.slice(0,2);
+  let html=steps.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
+  if(out.rice==='full')html+='<div class="rice-step"><b>See someone</b><span>If pain lasts more than 48 hours or gets worse, check in with a trainer or doctor.</span></div>';
+  return html;
+}
 function renderRecovery(series){
   const out=computeRecovery(series);
   const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
   const z=zoneOf(today.acwr);
+  const meta=z.key==='na'?'':z.label;
+  const riceHtml=buildRiceHtml(out);
   $('recoveryHeadline').textContent=out.headline;
   $('recoveryDetail').textContent=out.detail;
-  $('recoveryMeta').textContent=z.key==='na'?'':z.label;
+  $('recoveryMeta').textContent=meta;
   const riceEl=$('riceSteps');
-  if(out.rice){
-    const steps=out.rice==='full'?RICE_STEPS:RICE_STEPS.slice(0,2);
-    let html=steps.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
-    if(out.rice==='full')html+='<div class="rice-step"><b>See someone</b><span>If pain lasts more than 48 hours or gets worse, check in with a trainer or doctor.</span></div>';
-    riceEl.innerHTML=html;
-    riceEl.hidden=false;
-  }else{
-    riceEl.hidden=true;
-  }
+  if(riceHtml){riceEl.innerHTML=riceHtml;riceEl.hidden=false;}else{riceEl.hidden=true;riceEl.innerHTML='';}
+  $('hRecoveryHeadline').textContent=out.headline;
+  $('hRecoveryDetail').textContent=out.detail;
+  $('hRecoveryMeta').textContent=meta;
+  const hRice=$('hRiceSteps');
+  if(riceHtml){hRice.innerHTML=riceHtml;hRice.hidden=false;}else{hRice.hidden=true;hRice.innerHTML='';}
+  $('hAcuteVal').textContent=Math.round(today.acute);
+  $('hChronicVal').textContent=Math.round(today.chronic);
+  $('hAcwrVal').textContent=today.acwr==null?'—':today.acwr.toFixed(2);
+  $('hZoneDot').style.background=z.key==='na'?'#fff':z.color;
+  $('hZoneText').textContent=z.label;
 }
 
 /* ===== Home & Stats tab rendering (presentation only — same data & math) ===== */
