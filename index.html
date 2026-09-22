@@ -53,7 +53,7 @@ body.signed-in .auth-cta{display:none}
 .btn-danger{color:var(--red)}
 .btn-danger:hover{background:var(--red);color:#fff}
 
-main{max-width:880px;margin:0 auto;padding:48px 24px 72px}
+main{max-width:880px;margin:0 auto;padding:48px 24px 96px}
 
 .hero{margin-bottom:36px}
 h1{font-family:'Archivo Black','Arial Black',sans-serif;font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em}
@@ -144,7 +144,7 @@ tbody tr:hover td{background:rgba(239,255,4,.4)}
 .del:hover{text-decoration:underline}
 .empty{color:var(--muted);text-align:center;padding:26px;font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
 
-footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 
 .rpe-ref{position:fixed;right:14px;bottom:14px;z-index:30;width:190px;background:#fff;border:2px solid var(--ink);font-size:.68rem;box-shadow:4px 4px 0 var(--yellow)}
 .rpe-ref summary{list-style:none;cursor:pointer;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 10px;font-size:.64rem;display:flex;justify-content:space-between;align-items:center}
@@ -168,6 +168,68 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
   .rest-cta .btn{width:100%}
   .chart-wrap{height:260px}
 }
+
+/* ===== Home & Stats tabs ===== */
+.greet{margin-bottom:16px}
+.greet h1{font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.7rem;line-height:1.1;margin:0;letter-spacing:-.01em}
+.greet span{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.status-card{border:2px solid var(--ink);background:#fff;padding:18px;margin-bottom:14px;box-shadow:5px 5px 0 rgba(28,28,28,.14)}
+.score-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.score{font-family:'Archivo Black','Arial Black',sans-serif;font-size:4rem;line-height:.9;letter-spacing:-.02em}
+.score-side{text-align:right;padding-bottom:4px}
+.score-lbl{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.zone-chip{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--grey);border:2px solid var(--ink);padding:3px 9px}
+.gauge{position:relative;height:16px;border:2px solid var(--ink);display:flex;margin-bottom:6px}
+.gz{height:100%}
+.gz.under{background:rgba(119,119,119,.35);width:40%}
+.gz.safe{background:rgba(107,142,35,.45);width:25%}
+.gz.warn{background:rgba(191,90,0,.45);width:10%}
+.gz.hot{background:rgba(164,0,0,.5);width:25%}
+.gmarker{position:absolute;top:-9px;width:0;height:0;transform:translateX(-50%);transition:left .5s cubic-bezier(.34,1.4,.5,1)}
+.gmarker::after{content:'';display:block;border-left:7px solid transparent;border-right:7px solid transparent;border-top:11px solid var(--ink)}
+.gauge-labels{display:flex;justify-content:space-between;font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.home-msg{font-size:1.02rem;font-weight:700;line-height:1.3;margin:0 0 6px}
+.home-msg-sub{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0}
+.log-btn{width:100%;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-family:inherit;font-weight:700;font-size:1.05rem;text-transform:uppercase;letter-spacing:.08em;padding:17px;cursor:pointer;box-shadow:4px 4px 0 var(--yellow);margin-bottom:10px;transition:transform .08s}
+.log-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--yellow)}
+.chip{width:100%;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.78rem;padding:9px;cursor:pointer;margin-bottom:6px;text-align:center}
+.chip:hover{background:var(--yellow)}
+.chip[hidden]{display:none}
+.home-form{border:2px solid var(--ink);background:#fff;padding:16px;margin:4px 0 14px}
+.home-form label{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:10px 0 5px}
+.home-form label:first-of-type{margin-top:0}
+.home-form input[type=number]{width:100%;padding:9px 11px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.95rem;border-radius:0}
+.home-form input[type=range]{width:100%;accent-color:#1C1C1C}
+.load-preview{font-size:.78rem;font-weight:700;margin-top:8px;background:var(--yellow);display:inline-block;border:2px solid var(--ink);padding:3px 8px}
+.home-hint{font-size:.66rem;color:var(--muted);margin:10px 0 0}
+.data-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.see-all{font-size:.72rem;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--yellow);cursor:pointer}
+.week{display:flex;gap:7px;align-items:flex-end;height:84px}
+.wday{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.wbar{width:100%;border:2px solid var(--ink)}
+.wbar.rest{background:transparent!important;border-style:dashed;height:4px!important}
+.wday.today .wbar{box-shadow:0 0 0 3px var(--yellow)}
+.wday span{font-size:.6rem;font-weight:700;letter-spacing:.05em;color:var(--muted)}
+.wday.today span{color:var(--ink);background:var(--yellow);padding:0 3px}
+.cal{display:grid;grid-template-columns:repeat(15,1fr);gap:4px}
+.sq{aspect-ratio:1;border:1.5px solid var(--ink)}
+.sq.g{background:rgba(107,142,35,.55)} .sq.o{background:rgba(191,90,0,.6)}
+.sq.r{background:rgba(164,0,0,.65)} .sq.x{background:rgba(119,119,119,.25)}
+.cal-legend{display:flex;gap:12px;margin-top:10px;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);flex-wrap:wrap}
+.cal-legend i{width:8px;height:8px;display:inline-block;margin-right:4px;border:1.5px solid var(--ink)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.tile{border:2px solid var(--ink);background:#fff;padding:12px 14px;box-shadow:4px 4px 0 rgba(28,28,28,.14)}
+.tile b{display:block;font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.4rem;line-height:1.15;letter-spacing:-.01em}
+.tile span{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.tile small{display:block;font-size:.66rem;color:var(--muted);margin-top:3px;font-weight:600}
+.stats-title{font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.5rem;margin:0 0 14px;letter-spacing:-.01em}
+.stats-chart{width:100%;height:auto;display:block}
+.foot-note{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin:6px 0 0}
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:45;display:flex;background:var(--paper);border-top:2px solid var(--ink)}
+.tabbar button{flex:1;border:none;background:none;font-family:inherit;font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;padding:9px 4px 10px;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+.tabbar button .tico{font-size:1.1rem;line-height:1}
+.tabbar button.on{color:var(--ink);background:var(--yellow)}
+.tabbar button:not(.on):hover{background:rgba(255,214,0,.35)}
 
 /* ===== Welcome page ===== */
 .welcome{max-width:820px;margin:0 auto;padding:56px 24px 80px}
@@ -287,6 +349,100 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
 
 <main id="appView" hidden>
 
+  <!-- ================= HOME TAB ================= -->
+  <section id="homeTab">
+    <div class="greet">
+      <h1 id="greetLine">Hey 👋</h1>
+      <span id="greetDate">—</span>
+    </div>
+
+    <section class="status-card">
+      <div class="score-row">
+        <div class="score" id="readinessNum">—</div>
+        <div class="score-side">
+          <div class="score-lbl">Readiness</div>
+          <div class="zone-chip" id="homeZoneChip" style="background:var(--grey)">—</div>
+        </div>
+      </div>
+      <div class="gauge">
+        <div class="gz under"></div><div class="gz safe"></div><div class="gz warn"></div><div class="gz hot"></div>
+        <div class="gmarker" id="gaugeMarker" style="display:none"></div>
+      </div>
+      <div class="gauge-labels"><span>0</span><span>1.0</span><span>2.0</span></div>
+      <p class="home-msg" id="homeMsg"></p>
+      <p class="home-msg-sub" id="homeMsgSub"></p>
+    </section>
+
+    <button class="log-btn" id="homeLogBtn" type="button">＋ Log a workout</button>
+    <button class="chip" id="repeatChip" type="button" hidden>↻ Repeat last</button>
+    <button class="chip" id="sampleChip" type="button" hidden>🌱 Load a sample season (for testing)</button>
+
+    <form class="home-form" id="homeLogForm" hidden novalidate>
+      <label for="hDur">Duration — minutes</label>
+      <input type="number" id="hDur" min="1" max="600" step="1" placeholder="e.g. 90">
+      <label for="hRpe">Intensity — <span id="hRpeVal">5</span>/10</label>
+      <input type="range" id="hRpe" min="1" max="10" step="1" value="5">
+      <div class="load-preview" id="hLoadPreview">= 0 points</div>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px">Save workout</button>
+      <p class="home-hint">Need a past date or a rest day? Use the <b>Advanced</b> tab.</p>
+    </form>
+    <p class="flash" id="homeFlash"></p>
+
+    <section class="card">
+      <h2 class="card-title" style="margin:0 0 12px">This week</h2>
+      <div class="week" id="weekStrip"></div>
+    </section>
+
+    <section class="card">
+      <div class="data-head">
+        <h2 class="card-title" style="margin:0">Last 30 days</h2>
+        <a class="see-all" href="#stats" id="seeAllBtn">See all my data →</a>
+      </div>
+      <div class="cal" id="homeCal"></div>
+      <p class="empty" id="calEmpty" hidden>Log your first workout to fill this in</p>
+      <div class="cal-legend">
+        <span><i style="background:rgba(107,142,35,.55)"></i>Safe</span>
+        <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
+        <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
+        <span><i style="background:rgba(119,119,119,.25)"></i>Rest</span>
+      </div>
+    </section>
+
+    <p class="foot-note">Readiness is your ACWR, reskinned · monitoring guide, not medical advice</p>
+  </section>
+
+  <!-- ================= STATS TAB ================= -->
+  <section id="statsTab" hidden>
+    <h1 class="stats-title">My data</h1>
+
+    <section class="card">
+      <div class="card-title"><h2>Strain ratio (ACWR) · last 30 days</h2></div>
+      <div id="statsChartWrap"></div>
+      <div class="cal-legend" style="margin-top:8px">
+        <span><i style="background:rgba(107,142,35,.55)"></i>Safe</span>
+        <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
+        <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
+      </div>
+    </section>
+
+    <div class="tiles" id="statTiles"></div>
+
+    <section class="card">
+      <div class="card-title"><h2>Every day this month</h2></div>
+      <div class="cal" id="statsCal"></div>
+      <div class="cal-legend">
+        <span><i style="background:rgba(107,142,35,.55)"></i>Safe</span>
+        <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
+        <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
+        <span><i style="background:rgba(119,119,119,.25)"></i>Rest</span>
+      </div>
+    </section>
+
+    <p class="foot-note">Same EWMA math as always — friendlier wrapper.</p>
+  </section>
+
+  <!-- ================= ADVANCED TAB (original view) ================= -->
+  <section id="advancedTab" hidden>
   <header class="hero" id="top">
     <h1>Asclepius</h1>
     <p class="sub">tendon load tracker</p>
@@ -408,6 +564,13 @@ footer{padding:26px 24px;text-align:center;font-size:.72rem;color:var(--muted);t
       <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
     </div>
   </section>
+  </section><!-- /advancedTab -->
+
+  <nav class="tabbar" id="tabbar">
+    <button type="button" data-tab="home" class="on"><span class="tico">🏠</span>Home</button>
+    <button type="button" data-tab="stats"><span class="tico">📈</span>Stats</button>
+    <button type="button" data-tab="advanced"><span class="tico">⚙️</span>Advanced</button>
+  </nav>
 </main>
 
 <section class="demo" id="demoView" hidden>
@@ -659,6 +822,136 @@ function renderRecovery(series){
   }
 }
 
+/* ===== Home & Stats tab rendering (presentation only — same data & math) ===== */
+const homeTab=$('homeTab'),statsTab=$('statsTab'),advancedTab=$('advancedTab');
+const READINESS_ANCHORS=[[0.5,70],[0.8,82],[1.0,97],[1.05,98],[1.3,80],[1.5,58],[1.7,38],[2.0,22]];
+function readinessOf(a){
+  if(a==null)return null;
+  if(a<=READINESS_ANCHORS[0][0])return READINESS_ANCHORS[0][1];
+  for(let i=1;i<READINESS_ANCHORS.length;i++){
+    if(a<=READINESS_ANCHORS[i][0]){
+      const[x0,y0]=READINESS_ANCHORS[i-1],[x1,y1]=READINESS_ANCHORS[i];
+      return Math.round(y0+(y1-y0)*(a-x0)/(x1-x0));
+    }
+  }
+  return READINESS_ANCHORS[READINESS_ANCHORS.length-1][1];
+}
+function pickHomeMessage(series){
+  const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
+  if(today.acwr==null)return{h:'Log your first workout to see your readiness.',sub:'Every session sharpens the picture.'};
+  const z=zoneOf(today.acwr);
+  const trend=computeTrend(series);
+  const ms=monotonyAndStrain();
+  const rest=restDayStats();
+  const highMono=ms.monotony!==null&&ms.monotony>2;
+  const unplanned=rest.unplanned;
+  const pct=Math.round((today.acwr-1)*100);
+  if(z.key==='high')return{h:'That was a big spike — take today off, seriously.',sub:'ACWR '+today.acwr.toFixed(2)+' · '+pct+'% above your usual'};
+  if(z.key==='elevated'&&unplanned>0)return{h:'Rough week — make sure you get real rest.',sub:'ACWR '+today.acwr.toFixed(2)+' · '+unplanned+' unplanned rest day'+(unplanned===1?'':'s')+' logged'};
+  if(z.key==='elevated'&&trend!==null&&trend>20)return{h:'You’ve been ramping up fast — easy today.',sub:'ACWR '+today.acwr.toFixed(2)+' · load up '+trend+'% this week'};
+  if(z.key==='elevated')return{h:'Running a little hot — consider easing off.',sub:'ACWR '+today.acwr.toFixed(2)+' · above your baseline'};
+  if(highMono)return{h:'Same grind every day — mix it up or breathe.',sub:'ACWR '+today.acwr.toFixed(2)+' · very repetitive week'};
+  if(z.key==='under')return{h:'Fresh and ready — good window to push.',sub:'ACWR '+today.acwr.toFixed(2)+' · lighter than your baseline'};
+  return{h:'Good rhythm — keep it up. 💪',sub:'ACWR '+today.acwr.toFixed(2)+' · right at your baseline'};
+}
+function showTab(name){
+  homeTab.hidden=name!=='home';
+  statsTab.hidden=name!=='stats';
+  advancedTab.hidden=name!=='advanced';
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function dayBucket(load,acwr){
+  if(!load)return'x';
+  if(acwr!=null&&acwr>=1.5)return'r';
+  if(acwr!=null&&acwr>=1.3)return'o';
+  return'g';
+}
+function renderHomeTab(series){
+  const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
+  const lm=dailyLoads();
+  const amap={};for(const m of series)amap[m.date]=m.acwr;
+  const first=(signedInName||'athlete').split(' ')[0];
+  $('greetLine').textContent='Hey '+first+' 👋';
+  $('greetDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  const r=readinessOf(today.acwr);
+  const z=zoneOf(today.acwr);
+  $('readinessNum').textContent=r==null?'':r;
+  $('readinessNum').style.color=(r==null||z.key==='under'||z.key==='na')?'var(--ink)':z.color;
+  const chip=$('homeZoneChip');
+  chip.textContent=z.key==='na'?'No data yet':z.label;
+  chip.style.background=z.key==='na'?'var(--grey)':z.color;
+  const mk=$('gaugeMarker');
+  if(today.acwr==null){mk.style.display='none';}
+  else{mk.style.display='';mk.style.left=Math.min(97,Math.max(3,today.acwr/2*100))+'%';}
+  const msg=pickHomeMessage(series);
+  $('homeMsg').textContent=msg.h;
+  $('homeMsgSub').textContent=msg.sub;
+  const wdays=['S','M','T','W','T','F','S'];
+  let weekHtml='';
+  for(let i=6;i>=0;i--){
+    const d=addDays(new Date(),-i);
+    const iso=toISO(d);
+    const load=lm[iso]||0;
+    const a=amap[iso];
+    const col=load?(a!=null&&a>=1.5?'var(--red)':a!=null&&a>=1.3?'var(--orange)':'var(--green)'):'transparent';
+    const h=load?Math.max(14,Math.min(load/1500,1)*64):4;
+    weekHtml+='<div class="wday'+(i===0?' today':'')+'"><div class="wbar'+(load?'':' rest')+'" style="height:'+h+'px;'+(load?'background:'+col:'')+'"></div><span>'+wdays[d.getDay()]+'</span></div>';
+  }
+  $('weekStrip').innerHTML=weekHtml;
+  const last30=series.slice(-30);
+  if(!last30.length){$('homeCal').innerHTML='';$('calEmpty').hidden=false;}
+  else{
+    $('calEmpty').hidden=true;
+    $('homeCal').innerHTML=last30.map(m=>'<div class="sq '+dayBucket(lm[m.date]||0,m.acwr)+'"></div>').join('');
+  }
+  const last=[...workouts].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created)[0];
+  const rc=$('repeatChip');
+  if(last){rc.hidden=false;rc.textContent='↻ Repeat last · '+(last.notes?last.notes+' · ':'')+last.duration+' min × '+last.rpe;}
+  else rc.hidden=true;
+  $('sampleChip').hidden=!!workouts.length||!!restDays.length;
+}
+function statTile(b,s,sm){return '<div class="tile"><b>'+b+'</b><span>'+s+'</span><small>'+sm+'</small></div>';}
+function statsChartSVG(series){
+  const data=series.slice(-30);
+  if(data.length<2)return'';
+  const W=340,H=190,L=30,R=8,T=12,B=24,YMAX=2.2;
+  const x=i=>L+(W-L-R)*i/(data.length-1);
+  const y=v=>T+(H-T-B)*(1-v/YMAX);
+  let s='';
+  const bands=[[0,.8,'rgba(119,119,119,.18)'],[.8,1.3,'rgba(107,142,35,.16)'],[1.3,1.5,'rgba(191,90,0,.18)'],[1.5,YMAX,'rgba(164,0,0,.15)']];
+  for(const b of bands)s+='<rect x="'+L+'" y="'+y(b[1])+'" width="'+(W-L-R)+'" height="'+(y(b[0])-y(b[1]))+'" fill="'+b[2]+'"/>';
+  [.8,1.3,1.5].forEach(g=>{s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="rgba(28,28,28,.35)" stroke-dasharray="3 3"/><text x="'+(L-4)+'" y="'+(y(g)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">'+g+'</text>';});
+  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="#1C1C1C" stroke-width="1.5"/><text x="'+(L-4)+'" y="'+(y(0)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">0</text>';
+  [0,10,20,data.length-1].filter((v,i,arr)=>arr.indexOf(v)===i&&v<data.length).forEach(i=>{const p=data[i].date.split('-');s+='<text x="'+x(i)+'" y="'+(H-8)+'" font-size="7" text-anchor="middle" fill="#5A5751">'+p[1]+'/'+p[2]+'</text>';});
+  const pts=data.map((m,i)=>m.acwr==null?null:(x(i)+','+y(Math.min(m.acwr,YMAX)))).filter(Boolean).join(' ');
+  s+='<polyline points="'+pts+'" fill="none" stroke="#1C1C1C" stroke-width="2"/>';
+  data.forEach((m,i)=>{if(m.acwr==null)return;s+='<circle cx="'+x(i)+'" cy="'+y(Math.min(m.acwr,YMAX))+'" r="2.4" fill="'+zoneOf(m.acwr).color+'" stroke="#1C1C1C" stroke-width="1"/>';});
+  return '<svg class="stats-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily ACWR, last 30 days">'+s+'</svg>';
+}
+function renderStatsTab(series){
+  const data=series.slice(-30);
+  $('statsChartWrap').innerHTML=data.length>=2?statsChartSVG(series):'<p class="empty">Not enough data yet — log a few workouts</p>';
+  const lm=dailyLoads();
+  if(!data.length){$('statTiles').innerHTML='';$('statsCal').innerHTML='';return;}
+  const sessions=data.filter(m=>(lm[m.date]||0)>0).length;
+  const rests=data.length-sessions;
+  let streak=0;
+  for(let i=data.length-1;i>=0;i--){
+    const load=lm[data[i].date]||0;
+    if(load>0&&data[i].acwr!=null&&data[i].acwr>=1.5)break;
+    streak++;
+  }
+  let mi=0;data.forEach((m,i)=>{if((lm[m.date]||0)>(lm[data[mi].date]||0))mi=i;});
+  const ago=data.length-1-mi;
+  $('statTiles').innerHTML=
+    statTile(streak+'d','Days since the red zone','rest days count — that’s the point')+
+    statTile(sessions,'Sessions · 30d','practices, games, workouts')+
+    statTile(rests,'Rest days · 30d',rests===0?'zero — consider one':'your body’s timeouts')+
+    statTile(Math.round(lm[data[mi].date]||0).toLocaleString()+' AU','Biggest day',ago===0?'today':ago+' day'+(ago===1?'':'s')+' ago');
+  $('statsCal').innerHTML=data.map(m=>'<div class="sq '+dayBucket(lm[m.date]||0,m.acwr)+'"></div>').join('');
+}
+
 function zoneOf(acwr){
   if(acwr===null||Number.isNaN(acwr))return{key:'na',label:'Not enough data',color:'#8A8A8A'};
   if(acwr<0.8)return{key:'under',label:'Room to push',color:'#8A8A8A'};
@@ -749,6 +1042,8 @@ function render(){
   }
   renderTable();
   renderRecovery(series);
+  renderHomeTab(series);
+  renderStatsTab(series);
 }
 
 function tdCell(t,cls){const td=document.createElement('td');td.textContent=t;if(cls)td.className=cls;return td;}
@@ -1062,6 +1357,7 @@ function showApp(){
   demoView.hidden=true;
   killDemoChart();
   syncNav();
+  showTab('home');
   history.replaceState(null,'',window.location.pathname+window.location.search);
   window.scrollTo({top:0,behavior:'instant'});
   if(chart)setTimeout(()=>chart.resize(),0);
@@ -1083,6 +1379,7 @@ navLinks.forEach(a=>{
     e.preventDefault();
     const target=a.getAttribute('href');
     showApp();
+    showTab('advanced');
     setTimeout(()=>{
       const el=document.querySelector(target);
       if(el)el.scrollIntoView({behavior:'smooth'});
@@ -1092,6 +1389,40 @@ navLinks.forEach(a=>{
 
 $('demoBtn').addEventListener('click',openDemo);
 [$('tryDemoBtn'),$('tryDemoBtn2')].forEach(b=>b.addEventListener('click',openDemo));
+
+/* ===== Home tab interactions ===== */
+$('homeLogBtn').addEventListener('click',()=>{const f=$('homeLogForm');f.hidden=!f.hidden;if(!f.hidden)$('hDur').focus();});
+function syncHomePreview(){$('hRpeVal').textContent=$('hRpe').value;$('hLoadPreview').textContent='= '+Math.round(($('hDur').value||0)*$('hRpe').value)+' points';}
+$('hRpe').addEventListener('input',syncHomePreview);
+$('hDur').addEventListener('input',syncHomePreview);
+function homeFlashMsg(text,err){
+  const el=$('homeFlash');
+  el.textContent=text;el.classList.toggle('err',!!err);el.style.opacity='1';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2600);
+}
+$('homeLogForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const duration=parseInt($('hDur').value,10),rpe=parseInt($('hRpe').value,10);
+  if(!duration||duration<1){homeFlashMsg('Enter a duration of at least 1 minute.',true);return;}
+  workouts.push({id:uid(),date:todayStr(),duration,rpe,notes:'',created:Date.now()});
+  persist();render();
+  $('hDur').value='';
+  syncHomePreview();
+  homeFlashMsg('Workout saved — '+duration+' min × '+rpe+'.');
+});
+$('repeatChip').addEventListener('click',()=>{
+  const last=[...workouts].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created)[0];
+  if(!last)return;
+  workouts.push({id:uid(),date:todayStr(),duration:last.duration,rpe:last.rpe,notes:last.notes,created:Date.now()});
+  persist();render();
+  homeFlashMsg('Repeat logged — '+last.duration+' min × '+last.rpe+'.');
+});
+$('sampleChip').addEventListener('click',()=>{
+  loadSampleSeason();
+  homeFlashMsg('Sample season loaded — log a big session to watch the spike.');
+});
+$('seeAllBtn').addEventListener('click',e=>{e.preventDefault();showTab('stats');});
+document.querySelectorAll('.tabbar button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 $('demoExit').addEventListener('click',showApp);
 document.querySelectorAll('.scenario').forEach(b=>b.addEventListener('click',()=>applyDemo(b.dataset.demo)));
 
