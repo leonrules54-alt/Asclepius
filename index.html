@@ -195,6 +195,14 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 .chip{width:100%;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.78rem;padding:9px;cursor:pointer;margin-bottom:6px;text-align:center}
 .chip:hover{background:var(--yellow)}
 .chip[hidden]{display:none}
+.guest-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:2px solid var(--ink);background:var(--yellow);padding:10px 14px;font-size:.78rem;font-weight:600;margin-bottom:14px}
+.guest-banner .btn{padding:6px 10px;font-size:.68rem}
+.demo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px dashed var(--ink);background:#fff;padding:10px 14px;margin-bottom:14px}
+.demo-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:var(--yellow);border:2px solid var(--ink);padding:3px 8px}
+.dchip{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.72rem;padding:6px 10px;cursor:pointer}
+.dchip:hover{background:var(--yellow)}
+.dchip.on{background:var(--ink);color:var(--paper)}
+.dchip[hidden]{display:none}
 .home-form{border:2px solid var(--ink);background:#fff;padding:16px;margin:4px 0 14px}
 .home-form label{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:10px 0 5px}
 .home-form label:first-of-type{margin-top:0}
@@ -278,9 +286,10 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 <nav class="nav">
   <button class="brand" id="brandBtn" type="button"><span class="mark"></span>Asclepius</button>
   <div class="nav-links">
-    <a href="#log">Log</a>
-    <a href="#chart">Trend</a>
-    <a href="#history">History</a>
+    <a href="#home" data-navtab="home">Home</a>
+    <a href="#stats" data-navtab="stats">Stats</a>
+    <a href="#advanced" data-navtab="advanced">Advanced</a>
+    <a href="#about" id="aboutLink">About</a>
   </div>
   <button id="demoBtn" class="btn btn-sm" style="margin-left:auto">Demo</button>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
@@ -293,9 +302,9 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
     <h1>Asclepius</h1>
     <p class="w-sub">The math-powered load tracker that tells you when to push, when to ease off, and when to rest — before an injury beats you to it.</p>
     <div class="w-cta">
-      <button id="openSignupBtn" class="btn btn-primary auth-cta">Sign up</button>
-      <button id="openLoginBtn" class="btn auth-cta">Log in</button>
-      <button id="tryDemoBtn" class="btn">Demo</button>
+      <button id="openAppBtn" class="btn btn-primary">Open the app</button>
+      <button id="openSignupBtn" class="btn auth-cta">Sign up</button>
+      <button id="tryDemoBtn" class="btn">Try demo data</button>
     </div>
   </header>
 
@@ -321,9 +330,9 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
   <div class="w-footer">
     <p>Asclepius is a service that utilizes math and the biological sciences to prevent athletic injuries. It pushes towards the <b>democratization of elite sports science</b>, ensuring that every student athlete — regardless of family income — has the tools to train safely, stay healthy, and stay in the game.</p>
     <div class="w-cta">
-      <button id="openSignupBtn2" class="btn btn-primary auth-cta">Sign up</button>
-      <button id="openLoginBtn2" class="btn auth-cta">Log in</button>
-      <button id="tryDemoBtn2" class="btn">Demo</button>
+      <button id="openAppBtn2" class="btn btn-primary">Open the app</button>
+      <button id="openSignupBtn2" class="btn auth-cta">Sign up</button>
+      <button id="tryDemoBtn2" class="btn">Try demo data</button>
     </div>
   </div>
 </section>
@@ -354,6 +363,19 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
     <div class="greet">
       <h1 id="greetLine">Hey 👋</h1>
       <span id="greetDate">—</span>
+    </div>
+
+    <div class="guest-banner" id="guestBanner" hidden>
+      <span>👀 You're browsing as a guest — your data stays in this browser.</span>
+      <button type="button" class="btn" id="guestAuthBtn">Sign up / Log in</button>
+    </div>
+
+    <div class="demo-bar" id="demoBar" hidden>
+      <span class="demo-tag">Demo data</span>
+      <button type="button" class="dchip" data-demo="recovered">Fully recovered</button>
+      <button type="button" class="dchip" data-demo="semi">Ramping up</button>
+      <button type="button" class="dchip" data-demo="rest">Needs a rest day</button>
+      <button type="button" class="dchip" id="demoExitBtn" style="margin-left:auto;color:var(--red)">✕ Exit demo</button>
     </div>
 
     <section class="status-card">
@@ -435,6 +457,24 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
         <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
         <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
         <span><i style="background:rgba(119,119,119,.25)"></i>Rest</span>
+      </div>
+    </section>
+
+    <section class="card" id="history">
+      <div class="card-title">
+        <h2>Full history</h2>
+        <span class="hist-meta" id="histMeta"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Duration</th><th>Intensity</th><th>Load</th><th></th></tr>
+          </thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;text-align:right">
+        <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
       </div>
     </section>
 
@@ -547,23 +587,6 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
     </div>
   </section>
 
-  <section class="card" id="history">
-    <div class="card-title">
-      <h2>History</h2>
-      <span class="hist-meta" id="histMeta"></span>
-    </div>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr><th>Date</th><th>Duration</th><th>intensity</th><th>Load</th><th></th></tr>
-        </thead>
-        <tbody id="histBody"></tbody>
-      </table>
-    </div>
-    <div style="margin-top:16px;text-align:right">
-      <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
-    </div>
-  </section>
   </section><!-- /advancedTab -->
 
   <nav class="tabbar" id="tabbar">
@@ -572,76 +595,6 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
     <button type="button" data-tab="advanced"><span class="tico">⚙️</span>Advanced</button>
   </nav>
 </main>
-
-<section class="demo" id="demoView" hidden>
-  <div class="demo-bar">
-    <div>
-      <h2 class="demo-title">Demo</h2>
-      <p class="demo-sub">Sample data for three recovery states — your own data is never touched.</p>
-    </div>
-    <button id="demoExit" class="btn btn-sm" type="button" style="margin-left:auto">Back to my data</button>
-  </div>
-  <div class="scenarios">
-    <button class="scenario on" data-demo="recovered" type="button"><b>Fully recovered</b><span>Safe zone · ACWR ~1.0</span></button>
-    <button class="scenario" data-demo="semi" type="button"><b>Semi recovered</b><span>Elevated · ACWR ~1.4</span></button>
-    <button class="scenario" data-demo="rest" type="button"><b>Needs a rest day</b><span>High risk · ACWR ~1.6</span></button>
-  </div>
-  <section class="stats">
-    <div class="stat">
-      <div class="lbl">Recent Load</div>
-      <div class="num" id="demoAcuteVal">0</div>
-      <div class="sub">pts · last 7 days</div>
-    </div>
-    <div class="stat">
-      <div class="lbl">Usual Load</div>
-      <div class="num" id="demoChronicVal">0</div>
-      <div class="sub">pts · last 28 days</div>
-    </div>
-    <div class="stat">
-      <div class="lbl">Push or Rest?</div>
-      <div class="num" id="demoAcwrVal">—</div>
-      <div class="zone"><i id="demoZoneDot" style="background:#fff"></i><span id="demoZoneText">Not enough data</span></div>
-    </div>
-  </section>
-  <section class="card">
-    <div class="card-title">
-      <h2>Recovery Guidance</h2>
-      <span class="meta" id="demoRecoveryMeta"></span>
-    </div>
-    <p id="demoRecoveryHeadline" class="recovery-headline"></p>
-    <p id="demoRecoveryDetail" class="recovery-detail"></p>
-    <div id="demoRiceSteps" class="rice-steps" hidden></div>
-  </section>
-  <section class="card">
-    <div class="card-title">
-      <h2>Daily ACWR — Last 30 Days</h2>
-      <div class="legend">
-        <span><i style="background:var(--grey)"></i>&lt;0.8</span>
-        <span><i style="background:var(--green)"></i>0.8–1.3</span>
-        <span><i style="background:var(--orange)"></i>1.3–1.5</span>
-        <span><i style="background:var(--red)"></i>&ge;1.5</span>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="demoAcwrChart"></canvas>
-      <div class="chart-fallback" id="demoChartFallback">Chart.js could not load (offline?) — the demo math &amp; guidance still work.</div>
-    </div>
-  </section>
-  <section class="card">
-    <div class="card-title">
-      <h2>History</h2>
-      <span class="hist-meta" id="demoHistMeta"></span>
-    </div>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr><th>Date</th><th>Duration</th><th>intensity</th><th>Load</th><th></th></tr>
-        </thead>
-        <tbody id="demoHistBody"></tbody>
-      </table>
-    </div>
-  </section>
-</section>
 
 <footer id="appFoot" hidden>Data stays in your browser · ACWR is a monitoring guide, not medical advice</footer>
 
@@ -654,6 +607,9 @@ let restDays=[];
 let chart=null;
 let lastSeries=[];
 let signedInName=null;
+let demoActive=false;
+let demoBackup=null;
+let currentDemoKey='rest';
 
 const $=id=>document.getElementById(id);
 const form=$('workoutForm'),dateInput=$('dateInput'),durationInput=$('durationInput'),rpeInput=$('rpeInput'),rpeVal=$('rpeVal'),flash=$('flash');
@@ -668,9 +624,9 @@ function todayStr(){return toISO(new Date());}
 function uid(){return 'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 
 function load(){try{workouts=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){workouts=[];}}
-function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));}
+function persist(){if(demoActive)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));}
 function loadRest(){try{restDays=JSON.parse(localStorage.getItem(REST_KEY))||[];}catch(e){restDays=[];}}
-function persistRest(){localStorage.setItem(REST_KEY,JSON.stringify(restDays));}
+function persistRest(){if(demoActive)return;localStorage.setItem(REST_KEY,JSON.stringify(restDays));}
 
 function restDayStats(ctx){
   let total=0,unplanned=0,injury=0,soreness=0;
@@ -910,6 +866,7 @@ function renderHomeTab(series){
   if(last){rc.hidden=false;rc.textContent='↻ Repeat last · '+(last.notes?last.notes+' · ':'')+last.duration+' min × '+last.rpe;}
   else rc.hidden=true;
   $('sampleChip').hidden=!!workouts.length||!!restDays.length;
+  $('guestBanner').hidden=!!signedInName;
 }
 function statTile(b,s,sm){return '<div class="tile"><b>'+b+'</b><span>'+s+'</span><small>'+sm+'</small></div>';}
 function statsChartSVG(series){
@@ -1173,10 +1130,7 @@ restBtn.addEventListener('click',()=>{
   flashMsg('Rest day logged ('+reason+'). No load added — ACWR unchanged.');
 });
 
-const demoView=$('demoView');
-let demoChart=null,demoLastSeries=[],demoWorkouts=[],demoRestDays=[],currentDemo='recovered';
-const demoAcuteVal=$('demoAcuteVal'),demoChronicVal=$('demoChronicVal'),demoAcwrVal=$('demoAcwrVal'),demoZoneDot=$('demoZoneDot'),demoZoneText=$('demoZoneText');
-const demoHistBody=$('demoHistBody'),demoHistMeta=$('demoHistMeta');
+/* ===== Demo mode: fills the real app with sample data; exit restores yours (never persisted while active) ===== */
 const DEMO_LOADS={
   recovered:[350,240,410,180,390,0,320,340,230,400,190,380,0,310,360,250,420,200,400,0,330,360,250,420,0,390,0,350,340,340],
   semi:[210,140,260,120,240,0,200,220,150,270,130,250,0,210,230,160,280,140,260,0,220,300,320,440,380,480,0,420,460,450],
@@ -1199,130 +1153,32 @@ function makeDemoData(scenario){
   const restDays=(DEMO_REST[scenario]||[]).map(([ago,reason])=>({id:uid(),date:toISO(addDays(new Date(),-ago)),reason,created:Date.now()-ago*86400000}));
   return{workouts,restDays};
 }
-function ensureDemoChart(){
-  if(demoChart||typeof Chart==='undefined')return;
-  demoChart=new Chart($('demoAcwrChart'),{
-    type:'line',
-    data:{labels:[],datasets:[{label:'ACWR',data:[],borderColor:'#0A0A0A',borderWidth:2.5,tension:.35,spanGaps:false,pointRadius:3.5,pointHoverRadius:5.5,pointBackgroundColor:[],pointBorderColor:'#0A0A0A',pointBorderWidth:1.5,fill:false}]},
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      scales:{
-        y:{min:0,suggestedMax:2,title:{display:true,text:'ACWR',color:'#75715F'},ticks:{color:'#0A0A0A',font:{weight:'600'},callback:v=>v.toFixed(1)},grid:{color:'rgba(10,10,10,.08)'}},
-        x:{ticks:{color:'#0A0A0A',font:{weight:'600'},maxTicksLimit:8,maxRotation:0},grid:{display:false}}
-      },
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#0A0A0A',titleColor:'#F5F2EA',bodyColor:'#F5F2EA',cornerRadius:0,padding:12,displayColors:false,
-          callbacks:{
-            label(it){const v=it.parsed.y;return v==null?'ACWR: not calculable yet':'ACWR: '+v.toFixed(2)+' — '+zoneOf(v).label;},
-            afterBody(it){const m=demoLastSeries[it[0].dataIndex];return m?['','Recent Load: '+Math.round(m.acute)+' pts','Usual Load: '+Math.round(m.chronic)+' pts']:[];}
-          }
-        }
-      }
-    },
-    plugins:[zoneBandsPlugin]
-  });
+function loadDemoScenario(key){
+  currentDemoKey=key;
+  if(!demoActive){demoBackup={workouts,restDays};demoActive=true;}
+  $('demoBtn').textContent='Exit demo';
+  $('demoBar').hidden=false;
+  document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.classList.toggle('on',b.dataset.demo===key));
+  const d=makeDemoData(key);
+  workouts=d.workouts;
+  restDays=d.restDays;
+  render();
+  showTab('home');
+  homeFlashMsg('Demo data loaded — exit anytime to get your own data back.');
 }
-function killDemoChart(){if(demoChart){demoChart.destroy();demoChart=null;}}
-function renderDemo(){
-  const ctx={workouts:demoWorkouts,restDays:demoRestDays};
-  const series=ewmaSeries(ctx);
-  demoLastSeries=series.slice(-30);
-  const labels=[],values=[],colors=[];
-  for(const m of demoLastSeries){
-    labels.push(fromISO(m.date).toLocaleDateString(undefined,{month:'short',day:'numeric'}));
-    values.push(m.acwr);
-    colors.push(zoneOf(m.acwr).color);
-  }
-  const today=demoLastSeries[demoLastSeries.length-1]||{acute:0,chronic:0,acwr:null};
-  demoAcuteVal.textContent=Math.round(today.acute);
-  demoChronicVal.textContent=Math.round(today.chronic);
-  const z=zoneOf(today.acwr);
-  demoAcwrVal.textContent=today.acwr==null?'—':today.acwr.toFixed(2);
-  demoZoneDot.style.background=z.key==='na'?'#fff':z.color;
-  demoZoneText.textContent=z.label;
-  if(demoChart){
-    demoChart.data.labels=labels;
-    demoChart.data.datasets[0].data=values;
-    demoChart.data.datasets[0].pointBackgroundColor=colors;
-    demoChart.update();
-  }
-  const out=computeRecovery(series,ctx);
-  $('demoRecoveryHeadline').textContent=out.headline;
-  $('demoRecoveryDetail').textContent=out.detail;
-  $('demoRecoveryMeta').textContent=z.key==='na'?'':z.label;
-  const riceEl=$('demoRiceSteps');
-  if(out.rice){
-    const steps=out.rice==='full'?RICE_STEPS:RICE_STEPS.slice(0,2);
-    let html=steps.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
-    if(out.rice==='full')html+='<div class="rice-step"><b>See someone</b><span>If pain lasts more than 48 hours or gets worse, check in with a trainer or doctor.</span></div>';
-    riceEl.innerHTML=html;
-    riceEl.hidden=false;
-  }else{
-    riceEl.hidden=true;
-  }
-  demoHistBody.innerHTML='';
-  const rows=[];
-  for(const w of demoWorkouts)rows.push({kind:'w',date:w.date,created:w.created,ref:w});
-  for(const r of demoRestDays)rows.push({kind:'r',date:r.date,created:r.created,ref:r});
-  rows.sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created);
-  if(!rows.length){
-    demoHistBody.innerHTML='<tr><td colspan="5" class="empty">No data for this demo scenario</td></tr>';
-  }else{
-    for(const row of rows){
-      const tr=document.createElement('tr');
-      const dt=fromISO(row.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-      if(row.kind==='w'){
-        tr.append(
-          tdCell(dt),
-          tdCell(row.ref.duration+' min'),
-          tdCell(row.ref.rpe),
-          tdCell(Math.round(row.ref.duration*row.ref.rpe)+' pts','load-cell'),
-          tdCell('')
-        );
-      }else{
-        tr.classList.add('rest-row');
-        const reason=row.ref.reason==='soreness'?'Soreness':row.ref.reason==='injury'?'Injury':'Planned';
-        tr.append(
-          tdCell(dt),
-          tdCell('—'),
-          tdCell('—'),
-          tdCell('Rest · '+reason,'rest-cell'),
-          tdCell('')
-        );
-      }
-      demoHistBody.appendChild(tr);
-    }
-  }
-  const total=demoWorkouts.reduce((s,w)=>s+w.duration*w.rpe,0);
-  const dRest=restDayStats(ctx);
-  const parts=[];
-  if(demoWorkouts.length)parts.push(demoWorkouts.length+' session'+(demoWorkouts.length>1?'s':'')+' · '+Math.round(total).toLocaleString()+' pts total');
-  if(dRest.total)parts.push(dRest.total+' rest day'+(dRest.total>1?'s':'')+' last 7 days');
-  demoHistMeta.textContent=parts.join(' · ');
-}
-function applyDemo(scenario){
-  currentDemo=scenario;
-  document.querySelectorAll('.scenario').forEach(b=>b.classList.toggle('on',b.dataset.demo===scenario));
-  const d=makeDemoData(scenario);
-  demoWorkouts=d.workouts;
-  demoRestDays=d.restDays;
-  renderDemo();
-}
-function openDemo(){
-  welcomeView.hidden=true;
-  appView.hidden=true;
-  demoView.hidden=false;
-  appFoot.hidden=false;
-  syncNav();
-  if(typeof Chart==='undefined'){$('demoChartFallback').style.display='flex';}
-  ensureDemoChart();
-  applyDemo(currentDemo);
-  history.replaceState(null,'',window.location.pathname+window.location.search);
-  window.scrollTo({top:0,behavior:'instant'});
+function enterDemo(){loadDemoScenario(currentDemoKey);}
+function exitDemo(){
+  if(!demoActive)return;
+  demoActive=false;
+  workouts=demoBackup.workouts;
+  restDays=demoBackup.restDays;
+  demoBackup=null;
+  $('demoBtn').textContent='Demo';
+  $('demoBar').hidden=true;
+  persist();persistRest();
+  render();
+  showTab('home');
+  homeFlashMsg('Demo closed — your own data is back.');
 }
 
 $('clearBtn').addEventListener('click',()=>{
@@ -1338,12 +1194,12 @@ function init(){
   syncRpe();
   if(typeof Chart==='undefined'){$('chartFallback').style.display='flex';}
   ensureChart();
-  if(window.location.hash==='#welcome'){showWelcome();}
+  if(window.location.hash==='#welcome'){/* legacy hash — app-first now */}
   load();
   loadRest();
   signedInName=localStorage.getItem(NAME_KEY)||'';
   updateAuthUI();
-  if(signedInName)showApp();else syncNav();
+  showApp();
   render();
 }
 
@@ -1354,8 +1210,6 @@ function showApp(){
   welcomeView.hidden=true;
   appView.hidden=false;
   appFoot.hidden=false;
-  demoView.hidden=true;
-  killDemoChart();
   syncNav();
   showTab('home');
   history.replaceState(null,'',window.location.pathname+window.location.search);
@@ -1366,29 +1220,23 @@ function showWelcome(e){
   if(e){e.preventDefault();}
   appView.hidden=true;
   appFoot.hidden=true;
-  demoView.hidden=true;
-  killDemoChart();
   welcomeView.hidden=false;
   syncNav();
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'instant'});
 }
 $('brandBtn').addEventListener('click',showWelcome);
 const navLinks=[...document.querySelectorAll('.nav-links a')];
 navLinks.forEach(a=>{
   a.addEventListener('click',e=>{
     e.preventDefault();
-    const target=a.getAttribute('href');
+    if(a.id==='aboutLink'){showWelcome();return;}
     showApp();
-    showTab('advanced');
-    setTimeout(()=>{
-      const el=document.querySelector(target);
-      if(el)el.scrollIntoView({behavior:'smooth'});
-    },0);
+    showTab(a.dataset.navtab||'advanced');
   });
 });
 
-$('demoBtn').addEventListener('click',openDemo);
-[$('tryDemoBtn'),$('tryDemoBtn2')].forEach(b=>b.addEventListener('click',openDemo));
+$('demoBtn').addEventListener('click',()=>{showApp();if(demoActive){exitDemo();}else{enterDemo();}});
+[$('tryDemoBtn'),$('tryDemoBtn2')].forEach(b=>b.addEventListener('click',()=>{showApp();enterDemo();}));
 
 /* ===== Home tab interactions ===== */
 $('homeLogBtn').addEventListener('click',()=>{const f=$('homeLogForm');f.hidden=!f.hidden;if(!f.hidden)$('hDur').focus();});
@@ -1423,8 +1271,9 @@ $('sampleChip').addEventListener('click',()=>{
 });
 $('seeAllBtn').addEventListener('click',e=>{e.preventDefault();showTab('stats');});
 document.querySelectorAll('.tabbar button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
-$('demoExit').addEventListener('click',showApp);
-document.querySelectorAll('.scenario').forEach(b=>b.addEventListener('click',()=>applyDemo(b.dataset.demo)));
+$('guestAuthBtn').addEventListener('click',()=>openAuth('signup'));
+document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.addEventListener('click',()=>loadDemoScenario(b.dataset.demo)));
+$('demoExitBtn').addEventListener('click',exitDemo);
 
 /* ===== Sign up / Log in (local, no backend) ===== */
 const ACCOUNTS_KEY='asclepius-accounts-v1';
@@ -1453,7 +1302,7 @@ function openAuth(mode){
 function closeAuth(){authModal.hidden=true;authFlash.textContent='';authForm.reset();}
 authBtn.addEventListener('click',()=>openAuth());
 [$('openSignupBtn'),$('openSignupBtn2')].forEach(b=>b.addEventListener('click',()=>openAuth('signup')));
-[$('openLoginBtn'),$('openLoginBtn2')].forEach(b=>b.addEventListener('click',()=>openAuth('login')));
+[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',()=>{showApp();showTab('home');}));
 authClose.addEventListener('click',closeAuth);
 authModal.addEventListener('click',e=>{if(e.target===authModal)closeAuth();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth();});
@@ -1484,8 +1333,8 @@ $('logoutBtn').addEventListener('click',()=>{
   signedInName='';
   localStorage.removeItem(NAME_KEY);
   updateAuthUI();
-  showWelcome();
   render();
+  showTab('home');
 });
 
 authForm.addEventListener('submit',e=>{
@@ -1500,12 +1349,14 @@ authForm.addEventListener('submit',e=>{
     if(taken){authFlash.textContent='That name is already registered — log in instead.';return;}
     accounts.push(name);
     saveAccounts(accounts);
-    workouts=[];
-    restDays=[];
-    persist();
-    persistRest();
+    if(demoActive)exitDemo();
+    persist();persistRest();
+    signedInName=name;
+    localStorage.setItem(NAME_KEY,name);
+    updateAuthUI();
+    closeAuth();
     render();
-    finishSignIn(name);
+    homeFlashMsg('Account created — your guest data is now saved under “'+name+'”.');
   }else{
     if(!taken){authFlash.textContent='No account found for that name — sign up first.';return;}
     finishSignIn(name);
