@@ -304,6 +304,9 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
 .auth-tab:not(.on):hover{background:rgba(255,214,0,.35)}
 .user-chip{display:inline-flex;align-items:center;gap:10px}
 .user-chip[hidden]{display:none}
+.sync-pill{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--ink);background:#fff;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;cursor:default}
+.sync-pill.saving{background:var(--yellow)}
+.sync-pill.err{background:var(--red);color:#fff;cursor:pointer}
 #welcomeText{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 #welcomeText b{color:var(--ink)}
 </style>
@@ -317,7 +320,7 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
   </div>
   <button id="demoBtn" class="btn btn-sm" style="margin-left:auto">Demo</button>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
-  <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
+  <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
 
 <section class="welcome" id="welcome">
@@ -668,6 +671,90 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
 const STORAGE_KEY='tendon-tracker-workouts-v1';
 const REST_KEY='asclepius-rest-days-v1';
 const NAME_KEY='asclepius-name-v1';
+
+/* ===== Cloud config (Clerk login + Supabase storage) =====
+   Paste your three keys below and they take effect on the next reload.
+   With them empty the app stays fully local — nothing else changes.
+   Step-by-step setup: see SETUP.md in this repo. */
+const CLOUD_CONFIG={
+  clerkPublishableKey:'',   // e.g. 'pk_test_...' from Clerk Dashboard → API keys
+  supabaseUrl:'',           // e.g. 'https://abcd1234.supabase.co' from Supabase → Settings → API
+  supabaseAnonKey:''        // the anon/public key from the same page
+};
+const CLOUD_ENABLED=!!(CLOUD_CONFIG.clerkPublishableKey&&CLOUD_CONFIG.supabaseUrl&&CLOUD_CONFIG.supabaseAnonKey);
+let sb=null,cloudUser=null,cloudUnavailable=false,syncTimer=null;
+
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Failed to load '+src));document.head.appendChild(s);});}
+function setSyncState(state,msg){
+  const p=$('syncPill');
+  if(!p||!CLOUD_ENABLED)return;
+  if(state==='off'||!signedInName){p.hidden=true;return;}
+  p.hidden=false;p.classList.toggle('err',state==='err');
+  p.textContent=state==='saving'?'☁ saving…':state==='err'?('⚠ '+msg).slice(0,26):'☁ synced';
+}
+function cloudReady(){return CLOUD_ENABLED&&sb&&Clerk.session&&cloudUser&&!cloudUnavailable;}
+function scheduleSync(){if(!cloudReady()||demoActive)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,800);}
+function entryRows(){
+  const rows=[];
+  for(const w of workouts)rows.push({id:w.id,kind:'w',entry_date:w.date,payload:{duration:w.duration,rpe:w.rpe,notes:w.notes||''},created:w.created||0,deleted:false});
+  for(const r of restDays)rows.push({id:r.id,kind:'r',entry_date:r.date,payload:{reason:r.reason},created:r.created||0,deleted:false});
+  return rows;
+}
+async function syncNow(){
+  if(!cloudReady())return;
+  try{
+    setSyncState('saving');
+    const rows=entryRows();
+    if(rows.length)await sb.from('entries').upsert(rows,{onConflict:'id'});
+    const{data,error}=await sb.from('entries').select('id,kind,entry_date,payload,created,deleted');
+    if(error)throw error;
+    const byId={};
+    for(const e of entryRows())byId[e.id]=e;
+    for(const rd of data||[]){
+      if(rd.deleted){delete byId[rd.id];continue;}
+      const ex=byId[rd.id];
+      if(!ex||(rd.created||0)>=(ex.created||0))byId[rd.id]={id:rd.id,kind:rd.kind,entry_date:rd.entry_date,payload:rd.payload||{},created:rd.created||0,deleted:false};
+    }
+    const nw=[],nr=[];
+    for(const e of Object.values(byId)){
+      if(e.kind==='r')nr.push({id:e.id,date:e.entry_date,reason:e.payload.reason||'planned',created:e.created});
+      else nw.push({id:e.id,date:e.entry_date,duration:e.payload.duration||1,rpe:e.payload.rpe||1,notes:e.payload.notes||'',created:e.created});
+    }
+    workouts=nw;restDays=nr;persist();persistRest();
+    render();
+    setSyncState('ok');
+  }catch(e){setSyncState('err','retry');}
+}
+async function cloudDeleteAll(){
+  if(!cloudReady())return;
+  try{await sb.from('entries').delete().neq('id','__none__');}catch(e){/* retried on next sync */}
+}
+async function initCloud(){
+  try{
+    await loadScript('https://cdn.jsdelivr.net/npm/@clerk/clerk-js@4/dist/clerk.browser.js');
+    await Clerk.load({publishableKey:CLOUD_CONFIG.clerkPublishableKey});
+    await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+    sb=supabase.createClient(CLOUD_CONFIG.supabaseUrl,CLOUD_CONFIG.supabaseAnonKey,{
+      accessToken:async()=>{try{return await Clerk.session.getToken({template:'supabase'})||null;}catch(e){return null;}}
+    });
+    Clerk.addListener(res=>onCloudSession(res.session));
+    onCloudSession(Clerk.session);
+  }catch(e){cloudUnavailable=true;setSyncState('off');}
+}
+async function onCloudSession(session){
+  if(!session){
+    if(cloudUser){cloudUser=null;signedInName='';localStorage.removeItem(NAME_KEY);updateAuthUI();render();}
+    return;
+  }
+  const u=Clerk.user;if(!u)return;
+  cloudUser=u;
+  const name=u.firstName||u.username||(u.primaryEmailAddress?u.primaryEmailAddress.emailAddress.split('@')[0]:'athlete');
+  if(demoActive)exitDemo();
+  signedInName=name;localStorage.setItem(NAME_KEY,name);
+  updateAuthUI();closeAuth();showApp();render();
+  await syncNow();
+}
+function openCloudAuth(){try{Clerk.openSignIn();}catch(e){cloudUnavailable=true;setSyncState('off');}}
 let workouts=[];
 let restDays=[];
 let chart=null;
@@ -690,9 +777,9 @@ function todayStr(){return toISO(new Date());}
 function uid(){return 'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 
 function load(){try{workouts=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){workouts=[];}}
-function persist(){if(demoActive)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));}
+function persist(){if(demoActive)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));scheduleSync();}
 function loadRest(){try{restDays=JSON.parse(localStorage.getItem(REST_KEY))||[];}catch(e){restDays=[];}}
-function persistRest(){if(demoActive)return;localStorage.setItem(REST_KEY,JSON.stringify(restDays));}
+function persistRest(){if(demoActive)return;localStorage.setItem(REST_KEY,JSON.stringify(restDays));scheduleSync();}
 
 function restDayStats(ctx){
   let total=0,unplanned=0,injury=0,soreness=0;
@@ -1281,7 +1368,7 @@ function exitDemo(){
 $('clearBtn').addEventListener('click',()=>{
   if(!workouts.length&&!restDays.length)return;
   if(confirm('Delete all workouts and rest days? This cannot be undone.')){
-    workouts=[];restDays=[];persist();persistRest();render();
+    workouts=[];restDays=[];persist();persistRest();cloudDeleteAll();render();
   }
 });
 
@@ -1298,6 +1385,7 @@ function init(){
   updateAuthUI();
   showApp();
   render();
+  if(CLOUD_ENABLED)initCloud();
 }
 
 /* ===== Welcome / app views ===== */
@@ -1388,6 +1476,7 @@ function setAuthMode(m){
 document.querySelectorAll('.auth-tab').forEach(t=>t.addEventListener('click',()=>setAuthMode(t.dataset.mode)));
 
 function openAuth(mode){
+  if(CLOUD_ENABLED){openCloudAuth();return;}
   authMode=mode||authMode;
   setAuthMode(authMode);
   authFlash.textContent='';
@@ -1427,6 +1516,7 @@ function finishSignIn(name){
 }
 
 $('logoutBtn').addEventListener('click',()=>{
+  if(CLOUD_ENABLED&&cloudUser){try{Clerk.signOut();}catch(e){}return;}
   signedInName='';
   localStorage.removeItem(NAME_KEY);
   updateAuthUI();
@@ -1459,6 +1549,8 @@ authForm.addEventListener('submit',e=>{
     finishSignIn(name);
   }
 });
+
+$('syncPill').addEventListener('click',()=>{if($('syncPill').classList.contains('err'))syncNow();});
 
 init();
 
