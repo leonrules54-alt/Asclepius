@@ -211,12 +211,16 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 .stats-row .zone{font-size:.58rem;margin-top:6px;gap:5px}
 .stats-row .zone i{width:8px;height:8px;border-width:1.5px}
 .ddot{width:8px;height:8px;border:1.5px solid var(--ink);display:inline-block;margin-right:6px;vertical-align:0}
+.score-cap{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:5px}
+.gz-words{display:flex;margin:4px 0 14px}
+.gz-words span{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;text-align:center;overflow:hidden;white-space:nowrap}
 .recent-row{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid rgba(28,28,28,.08);font-size:.8rem}
 .recent-row:last-child{border-bottom:0}
 .rdot{width:10px;height:10px;border:2px solid var(--ink);flex:none}
 .recent-row .rr-date{font-weight:700;width:88px;flex:none}
 .recent-row .rr-detail{color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.recent-row .rr-acwr{font-weight:700;font-variant-numeric:tabular-nums}
+.recent-row .rr-acwr{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rr-acwr em{font-style:normal;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;margin-left:4px}
 .load-explain{font-size:.68rem;color:var(--muted);margin:0 0 14px}
 .load-explain b{color:var(--ink)}
 .guest-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:2px solid var(--ink);background:var(--yellow);padding:10px 14px;font-size:.78rem;font-weight:600;margin-bottom:14px}
@@ -404,7 +408,10 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
 
     <section class="status-card">
       <div class="score-row">
-        <div class="score" id="readinessNum">—</div>
+        <div>
+          <div class="score" id="readinessNum">—</div>
+          <div class="score-cap" id="scoreCap">your score shows up after your first workout</div>
+        </div>
         <div class="score-side">
           <div class="score-lbl">Strain score</div>
           <div class="zone-chip" id="homeZoneChip" style="background:var(--grey)">—</div>
@@ -414,29 +421,31 @@ footer{padding:26px 24px 90px;text-align:center;font-size:.72rem;color:var(--mut
         <div class="gz under"></div><div class="gz safe"></div><div class="gz warn"></div><div class="gz hot"></div>
         <div class="gmarker" id="gaugeMarker" style="display:none"></div>
       </div>
-      <div class="gauge-labels"><span>0</span><span>1.0</span><span>2.0</span></div>
+      <div class="gz-words">
+        <span style="width:40%;color:var(--grey)">fresh</span><span style="width:25%;color:var(--green)">safe</span><span style="width:10%;color:var(--orange)">ease</span><span style="width:25%;color:var(--red)">too much</span>
+      </div>
       <p class="home-msg" id="homeMsg"></p>
       <p class="home-msg-sub" id="homeMsgSub"></p>
     </section>
 
     <section class="stats-row">
       <div class="stat">
-        <div class="lbl">Recent load</div>
+        <div class="lbl">This week</div>
         <div class="num" id="hAcuteVal">0</div>
-        <div class="sub">last 7 days</div>
+        <div class="sub" id="hAcuteSub">per day, right now</div>
       </div>
       <div class="stat">
-        <div class="lbl">Usual load</div>
+        <div class="lbl">Your normal</div>
         <div class="num" id="hChronicVal">0</div>
-        <div class="sub">last 28 days</div>
+        <div class="sub" id="hChronicSub">per day, what you're used to</div>
       </div>
       <div class="stat">
-        <div class="lbl">7-day trend</div>
+        <div class="lbl">Trend</div>
         <div class="num" id="hTrendVal">—</div>
-        <div class="sub">vs last week</div>
+        <div class="sub" id="hTrendSub">vs last week</div>
       </div>
     </section>
-    <p class="load-explain">Load = <b>minutes × intensity</b> — a 90-min practice at intensity 5 scores <b>450</b>. Strain score = recent ÷ usual load.</p>
+    <p class="load-explain">A workout's <b>load</b> = minutes × intensity (a 90-min practice at effort 5 ≈ <b>450</b>). The strain score compares this week to your normal: <b>1.00 = exactly normal</b>.</p>
 
     <section class="card" id="homeAdvice">
       <div class="card-title">
@@ -891,12 +900,19 @@ function renderHomeTab(series){
   const z=zoneOf(today.acwr);
   $('readinessNum').textContent=today.acwr==null?'—':today.acwr.toFixed(2);
   $('readinessNum').style.color=(today.acwr==null||z.key==='under'||z.key==='na')?'var(--ink)':z.color;
+  const cap=$('scoreCap');
+  if(today.acwr==null)cap.textContent='your score shows up after your first workout';
+  else if(z.key==='under')cap.textContent='below your normal — body is fresh';
+  else if(z.key==='optimal')cap.textContent='this week matches what your body is used to';
+  else if(z.key==='elevated')cap.textContent='above your normal — go a bit lighter';
+  else cap.textContent='way above your normal — rest today';
   const tv=$('hTrendVal');
   const trend=computeTrend(series);
-  if(trend===null){tv.textContent='—';tv.style.color='var(--ink)';}
+  if(trend===null){tv.textContent='—';tv.style.color='var(--ink)';$('hTrendSub').textContent='not enough history';}
   else{
     tv.textContent=(trend>0?'▲ +':trend<0?'▼ −':'± ')+Math.abs(trend)+'%';
     tv.style.color=trend>35?'var(--red)':trend>10?'var(--orange)':'var(--green)';
+    $('hTrendSub').textContent=trend>0?'training is ramping up':trend<0?'backing off — good':'holding steady';
   }
   const chip=$('homeZoneChip');
   chip.textContent=z.key==='na'?'No data yet':z.label;
@@ -921,7 +937,8 @@ function renderHomeTab(series){
         const a=amap[e.date];
         const z2=zoneOf(a);
         const dot=a==null?'var(--grey)':z2.color;
-        return '<div class="recent-row"><span class="rdot" style="background:'+dot+'"></span><span class="rr-date">'+escHtml(d)+'</span><span class="rr-detail">'+escHtml((e.ref.notes?e.ref.notes+' · ':'')+e.ref.duration+' min × intensity '+e.ref.rpe)+'</span><span class="rr-acwr" style="color:'+(a==null?'var(--muted)':z2.color)+'">'+(a==null?'—':a.toFixed(2))+'</span></div>';
+        const word=a==null?'':(z2.key==='optimal'?'safe':z2.key==='high'?'high':z2.key==='elevated'?'ease off':'low');
+        return '<div class="recent-row"><span class="rdot" style="background:'+dot+'"></span><span class="rr-date">'+escHtml(d)+'</span><span class="rr-detail">'+escHtml((e.ref.notes?e.ref.notes+' · ':'')+e.ref.duration+' min × intensity '+e.ref.rpe)+'</span><span class="rr-acwr" style="color:'+(a==null?'var(--muted)':z2.color)+'">'+(a==null?'—':a.toFixed(2)+' <em>'+word+'</em>')+'</span></div>';
       }
       const reason=e.ref.reason==='soreness'?'Soreness':e.ref.reason==='injury'?'Injury':'Planned';
       return '<div class="recent-row"><span class="rdot" style="background:rgba(119,119,119,.35)"></span><span class="rr-date">'+escHtml(d)+'</span><span class="rr-detail">Rest day · '+reason+'</span><span class="rr-acwr"></span></div>';
