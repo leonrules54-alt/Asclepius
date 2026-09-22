@@ -1,7 +1,7 @@
 /* Asclepius service worker — offline-first app shell */
 /* Bump the version on every content change — otherwise returning visitors
    (and installed PWAs) keep the stale cached app forever. */
-const CACHE = 'asclepius-v3';
+const CACHE = 'asclepius-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -26,10 +26,24 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-/* Cache-first with runtime caching: CDN files (Chart.js, fonts) are cached on first fetch,
-   so the app keeps working fully offline after the first visit. */
+/* Page navigations: network-first so updates always land after one reload
+   (falls back to the cached shell when offline). Other GETs (Chart.js, fonts):
+   cache-first with runtime caching, so the app keeps working fully offline
+   after the first visit. */
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy));
+          return res;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then((hit) => {
       if (hit) return hit;
