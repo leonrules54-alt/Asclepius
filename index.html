@@ -478,6 +478,8 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
     <button class="chip" id="sampleChip" type="button" hidden>🌱 Load a sample season (for testing)</button>
 
     <form class="home-form" id="homeLogForm" hidden novalidate>
+      <label for="hName">Name — optional</label>
+      <input type="text" id="hName" maxlength="40" placeholder="e.g. Practice, scrimmage, lifts…">
       <label for="hDur">Duration — minutes</label>
       <input type="number" id="hDur" min="1" max="600" step="1" placeholder="e.g. 90">
       <label for="hRpe">Intensity — <span id="hRpeVal">5</span>/10</label>
@@ -610,6 +612,8 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
           <input type="number" id="durationInput" min="1" max="600" step="1" placeholder="e.g. 60" required>
         </div>
       </div>
+      <label for="nameInput">Name — optional</label>
+      <input type="text" id="nameInput" maxlength="40" placeholder="e.g. Practice, scrimmage, lifts…">
       <label for="rpeInput">Intensity — 1 to 10</label>
       <div class="range-row">
         <input type="range" id="rpeInput" min="1" max="10" step="1" value="5">
@@ -681,8 +685,8 @@ const NAME_KEY='asclepius-name-v1';
    Step-by-step setup: see SETUP.md in this repo. */
 const CLOUD_CONFIG={
   clerkPublishableKey:'',   // e.g. 'pk_test_...' from Clerk Dashboard → API keys
-  supabaseUrl:'',           // e.g. 'https://abcd1234.supabase.co' from Supabase → Settings → API
-  supabaseAnonKey:''        // the anon/public key from the same page
+  supabaseUrl:'https://fghtorhodemmpeawkirq.supabase.co',           // from Supabase → Settings → API
+  supabaseAnonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnaHRvcmhvZGVtbXBlYXdraXFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjAwNjgsImV4cCI6MjEwNTY5NjA2OH0.onRJCTi5PrmjPwtyUYq-XYXjp9FYosDrGUI_Yn9qZJY'
 };
 const CLOUD_ENABLED=!!(CLOUD_CONFIG.clerkPublishableKey&&CLOUD_CONFIG.supabaseUrl&&CLOUD_CONFIG.supabaseAnonKey);
 let sb=null,cloudUser=null,cloudUnavailable=false,syncTimer=null;
@@ -1251,13 +1255,15 @@ form.addEventListener('submit',e=>{
   const date=dateInput.value;
   const duration=parseInt(durationInput.value,10);
   const rpe=parseInt(rpeInput.value,10);
+  const notes=($('nameInput').value||'').trim().slice(0,40);
   if(!date){flashMsg('Please pick a date.',true);return;}
     if(!duration||duration<1){flashMsg('Enter a duration of at least 1 minute.',true);return;}
   if(!rpe||rpe<1||rpe>10){flashMsg('Intensity must be between 1 and 10.',true);return;}
-  workouts.push({id:uid(),date,duration,rpe,notes:'',created:Date.now()});
+  workouts.push({id:uid(),date,duration,rpe,notes,created:Date.now()});
   persist();
   render();
   durationInput.value='';
+  $('nameInput').value='';
   flashMsg('Workout saved.');
 });
 
@@ -1439,10 +1445,11 @@ function homeFlashMsg(text,err){
 $('homeLogForm').addEventListener('submit',e=>{
   e.preventDefault();
   const duration=parseInt($('hDur').value,10),rpe=parseInt($('hRpe').value,10);
+  const notes=($('hName').value||'').trim().slice(0,40);
   if(!duration||duration<1){homeFlashMsg('Enter a duration of at least 1 minute.',true);return;}
-  workouts.push({id:uid(),date:todayStr(),duration,rpe,notes:'',created:Date.now()});
+  workouts.push({id:uid(),date:todayStr(),duration,rpe,notes,created:Date.now()});
   persist();render();
-  $('hDur').value='';
+  $('hDur').value='';$('hName').value='';
   syncHomePreview();
   homeFlashMsg('Workout saved — '+duration+' min × '+rpe+'.');
 });
