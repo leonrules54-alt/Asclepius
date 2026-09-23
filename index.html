@@ -773,8 +773,8 @@ async function onCloudSession(session){
 }
 function openCloudAuth(){
   try{
-    const back=window.location.origin+window.location.pathname;
-    Clerk.openSignIn({forceRedirectUrl:back,fallbackRedirectUrl:back});
+    const back=window.location.pathname+window.location.search; // path only — Clerk strips absolute URLs to '/'
+    Clerk.openSignIn({forceRedirectUrl:back,fallbackRedirectUrl:back,redirectUrl:back});
   }catch(e){cloudUnavailable=true;setSyncState('off');}
 }
 let workouts=[];
