@@ -9,40 +9,7 @@ With keys pasted in, accounts and workouts sync to the cloud: log in on any devi
 ## 1. Supabase (stores the workouts)
 
 1. Go to [supabase.com](https://supabase.com) → **New project** (free tier is fine). Pick any name, generate a DB password, choose a region near you.
-2. When the project is ready, open **SQL Editor** (left sidebar) → **New query**, paste this, click **Run**:
-
-```sql
-create table if not exists public.entries (
-  id         text primary key,
-  user_id    uuid not null default auth.uid(),
-  kind       text not null check (kind in ('w','r')),
-  entry_date date not null,
-  payload    jsonb not null default '{}'::jsonb,
-  created    bigint not null default 0,
-  deleted    boolean not null default false,
-  updated_at timestamptz not null default now()
-);
-
-alter table public.entries enable row level security;
-
-create policy "own rows read"
-  on public.entries for select
-  using (auth.uid() = user_id);
-
-create policy "own rows insert"
-  on public.entries for insert
-  with check (auth.uid() = user_id);
-
-create policy "own rows update"
-  on public.entries for update
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create policy "own rows delete"
-  on public.entries for delete
-  using (auth.uid() = user_id);
-```
-
+2. When the project is ready, open **SQL Editor** (left sidebar) → **New query**, paste the full contents of `schema.sql` (it's in this repo), click **Run**. You should see `Success. No rows returned`.
 3. Go to **Project Settings → API** and copy two values:
    - **Project URL** — looks like `https://abcd1234.supabase.co`
    - **anon / public key** — the long `eyJ...` string labeled `anon` `public`
@@ -54,13 +21,17 @@ create policy "own rows delete"
 1. Go to [clerk.com](https://clerk.com) → **Add application**. Name it (e.g. "Asclepius"). Under sign-in options pick **Email** (and Google if you want one-tap). Create.
 2. You land on the API keys page. Copy the **Publishable key** — starts with `pk_test_...` (or `pk_live_...` after going live).
 
-## 3. Connect Clerk → Supabase (the JWT template)
+## 3. Connect Clerk → Supabase (two small steps)
 
-This makes every request to Supabase carry the signed-in user's identity:
+**In Clerk — enable Supabase compatibility:**
+1. In the Clerk dashboard: **Configure → JWT Templates → New template → Supabase**. Keep the name exactly `supabase`. Leave the prefilled claims (they include `"role": "authenticated"`, which Supabase requires). Save.
+2. Clerk docs route (recommended): go to Clerk's **Connect with Supabase** page (Dashboard → Configure → Integrations) and **Activate Supabase integration** — it reveals your Clerk domain, e.g. `thankful-mantis-4029.clerk.accounts.dev`.
 
-1. In Clerk dashboard: **Configure → JWT Templates → New template**, choose **Supabase**.
-2. It prefills the claims — leave them. In the **Signing key** dropdown pick your instance's key (the default one is fine).
-3. Save. Note the template name is exactly **`supabase`** (the app requests it by that name — if Clerk names it differently, rename it to `supabase`).
+**In Supabase — trust your Clerk instance:**
+1. Supabase dashboard → **Authentication → Sign In / Up** (Providers) → **Third-Party Auth** → **Add provider** → **Clerk**.
+2. Paste your Clerk domain (`thankful-mantis-4029.clerk.accounts.dev`) → Save.
+
+This makes Supabase accept your users' Clerk logins and lets the RLS policies match rows by Clerk user ID (`auth.jwt()->>'sub'`).
 
 ## 4. Paste the three keys into the app
 
