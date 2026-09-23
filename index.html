@@ -771,7 +771,12 @@ async function onCloudSession(session){
   updateAuthUI();closeAuth();showApp();render();
   await syncNow();
 }
-function openCloudAuth(){try{Clerk.openSignIn();}catch(e){cloudUnavailable=true;setSyncState('off');}}
+function openCloudAuth(){
+  try{
+    const back=window.location.origin+window.location.pathname;
+    Clerk.openSignIn({forceRedirectUrl:back,fallbackRedirectUrl:back});
+  }catch(e){cloudUnavailable=true;setSyncState('off');}
+}
 let workouts=[];
 let restDays=[];
 let chart=null;
