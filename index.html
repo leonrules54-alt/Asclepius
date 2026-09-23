@@ -57,7 +57,7 @@ body.signed-in .auth-cta{display:none}
 main{max-width:880px;margin:0 auto;padding:48px 24px 96px}
 
 .hero{margin-bottom:36px}
-h1{font-family:'Archivo Black','Arial Black',sans-serif;font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em}
+h1:not(.cl-rootBox h1){font-family:'Archivo Black','Arial Black',sans-serif;font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em}
 h1 .hl{background:var(--yellow);padding:0 .12em}
 .sub{color:var(--muted);margin:0;font-size:.95rem;max-width:52ch}
 
@@ -75,10 +75,10 @@ h1 .hl{background:var(--yellow);padding:0 .12em}
 .card-title .meta{font-size:.7rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:14px 0 6px}
+label:not(.cl-rootBox label){display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:14px 0 6px}
 .row2 label:first-child{margin-top:0}
-input[type=date],input[type=number],input[type=text]{width:100%;padding:10px 12px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.92rem;border-radius:0}
-input[type=date]:focus,input[type=number]:focus,input[type=text]:focus{outline:none;box-shadow:3px 3px 0 var(--yellow)}
+input[type=date],input[type=number],input[type=text]:not(.cl-rootBox input){width:100%;padding:10px 12px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.92rem;border-radius:0}
+input[type=date]:focus,input[type=number]:focus,input[type=text]:not(.cl-rootBox input):focus{outline:none;box-shadow:3px 3px 0 var(--yellow)}
 .range-row{display:flex;align-items:center;gap:14px}
 .rpe-val{min-width:44px;text-align:center;background:var(--ink);color:var(--paper);font-weight:700;font-size:1rem;padding:3px 8px}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
@@ -121,8 +121,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--yell
 .rest-log{border-top:2px solid var(--ink);margin-top:20px;padding-top:16px}
 .row3{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:end}
 .row3 label{margin-top:0}
-select{width:100%;padding:10px 12px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.92rem;border-radius:0}
-select:focus{outline:none;box-shadow:3px 3px 0 var(--yellow)}
+select:not(.cl-rootBox select){width:100%;padding:10px 12px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.92rem;border-radius:0}
+select:not(.cl-rootBox select):focus{outline:none;box-shadow:3px 3px 0 var(--yellow)}
 .rest-cta{white-space:nowrap}
 .rest-row td{color:var(--muted);font-style:italic}
 .rest-cell{font-weight:700;font-style:normal}
@@ -311,7 +311,9 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
 .sync-pill.saving{background:var(--yellow)}
 .sync-pill.err{background:var(--red);color:#fff;cursor:pointer}
 #welcomeText{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-#welcomeText b{color:var(--ink)}
+#welcomeText b{color:var(--ink)}/* Clerk modal isolation: app's bare-element selectors (h1, label, input[type=text]…) leak into Clerk's portal and wreck its layout — exclude Clerk's tree (.cl-rootBox) everywhere */
+.cl-rootBox *{box-sizing:border-box}
+
 </style>
 </head>
 <body>
