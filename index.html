@@ -417,6 +417,67 @@ body.ui2 .theme-switch .tsw{border-radius:999px;color:#64748B}
 body.ui2 .theme-switch .tsw.on{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff}
 body.ui2 .flash,body.ui2 .btn,body.ui2 .chip,body.ui2 .card,body.ui2 .stat,body.ui2 .top-tabs button{transition:background-color .25s ease,border-color .25s ease,box-shadow .25s ease}
 
+/* ===== UI2 dark — same glass, midnight backdrop ===== */
+body.ui2.dark{
+  --ink:#E2E8F0; --muted:#94A3B8;
+  background:linear-gradient(165deg,#0B1220 0%,#111a2e 50%,#0f172a 100%) fixed;
+  color-scheme:dark;
+}
+body.ui2.dark .nav{background:rgba(10,15,30,.55);border-bottom-color:rgba(148,163,184,.15)}
+body.ui2.dark .nav-links a:hover,body.ui2.dark .nav-links a.active{background:rgba(99,102,241,.28);color:#E0E7FF}
+body.ui2.dark .card,body.ui2.dark .stat,body.ui2.dark .status-card,body.ui2.dark .home-form,body.ui2.dark .tile,body.ui2.dark .w-card,body.ui2.dark .rice-step,body.ui2.dark .scenario,body.ui2.dark .z,body.ui2.dark .rpe-ref{background:rgba(17,25,48,.52);border-color:rgba(148,163,184,.16);box-shadow:0 12px 34px -14px rgba(0,0,0,.6)}
+body.ui2.dark .status-card{box-shadow:0 18px 48px -16px rgba(0,0,0,.7),0 0 0 1px rgba(99,102,241,.12)}
+body.ui2.dark .btn{background:rgba(30,41,66,.6);border-color:rgba(148,163,184,.2);color:#E2E8F0}
+body.ui2.dark .btn:hover{background:rgba(51,65,94,.7)}
+body.ui2.dark .btn-primary{color:#fff}
+body.ui2.dark .chip,body.ui2.dark .dchip{background:rgba(30,41,66,.5);border-color:rgba(148,163,184,.18);color:#E2E8F0}
+body.ui2.dark .chip:hover,body.ui2.dark .dchip:hover{background:rgba(79,70,229,.16)}
+body.ui2.dark .dchip.on{background:#4F46E5;color:#fff;border-color:transparent}
+body.ui2.dark input[type=date],body.ui2.dark input[type=number],body.ui2.dark input[type=text]:not(.cl-rootBox input),body.ui2.dark select:not(.cl-rootBox select),body.ui2.dark .home-form input[type=number]{background:rgba(255,255,255,.06);border-color:rgba(148,163,184,.25);color:#E2E8F0}
+body.ui2.dark input[type=date]:focus,body.ui2.dark input[type=number]:focus,body.ui2.dark input[type=text]:not(.cl-rootBox input):focus,body.ui2.dark select:not(.cl-rootBox select):focus{border-color:#818CF8;box-shadow:0 0 0 3px rgba(99,102,241,.25)}
+body.ui2.dark .top-tabs{background:rgba(17,25,48,.5);border-color:rgba(148,163,184,.16)}
+body.ui2.dark .top-tabs button{color:#CBD5E1}
+body.ui2.dark .top-tabs button.on{color:#fff}
+body.ui2.dark .top-tabs button:not(.on):hover{background:rgba(99,102,241,.14)}
+body.ui2.dark .score{color:#F1F5F9}
+body.ui2.dark .score.is-empty{color:var(--muted)}
+body.ui2.dark .zone-chip{border:none}
+body.ui2.dark .gmarker::after{border-top-color:#F1F5F9}
+body.ui2.dark .load-preview{background:rgba(99,102,241,.16);border-color:rgba(129,140,248,.35);color:#A5B4FC}
+body.ui2.dark .see-all{color:#A5B4FC;border-bottom-color:#818CF8}
+body.ui2.dark .guest-banner{background:rgba(79,70,229,.14);border-color:rgba(129,140,248,.3)}
+body.ui2.dark .demo-bar{background:rgba(17,25,48,.5);border-color:rgba(129,140,248,.35)}
+body.ui2.dark .w-card p{color:#CBD5E1}
+body.ui2.dark .z{background:rgba(255,255,255,.04)}
+body.ui2.dark .rice-step{background:rgba(255,255,255,.05)}
+body.ui2.dark th{border-bottom-color:rgba(148,163,184,.25)}
+body.ui2.dark td{border-bottom-color:rgba(148,163,184,.12)}
+body.ui2.dark tbody tr:hover td{background:rgba(99,102,241,.1)}
+body.ui2.dark .recent-row{border-bottom-color:rgba(148,163,184,.12)}
+body.ui2.dark .wbar{border-color:rgba(148,163,184,.3)}
+body.ui2.dark .wday.today .wbar{box-shadow:0 0 0 3px rgba(129,140,248,.4)}
+body.ui2.dark .wday.today span{background:rgba(99,102,241,.3);color:#C7D2FE}
+body.ui2.dark .sq{border-color:rgba(148,163,184,.2)}
+body.ui2.dark .zone i,body.ui2.dark .ddot,body.ui2.dark .rdot,body.ui2.dark .cal-legend i{border-color:rgba(148,163,184,.35)}
+body.ui2.dark .modal{background:rgba(2,6,18,.6)}
+body.ui2.dark .modal-box{background:rgba(15,23,42,.82);border-color:rgba(148,163,184,.2)}
+body.ui2.dark .auth-tabs{border-color:rgba(148,163,184,.25)}
+body.ui2.dark .auth-tab{color:#94A3B8}
+body.ui2.dark .auth-tab:not(.on):hover{background:rgba(99,102,241,.14)}
+body.ui2.dark .sync-pill{background:rgba(30,41,66,.6);border-color:rgba(148,163,184,.25);color:#CBD5E1}
+body.ui2.dark .sync-pill.saving{background:rgba(99,102,241,.18);color:#A5B4FC}
+body.ui2.dark .flash{color:#34D399}
+body.ui2.dark .flash.err{color:#F87171}
+body.ui2.dark .scenario.on{background:rgba(99,102,241,.16);border-color:#818CF8}
+body.ui2.dark .scenario:hover{outline-color:#818CF8}
+body.ui2.dark .rpe-ref summary:hover{background:rgba(99,102,241,.14)}
+body.ui2.dark .rpe-ref li.on{background:rgba(99,102,241,.18);color:#C7D2FE}
+body.ui2.dark .theme-switch{background:rgba(17,25,48,.6);border-color:rgba(148,163,184,.25)}
+body.ui2.dark .theme-switch .tsw{color:#94A3B8}
+body.ui2.dark .theme-switch .tsw.on{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff}
+body.ui2.dark .rest-log{border-top-color:rgba(148,163,184,.16)}
+body.ui2.dark .w-footer{box-shadow:0 22px 55px -18px rgba(0,0,0,.8)}
+
 </style>
 </head>
 <body>
@@ -427,7 +488,7 @@ body.ui2 .flash,body.ui2 .btn,body.ui2 .chip,body.ui2 .card,body.ui2 .stat,body.
     <a href="#about" id="aboutLink">About</a>
   </div>
   <button id="demoBtn" class="btn btn-sm" style="margin-left:auto">Demo</button>
-  <span class="theme-switch" role="group" aria-label="UI theme"><button id="ui1Btn" class="tsw on" type="button">UI1</button><button id="ui2Btn" class="tsw" type="button">UI2</button></span>
+  <span class="theme-switch" role="group" aria-label="UI theme"><button id="ui1Btn" class="tsw on" type="button">UI1</button><button id="ui2Btn" class="tsw" type="button">UI2</button><button id="uiDarkBtn" class="tsw" type="button" title="UI2 dark">🌙</button></span>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
   <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
@@ -1595,14 +1656,18 @@ $('demoExitBtn').addEventListener('click',exitDemo);
 /* ===== UI theme switch (presentation only — no logic touched) ===== */
 const THEME_KEY='asclepius-ui';
 function applyTheme(t){
-  document.body.classList.toggle('ui2',t==='ui2');
-  $('ui1Btn').classList.toggle('on',t!=='ui2');
-  $('ui2Btn').classList.toggle('on',t==='ui2');
+  const dark=t==='ui2dark';
+  document.body.classList.toggle('ui2',t!=='ui1');
+  document.body.classList.toggle('dark',dark);
+  $('ui1Btn').classList.toggle('on',t==='ui1');
+  $('ui2Btn').classList.toggle('on',t!=='ui1');
+  $('uiDarkBtn').classList.toggle('on',dark);
   try{localStorage.setItem(THEME_KEY,t);}catch(e){}
 }
-(function(){let t='ui1';try{t=localStorage.getItem(THEME_KEY)||'ui1';}catch(e){}applyTheme(t);}());
+(function(){let t='ui1';try{t=localStorage.getItem(THEME_KEY)||'ui1';}catch(e){}if(t!=='ui1'&&t!=='ui2'&&t!=='ui2dark')t='ui1';applyTheme(t);}());
 $('ui1Btn').addEventListener('click',()=>applyTheme('ui1'));
 $('ui2Btn').addEventListener('click',()=>applyTheme('ui2'));
+$('uiDarkBtn').addEventListener('click',()=>applyTheme('ui2dark'));
 
 /* ===== Sign up / Log in (local, no backend) ===== */
 const ACCOUNTS_KEY='asclepius-accounts-v1';
