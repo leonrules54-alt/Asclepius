@@ -314,6 +314,108 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
 #welcomeText b{color:var(--ink)}/* Clerk modal isolation: app's bare-element selectors (h1, label, input[type=text]…) leak into Clerk's portal and wreck its layout — exclude Clerk's tree (.cl-rootBox) everywhere */
 .cl-rootBox *{box-sizing:border-box}
 
+/* ===== UI THEME SWITCH (shared control) ===== */
+.theme-switch{display:inline-flex;border:2px solid var(--ink);margin-left:8px;flex:none}
+.theme-switch .tsw{border:none;background:transparent;font-family:inherit;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;cursor:pointer;color:var(--muted)}
+.theme-switch .tsw.on{background:var(--yellow);color:var(--ink)}
+
+/* ======================================================
+   UI2 — modern glassmorphism skin.
+   Purely presentational: body.ui2 overrides only colors,
+   borders, radii, shadows, fonts. Zero logic changes.
+   ====================================================== */
+body.ui2{
+  --ink:#0F172A; --muted:#64748B; --yellow:#C7D2FE;
+  background:linear-gradient(160deg,#eef2ff 0%,#f8fafc 45%,#e0e7ff 100%) fixed;
+}
+body.ui2 ::selection{background:#C7D2FE}
+body.ui2 .nav{background:rgba(255,255,255,.65);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid rgba(148,163,184,.3)}
+body.ui2 .mark{border:none;border-radius:4px;background:linear-gradient(135deg,#4F46E5,#7C3AED);width:14px;height:14px}
+body.ui2 .nav-links a:hover,body.ui2 .nav-links a.active{background:#E0E7FF;border-radius:8px}
+body.ui2 h1:not(.cl-rootBox h1),body.ui2 .greet h1,body.ui2 .w-hero h1,body.ui2 .stats-title,body.ui2 .modal-box h2{font-family:'Space Grotesk',-apple-system,sans-serif;font-weight:700;letter-spacing:-.03em}
+body.ui2 h1 .hl{background:linear-gradient(120deg,#4F46E5,#7C3AED);color:#fff;padding:0 .14em;border-radius:.18em}
+body.ui2 .btn{border:1px solid rgba(15,23,42,.12);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:0 2px 10px rgba(15,23,42,.06);transition:all .18s ease}
+body.ui2 .btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 6px 18px rgba(79,70,229,.18)}
+body.ui2 .btn-primary{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border-color:transparent}
+body.ui2 .btn-primary:hover{background:linear-gradient(135deg,#4338CA,#6D28D9);color:#fff}
+body.ui2 .btn-danger:hover{background:#DC2626}
+body.ui2 .card,body.ui2 .stat,body.ui2 .status-card,body.ui2 .home-form,body.ui2 .tile,body.ui2 .w-card,body.ui2 .rice-step,body.ui2 .scenario,body.ui2 .z,body.ui2 .rpe-ref{border:1px solid rgba(148,163,184,.35);border-radius:18px;background:rgba(255,255,255,.55);backdrop-filter:blur(16px) saturate(1.35);-webkit-backdrop-filter:blur(16px) saturate(1.35);box-shadow:0 10px 30px -12px rgba(15,23,42,.15)}
+body.ui2 .status-card{box-shadow:0 16px 44px -16px rgba(79,70,229,.25)}
+body.ui2 .stat .lbl,body.ui2 .tile span,body.ui2 .score-lbl,body.ui2 .greet span{color:#64748B}
+body.ui2 .score{color:#0F172A}
+body.ui2 .zone-chip{border:none;border-radius:999px;padding:4px 11px}
+body.ui2 .zone i,body.ui2 .ddot,body.ui2 .rdot,body.ui2 .cal-legend i{border-color:rgba(15,23,42,.22)}
+body.ui2 .gauge{border:none;border-radius:999px;overflow:hidden}
+body.ui2 .gz.under{background:#CBD5E1}
+body.ui2 .gz.safe{background:#34D399}
+body.ui2 .gz.warn{background:#FBBF24}
+body.ui2 .gz.hot{background:#F87171}
+body.ui2 .gmarker::after{border-top-color:#0F172A}
+body.ui2 .gauge-labels,body.ui2 .gz-words span{color:#94A3B8}
+body.ui2 .log-btn{background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;border-radius:16px;box-shadow:0 12px 28px -10px rgba(79,70,229,.55)}
+body.ui2 .log-btn:active{transform:scale(.985);box-shadow:0 6px 16px -8px rgba(79,70,229,.5)}
+body.ui2 .chip{border:1px solid rgba(15,23,42,.1);border-radius:12px;background:rgba(255,255,255,.6)}
+body.ui2 .chip:hover{background:#EEF2FF}
+body.ui2 label:not(.cl-rootBox label),body.ui2 .home-form label{color:#64748B}
+body.ui2 input[type=date],body.ui2 input[type=number],body.ui2 input[type=text]:not(.cl-rootBox input),body.ui2 select:not(.cl-rootBox select),body.ui2 .home-form input[type=number]{border:1px solid rgba(148,163,184,.5);border-radius:12px;background:rgba(255,255,255,.75)}
+body.ui2 input[type=date]:focus,body.ui2 input[type=number]:focus,body.ui2 input[type=text]:not(.cl-rootBox input):focus,body.ui2 select:not(.cl-rootBox select):focus{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.16)}
+body.ui2 input[type=range]::-webkit-slider-runnable-track{background:rgba(15,23,42,.14);border-radius:999px}
+body.ui2 input[type=range]::-webkit-slider-thumb{background:#4F46E5;border:none;border-radius:50%;box-shadow:0 2px 8px rgba(79,70,229,.4)}
+body.ui2 input[type=range]::-moz-range-track{background:rgba(15,23,42,.14);border-radius:999px}
+body.ui2 input[type=range]::-moz-range-thumb{background:#4F46E5;border:none;border-radius:50%}
+body.ui2 .rpe-val{background:#4F46E5;color:#fff;border-radius:10px}
+body.ui2 .load-preview{background:#EEF2FF;border:1px solid rgba(79,70,229,.25);border-radius:999px;color:#4F46E5}
+body.ui2 .top-tabs{background:rgba(255,255,255,.55);border:1px solid rgba(148,163,184,.3);border-radius:14px;padding:4px;gap:4px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+body.ui2 .top-tabs button{border:none;border-radius:10px;background:transparent;transition:all .18s ease}
+body.ui2 .top-tabs button.on{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;box-shadow:0 4px 14px -4px rgba(79,70,229,.5)}
+body.ui2 .top-tabs button:not(.on):hover{background:rgba(79,70,229,.08)}
+body.ui2 .flash{color:#059669}
+body.ui2 .flash.err{color:#DC2626}
+body.ui2 .guest-banner{background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border:1px solid rgba(79,70,229,.25);border-radius:14px}
+body.ui2 .demo-bar{background:rgba(255,255,255,.6);border:1px dashed rgba(79,70,229,.4);border-radius:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+body.ui2 .demo-tag{background:#4F46E5;color:#fff;border:none;border-radius:999px}
+body.ui2 .dchip{border:1px solid rgba(15,23,42,.12);border-radius:999px;background:rgba(255,255,255,.7)}
+body.ui2 .dchip:hover{background:#EEF2FF}
+body.ui2 .dchip.on{background:#4F46E5;color:#fff;border-color:transparent}
+body.ui2 .scenario:hover{outline-color:#4F46E5}
+body.ui2 .scenario.on{background:#EEF2FF;border-color:#4F46E5}
+body.ui2 .rice-step{background:rgba(255,255,255,.5)}
+body.ui2 .rest-log{border-top-color:rgba(148,163,184,.35)}
+body.ui2 th{border-bottom:1px solid rgba(148,163,184,.4)}
+body.ui2 td{border-bottom:1px solid rgba(148,163,184,.2)}
+body.ui2 tbody tr:hover td{background:rgba(79,70,229,.06)}
+body.ui2 .wbar{border-color:rgba(15,23,42,.2)}
+body.ui2 .wbar.rest{border-color:rgba(15,23,42,.25)}
+body.ui2 .wday.today .wbar{box-shadow:0 0 0 3px rgba(79,70,229,.35)}
+body.ui2 .wday.today span{background:#E0E7FF;color:#3730A3;border-radius:6px}
+body.ui2 .sq{border-color:rgba(15,23,42,.14);border-radius:4px}
+body.ui2 .recent-row{border-bottom-color:rgba(148,163,184,.2)}
+body.ui2 .see-all{border-bottom-color:#4F46E5;color:#4F46E5}
+body.ui2 .formula-hint,body.ui2 .home-hint,body.ui2 .load-explain,body.ui2 .empty,body.ui2 .hist-meta,body.ui2 .legend,body.ui2 .foot-note,body.ui2 .card-title .meta,body.ui2 footer,body.ui2 .sub{color:#64748B}
+body.ui2 .load-explain b{color:#0F172A}
+body.ui2 .w-kicker{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border:none;border-radius:999px;box-shadow:0 8px 22px -8px rgba(79,70,229,.55)}
+body.ui2 .w-card{border-radius:20px}
+body.ui2 .w-card p{color:#334155}
+body.ui2 .z{border-radius:14px}
+body.ui2 .z i{border:none}
+body.ui2 .w-footer{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border:none;border-radius:20px;box-shadow:0 20px 50px -16px rgba(79,70,229,.55)}
+body.ui2 .w-footer p{color:rgba(255,255,255,.92)}
+body.ui2 .modal{background:rgba(15,23,42,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+body.ui2 .modal-box{background:rgba(255,255,255,.85);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(148,163,184,.35);border-radius:20px;box-shadow:0 24px 64px -16px rgba(15,23,42,.35)}
+body.ui2 .auth-tabs{border:1px solid rgba(148,163,184,.4);border-radius:12px;overflow:hidden}
+body.ui2 .auth-tab.on{background:#4F46E5;color:#fff}
+body.ui2 .auth-tab:not(.on):hover{background:rgba(79,70,229,.08)}
+body.ui2 .sync-pill{border:1px solid rgba(148,163,184,.4);border-radius:999px;background:rgba(255,255,255,.7)}
+body.ui2 .sync-pill.saving{background:#EEF2FF;color:#4338CA}
+body.ui2 .sync-pill.err{background:#DC2626;border-color:transparent}
+body.ui2 .rpe-ref{border-radius:14px;box-shadow:0 14px 36px -12px rgba(15,23,42,.25)}
+body.ui2 .rpe-ref summary:hover{background:#EEF2FF}
+body.ui2 .rpe-ref li.on{background:#EEF2FF;color:#3730A3}
+body.ui2 .theme-switch{border:1px solid rgba(148,163,184,.4);border-radius:999px;padding:2px;background:rgba(255,255,255,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+body.ui2 .theme-switch .tsw{border-radius:999px;color:#64748B}
+body.ui2 .theme-switch .tsw.on{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff}
+body.ui2 .flash,body.ui2 .btn,body.ui2 .chip,body.ui2 .card,body.ui2 .stat,body.ui2 .top-tabs button{transition:background-color .25s ease,border-color .25s ease,box-shadow .25s ease}
+
 </style>
 </head>
 <body>
@@ -324,6 +426,7 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
     <a href="#about" id="aboutLink">About</a>
   </div>
   <button id="demoBtn" class="btn btn-sm" style="margin-left:auto">Demo</button>
+  <span class="theme-switch" role="group" aria-label="UI theme"><button id="ui1Btn" class="tsw on" type="button">UI1</button><button id="ui2Btn" class="tsw" type="button">UI2</button></span>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
   <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
@@ -1486,6 +1589,18 @@ document.querySelectorAll('.top-tabs button').forEach(b=>b.addEventListener('cli
 $('guestAuthBtn').addEventListener('click',()=>openAuth('signup'));
 document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.addEventListener('click',()=>loadDemoScenario(b.dataset.demo)));
 $('demoExitBtn').addEventListener('click',exitDemo);
+
+/* ===== UI theme switch (presentation only — no logic touched) ===== */
+const THEME_KEY='asclepius-ui';
+function applyTheme(t){
+  document.body.classList.toggle('ui2',t==='ui2');
+  $('ui1Btn').classList.toggle('on',t!=='ui2');
+  $('ui2Btn').classList.toggle('on',t==='ui2');
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+}
+(function(){let t='ui1';try{t=localStorage.getItem(THEME_KEY)||'ui1';}catch(e){}applyTheme(t);}());
+$('ui1Btn').addEventListener('click',()=>applyTheme('ui1'));
+$('ui2Btn').addEventListener('click',()=>applyTheme('ui2'));
 
 /* ===== Sign up / Log in (local, no backend) ===== */
 const ACCOUNTS_KEY='asclepius-accounts-v1';
