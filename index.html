@@ -444,7 +444,7 @@ body.ui4{
 .theme-switch{display:inline-flex;border:2px solid var(--ink);margin-left:8px;flex:none}
 .top-tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;margin:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--paper);border-top:2px solid var(--ink)}
 .top-tabs button{display:flex;flex-direction:column;align-items:center;gap:2px}
-.top-tabs button svg{width:19px;height:19px;flex:none}
+.top-tabs button svg{width:21px;height:21px;flex:none}
 body.soft .top-tabs{background:rgba(255,255,255,.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid rgba(148,163,184,.3)}
 body{padding-bottom:74px}
 /* ===== Monitor tab ===== */
@@ -570,10 +570,10 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
 <main id="appView" hidden>
 
   <div class="top-tabs" id="topTabs">
-    <button type="button" data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.8 12 4l8 6.8"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5.5h4V20"/></svg><span>Home</span></button>
-    <button type="button" data-tab="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="9" width="3.6" height="6" rx="1.4"/><rect x="16.9" y="9" width="3.6" height="6" rx="1.4"/><rect x="8.4" y="6.5" width="7.2" height="11" rx="2.4"/></svg><span>Log</span></button>
-    <button type="button" data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 4.5v15h15"/><path d="m7.5 14 3.5-4.5 3 3 4.5-6"/></svg><span>Stats</span></button>
-    <button type="button" data-tab="monitor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12.5h3.6l1.9-5.4 3.9 10.4 2-5h5.6"/></svg><span>Monitor</span></button>
+    <button type="button" data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6c.35 0 .7.11.99.34l7.3 5.85c.45.36.71.9.71 1.48V19.4a2.1 2.1 0 0 1-2.1 2.1h-3.62a1.05 1.05 0 0 1-1.05-1.05v-4.2a2.23 2.23 0 0 0-4.46 0v4.2c0 .58-.47 1.05-1.05 1.05H6.2a2.1 2.1 0 0 1-2.1-2.1V10.27c0-.58.26-1.12.71-1.48l7.3-5.85c.29-.23.64-.34.99-.34Z"/></svg><span>Home</span></button>
+    <button type="button" data-tab="log"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2.6" y="9.3" width="3.9" height="5.4" rx="1.7"/><rect x="17.5" y="9.3" width="3.9" height="5.4" rx="1.7"/><rect x="7.7" y="6.4" width="8.6" height="11.2" rx="2.7"/></svg><span>Log</span></button>
+    <button type="button" data-tab="stats"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.6" y="13.2" width="4.6" height="7.3" rx="1.7"/><rect x="9.7" y="8.2" width="4.6" height="12.3" rx="1.7"/><rect x="15.8" y="3.8" width="4.6" height="16.7" rx="1.7"/></svg><span>Stats</span></button>
+    <button type="button" data-tab="monitor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 12.6h3.7l1.9-5.6 4 11 2-5.4h6.8"/></svg><span>Monitor</span></button>
   </div>
 
   <!-- ================= HOME TAB ================= -->
