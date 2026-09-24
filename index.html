@@ -876,6 +876,15 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
     </div>
   </section>
 
+  <section class="card">
+    <div class="card-title">
+      <h2>Data</h2>
+      <span class="meta" id="histMeta2"></span>
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);margin:0 0 12px">Everything is stored on this device unless you're signed in — then it syncs to your account.</p>
+    <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
+  </section>
+
   <section class="card" id="chart">
     <div class="card-title">
       <h2>Daily ACWR — Last 30 Days</h2>
@@ -1546,6 +1555,8 @@ function tdCell(t,cls){const td=document.createElement('td');td.textContent=t;if
   if(workouts.length)parts.push(workouts.length+' session'+(workouts.length>1?'s':'')+' · '+Math.round(total).toLocaleString()+' AU total');
   if(restDays.length)parts.push(restDays.length+' rest day'+(restDays.length>1?'s':''));
   histMeta.textContent=parts.join(' · ');
+  const hm2=$('histMeta2');
+  if(hm2)hm2.textContent=parts.join(' · ')||'nothing logged yet';
 }
 
 function flashMsg(text,err){
@@ -1678,6 +1689,13 @@ function exitDemo(){
   showTab('home');
   homeFlashMsg('Demo closed — your own data is back.');
 }
+
+$('clearBtn').addEventListener('click',()=>{
+  if(!workouts.length&&!restDays.length)return;
+  if(confirm('Delete all workouts and rest days? This cannot be undone.')){
+    workouts=[];restDays=[];persist();persistRest();cloudDeleteAll();render();
+  }
+});
 
 function init(){
   dateInput.value=todayStr();
