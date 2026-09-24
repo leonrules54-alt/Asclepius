@@ -650,7 +650,6 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
     
 
 
-    <button class="log-btn" id="homeLogBtn" type="button">＋ Log a workout</button>
     <p class="flash" id="homeFlash"></p>
 
     <p class="foot-note">Strain score = recent ÷ usual load (ACWR) · monitoring guide, not medical advice</p>
@@ -1603,7 +1602,6 @@ $('demoBtn').addEventListener('click',()=>{showApp();if(demoActive){exitDemo();}
 [$('tryDemoBtn'),$('tryDemoBtn2')].forEach(b=>b.addEventListener('click',()=>{showApp();enterDemo();}));
 
 /* ===== Home & Log tab interactions ===== */
-$('homeLogBtn').addEventListener('click',()=>{showTab('log');setTimeout(()=>$('hDur').focus(),50);});
 function syncHomePreview(){$('hRpeVal').textContent=$('hRpe').value;$('hLoadPreview').textContent='= '+Math.round(($('hDur').value||0)*$('hRpe').value)+' points';}
 $('hRpe').addEventListener('input',syncHomePreview);
 $('hDur').addEventListener('input',syncHomePreview);
