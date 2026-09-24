@@ -1788,7 +1788,7 @@ function monShow(phase){
   $('monStatusMeta').classList.toggle('on',phase==='connected'||phase==='done');
 }
 function monResetSession(){
-  mon.secs=0;mon.peak=0;mon.calories=0;mon.history=[];
+  mon.secs=0;mon.peak=0;mon.calories=0;mon.history=[];mon.pending=[];
   $('monElapsed').textContent='0:00';
   $('monCals').textContent='0';
   $('monInt').textContent='—';
@@ -1807,8 +1807,15 @@ function monSetHr(v){
   }
   if(mon.chart){
     const c=mon.chart.data.datasets[0].data;
-    c.push(v);if(c.length>60)c.shift();
+    c.push({x:mon.secs,y:v});if(c.length>60)c.shift();
+    // keep the sliding 60s window moving with the clock, or points render off-screen
+    mon.chart.options.scales.x.min=Math.max(0,mon.secs-59);
+    mon.chart.options.scales.x.max=Math.max(30,mon.secs);
     mon.chart.update('none');
+  }else if(v>0){
+    // chart not ready yet (panel was hidden) — keep the trace so nothing is lost
+    (mon.pending=mon.pending||[]).push({x:mon.secs,y:v});
+    if(mon.pending.length>60)mon.pending.shift();
   }
 }
 function monEstimateIntensity(bpm){
@@ -1843,6 +1850,8 @@ function startMonitorScan(){
     clearInterval(iv);
     mon.phase='connected';monShow('connected');
     monResetSession();
+    ensureHrChart();          // chart must be created AFTER the panel is visible — hidden container = zero-size canvas
+    setTimeout(()=>{if(mon.chart)mon.chart.resize();},30);
     monDotBeat(false);
     if(!mon.timer)mon.timer=setInterval(monTick,1000);
   },3300);
@@ -1853,18 +1862,18 @@ function ensureHrChart(){
   Chart.defaults.font.family='"Space Grotesk",sans-serif';
   mon.chart=new Chart($('hrChart'),{
     type:'line',
-    data:{labels:[],datasets:[{data:[],borderColor:'#D60000',borderWidth:2,tension:.4,pointRadius:0,fill:true,backgroundColor:'rgba(214,0,0,.08)'}]},
+    data:{labels:[],datasets:[{data:(mon.pending||[]).slice(),borderColor:'#D60000',borderWidth:2,tension:.4,pointRadius:0,fill:true,backgroundColor:'rgba(214,0,0,.08)'}]},
     options:{
       responsive:true,maintainAspectRatio:false,animation:false,
       scales:{
         y:{min:50,max:190,ticks:{stepSize:40,color:'#8A8A8A',font:{size:10}},grid:{color:'rgba(28,28,28,.07)'},title:{display:true,text:'BPM',color:'#8A8A8A',font:{size:10}}},
-        x:{display:false}
+        x:{type:'linear',min:mon.secs-59,max:mon.secs,display:false}
       },
       plugins:{legend:{display:false},tooltip:{enabled:false}}
     }
   });
 }
-$('monConnectBtn').addEventListener('click',()=>{ensureHrChart();startMonitorScan();});
+$('monConnectBtn').addEventListener('click',()=>{startMonitorScan();});
 $('monStartBtn').addEventListener('click',()=>{
   if(mon.active)return;
   monResetSession();
