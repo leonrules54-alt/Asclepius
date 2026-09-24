@@ -147,17 +147,6 @@ tbody tr:hover td{background:rgba(239,255,4,.4)}
 
 footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 
-.rpe-ref{position:fixed;right:14px;bottom:14px;z-index:30;width:190px;background:#fff;border:2px solid var(--ink);font-size:.68rem;box-shadow:4px 4px 0 var(--yellow)}
-.rpe-ref summary{list-style:none;cursor:pointer;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 10px;font-size:.64rem;display:flex;justify-content:space-between;align-items:center}
-.rpe-ref summary::-webkit-details-marker{display:none}
-.rpe-ref summary::after{content:'+';font-size:.8rem}
-.rpe-ref[open] summary{border-bottom:1px solid rgba(10,10,10,.15)}
-.rpe-ref[open] summary::after{content:'−'}
-.rpe-ref summary:hover{background:var(--yellow)}
-.rpe-ref ul{list-style:none;margin:0;padding:3px 0 7px}
-.rpe-ref li{display:flex;gap:9px;padding:2px 10px;color:var(--muted)}
-.rpe-ref li b{width:15px;flex:none;color:var(--ink)}
-.rpe-ref li.on{background:var(--yellow);color:var(--ink)}
 
 @media(max-width:680px){
   .nav{flex-wrap:wrap;gap:8px 14px;padding:12px 16px}
@@ -343,7 +332,7 @@ body.soft .btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 6px
 body.soft .btn-primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-color:transparent}
 body.soft .btn-primary:hover{background:linear-gradient(135deg,var(--acc-d1),var(--acc-d2));color:#fff}
 body.soft .btn-danger:hover{background:#DC2626}
-body.soft .card,body.soft .stat,body.soft .status-card,body.soft .home-form,body.soft .tile,body.soft .w-card,body.soft .rice-step,body.soft .scenario,body.soft .z,body.soft .rpe-ref{border:1px solid rgba(148,163,184,.35);border-radius:18px;background:rgba(255,255,255,.55);backdrop-filter:blur(16px) saturate(1.35);-webkit-backdrop-filter:blur(16px) saturate(1.35);box-shadow:0 10px 30px -12px rgba(15,23,42,.15)}
+body.soft .card,body.soft .stat,body.soft .status-card,body.soft .home-form,body.soft .tile,body.soft .w-card,body.soft .rice-step,body.soft .scenario,body.soft .z{border:1px solid rgba(148,163,184,.35);border-radius:18px;background:rgba(255,255,255,.55);backdrop-filter:blur(16px) saturate(1.35);-webkit-backdrop-filter:blur(16px) saturate(1.35);box-shadow:0 10px 30px -12px rgba(15,23,42,.15)}
 body.soft .status-card{box-shadow:0 16px 44px -16px rgba(var(--acc-rgb),.25)}
 body.soft .stat .lbl,body.soft .tile span,body.soft .score-lbl,body.soft .greet span{color:#64748B}
 body.soft .score{color:#0F172A}
@@ -412,9 +401,6 @@ body.soft .auth-tab:not(.on):hover{background:rgba(var(--acc-rgb),.08)}
 body.soft .sync-pill{border:1px solid rgba(148,163,184,.4);border-radius:999px;background:rgba(255,255,255,.7)}
 body.soft .sync-pill.saving{background:var(--acc-soft);color:var(--acc-d1)}
 body.soft .sync-pill.err{background:#DC2626;border-color:transparent}
-body.soft .rpe-ref{border-radius:14px;box-shadow:0 14px 36px -12px rgba(15,23,42,.25)}
-body.soft .rpe-ref summary:hover{background:var(--acc-soft)}
-body.soft .rpe-ref li.on{background:var(--acc-soft);color:var(--acc-deep)}
 body.soft .theme-switch{border:1px solid rgba(148,163,184,.4);border-radius:999px;padding:2px;background:rgba(255,255,255,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 body.soft .theme-switch .tsw{border-radius:999px;color:#64748B}
 body.soft .theme-switch .tsw.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
@@ -453,7 +439,6 @@ body.ui4{
 .top-tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;margin:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--paper);border-top:2px solid var(--ink)}
 body.soft .top-tabs{background:rgba(255,255,255,.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid rgba(148,163,184,.3)}
 body{padding-bottom:74px}
-.rpe-ref{bottom:88px}
 /* ===== Monitor tab ===== */
 .mon-loading{display:flex;justify-content:center;gap:8px;padding:26px 0 4px}
 .mon-loading span{width:12px;height:12px;border-radius:50%;background:var(--acc,#1C1C1C);animation:monPulse 1.1s ease-in-out infinite}
@@ -485,6 +470,15 @@ body.ui4 .mon-meta div{border-color:rgba(74,55,40,.18);border-radius:14px;backgr
 body.soft .range-toggle{border:1px solid rgba(148,163,184,.4);border-radius:999px;padding:2px;background:rgba(255,255,255,.6)}
 body.soft .range-toggle .rt{border-radius:999px;background:transparent;color:var(--muted)}
 body.soft .range-toggle .rt.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:none}
+/* ===== Stats collapsible tool cards ===== */
+.details-card{padding:0}
+.details-card summary{list-style:none;cursor:pointer;font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;padding:16px 22px;user-select:none}
+.details-card summary::-webkit-details-marker{display:none}
+.details-card[open] summary{border-bottom:2px solid var(--ink)}
+.details-card .details-body{padding:16px 22px 20px}
+.details-card summary:hover{background:rgba(255,214,0,.18)}
+body.soft .details-card[open] summary{border-bottom:1px solid rgba(148,163,184,.35)}
+body.soft .details-card summary:hover{background:rgba(var(--acc-rgb),.07)}
 body.ui3 .range-toggle,body.ui4 .range-toggle{border-radius:999px;padding:2px}
 body.ui3 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:var(--acc-deep)}
 body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:var(--acc-deep)}
@@ -571,7 +565,6 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
     <button type="button" data-tab="home" class="on">Home</button>
     <button type="button" data-tab="stats">Stats</button>
     <button type="button" data-tab="monitor">Monitor</button>
-    <button type="button" data-tab="advanced">Advanced</button>
   </div>
 
   <!-- ================= HOME TAB ================= -->
@@ -713,18 +706,82 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
 
     <section class="card" id="history">
       <div class="card-title">
-        <h2>Recent history</h2>
+        <h2>History</h2>
         <span class="hist-meta" id="histMeta"></span>
       </div>
       <div class="table-scroll">
         <table>
           <thead>
-            <tr><th>Date</th><th>Duration</th><th>Intensity</th><th>Load</th></tr>
+            <tr><th>Date</th><th>Duration</th><th>Intensity</th><th>Load</th><th></th></tr>
           </thead>
           <tbody id="histBody"></tbody>
         </table>
       </div>
-      <p class="foot-note">Rest days and deletions live in the <b>Advanced</b> tab</p>
+      <details class="formula-hint" style="margin-top:14px">
+        <summary>How is this calculated?</summary>
+        <p><b>EWMA</b> (Exponentially Weighted Moving Average) — Load = minutes × intensity. Each day's EWMA = λ × today's load + (1 − λ) × yesterday's EWMA, so recent sessions count more but nothing drops off a cliff. Acute λ = 25% (~7-day window), chronic λ = 2/29 (~28-day window).</p>
+        <p><b>ACWR</b> (Acute:Chronic Workload Ratio) = acute EWMA ÷ chronic EWMA. Above 1.5 means you're doing a lot more than your body's recently adapted to.</p>
+      </details>
+    </section>
+
+    <details class="card details-card">
+      <summary class="details-sum">＋ Log a past session</summary>
+      <div class="details-body">
+        <form id="workoutForm" novalidate>
+          <div class="row2">
+            <div>
+              <label for="dateInput">Date</label>
+              <input type="date" id="dateInput" required>
+            </div>
+            <div>
+              <label for="durationInput">Duration — Min</label>
+              <input type="number" id="durationInput" min="1" max="600" step="1" placeholder="e.g. 60" required>
+            </div>
+          </div>
+          <label for="nameInput">Name — optional</label>
+          <input type="text" id="nameInput" maxlength="40" placeholder="e.g. Practice, scrimmage, lifts…">
+          <label for="rpeInput">Intensity — 1 to 10</label>
+          <div class="range-row">
+            <input type="range" id="rpeInput" min="1" max="10" step="1" value="5">
+            <span class="rpe-val" id="rpeVal">5</span>
+          </div>
+          <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%;margin-top:16px">Save Workout</button>
+          <p class="flash" id="flash"></p>
+        </form>
+      </div>
+    </details>
+
+    <details class="card details-card">
+      <summary class="details-sum">😴 Mark a rest day</summary>
+      <div class="details-body">
+        <div class="row3">
+          <div>
+            <label for="restDate">Date</label>
+            <input type="date" id="restDate">
+          </div>
+          <div>
+            <label for="restReason">Why?</label>
+            <select id="restReason">
+              <option value="planned">Planned</option>
+              <option value="soreness">Soreness</option>
+              <option value="injury">Injury</option>
+            </select>
+          </div>
+          <div class="rest-cta">
+            <button type="button" id="restBtn" class="btn">Log rest day</button>
+          </div>
+        </div>
+        <p class="home-hint" style="margin-top:10px">No load — doesn't affect the strain score.</p>
+      </div>
+    </details>
+
+    <section class="card">
+      <div class="card-title">
+        <h2>Data</h2>
+        <span class="meta" id="histMeta2"></span>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);margin:0 0 12px">Everything is stored on this device unless you're signed in — then it syncs to your account.</p>
+      <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
     </section>
 
     <p class="foot-note">Same EWMA math as always — friendlier wrapper.</p>
@@ -784,124 +841,6 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
     <p class="foot-note">Asclepius Watch (demo) — the real wrist device connects over Bluetooth with this same flow.</p>
   </section>
 
-  <!-- ================= ADVANCED TAB (original view) ================= -->
-  <section id="advancedTab" hidden>
-  <header class="hero" id="top">
-    <h1>Asclepius</h1>
-    <p class="sub">tendon load tracker</p>
-  </header>
-
-  <section class="stats">
-    <div class="stat">
-      <div class="lbl">Recent Load</div>
-      <div class="num" id="acuteVal">0</div>
-      <div class="sub">pts · last 7 days</div>
-    </div>
-    <div class="stat">
-      <div class="lbl">Usual Load</div>
-      <div class="num" id="chronicVal">0</div>
-      <div class="sub">pts · last 28 days</div>
-    </div>
-    <div class="stat">
-      <div class="lbl">Push or Rest?</div>
-      <div class="num" id="acwrVal">—</div>
-      <div class="zone"><i id="zoneDot" style="background:#fff"></i><span id="zoneText">Not enough data</span></div>
-    </div>
-  </section>
-
-  <section class="card" id="recovery">
-    <div class="card-title">
-      <h2>Recovery Guidance</h2>
-      <span class="meta" id="recoveryMeta"></span>
-    </div>
-    <p id="recoveryHeadline" class="recovery-headline"></p>
-    <p id="recoveryDetail" class="recovery-detail"></p>
-    <div id="riceSteps" class="rice-steps" hidden></div>
-  </section>
-
-  <section class="card" id="log">
-    <div class="card-title">
-      <h2>Log a Session</h2>
-      <span class="meta">Duration × Intensity</span>
-    </div>
-    <form id="workoutForm" novalidate>
-      <div class="row2">
-        <div>
-          <label for="dateInput">Date</label>
-          <input type="date" id="dateInput" required>
-        </div>
-        <div>
-          <label for="durationInput">Duration — Min</label>
-          <input type="number" id="durationInput" min="1" max="600" step="1" placeholder="e.g. 60" required>
-        </div>
-      </div>
-      <label for="nameInput">Name — optional</label>
-      <input type="text" id="nameInput" maxlength="40" placeholder="e.g. Practice, scrimmage, lifts…">
-      <label for="rpeInput">Intensity — 1 to 10</label>
-      <div class="range-row">
-        <input type="range" id="rpeInput" min="1" max="10" step="1" value="5">
-        <span class="rpe-val" id="rpeVal">5</span>
-      </div>
-      <div class="rpe-scale" id="rpeScale"></div>
-      <button type="submit" id="saveBtn" class="btn btn-primary">Save Workout</button>
-      <p class="flash" id="flash"></p>
-      <details class="formula-hint">
-        <summary>How is this calculated?</summary>
-        <p><b>EWMA</b> (Exponentially Weighted Moving Average) — Load = minutes × intensity. Each day's EWMA = λ × today's load + (1 − λ) × yesterday's EWMA, so recent sessions count more but nothing drops off a cliff. Acute λ = 25% (~7-day window), chronic λ = 2/29 (~28-day window).</p>
-        <p><b>ACWR</b> (Acute:Chronic Workload Ratio) = acute EWMA ÷ chronic EWMA. Above 1.5 means you're doing a lot more than your body's recently adapted to.</p>
-      </details>
-    </form>
-    <div class="rest-log">
-      <div class="card-title">
-        <h2>Or mark a rest day</h2>
-        <span class="meta">No load — doesn't affect ACWR</span>
-      </div>
-      <div class="row3">
-        <div>
-          <label for="restDate">Date</label>
-          <input type="date" id="restDate">
-        </div>
-        <div>
-          <label for="restReason">Why?</label>
-          <select id="restReason">
-            <option value="planned">Planned</option>
-            <option value="soreness">Soreness</option>
-            <option value="injury">Injury</option>
-          </select>
-        </div>
-        <div class="rest-cta">
-          <button type="button" id="restBtn" class="btn">Log rest day</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="card-title">
-      <h2>Data</h2>
-      <span class="meta" id="histMeta2"></span>
-    </div>
-    <p style="font-size:.8rem;color:var(--muted);margin:0 0 12px">Everything is stored on this device unless you're signed in — then it syncs to your account.</p>
-    <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
-  </section>
-
-  <section class="card" id="chart">
-    <div class="card-title">
-      <h2>Daily ACWR — Last 30 Days</h2>
-      <div class="legend">
-        <span><i style="background:var(--grey)"></i>&lt;0.8</span>
-        <span><i style="background:var(--green)"></i>0.8–1.3</span>
-        <span><i style="background:var(--orange)"></i>1.3–1.5</span>
-        <span><i style="background:var(--red)"></i>&ge;1.5</span>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="acwrChart"></canvas>
-      <div class="chart-fallback" id="chartFallback">Chart.js could not load (offline?) — logging, math &amp; history still work.</div>
-    </div>
-  </section>
-
-  </section><!-- /advancedTab -->
 </main>
 
 <footer id="appFoot" hidden>Data stays in your browser · ACWR is a monitoring guide, not medical advice</footer>
@@ -1180,11 +1119,6 @@ function renderRecovery(series){
   const z=zoneOf(today.acwr);
   const meta=z.key==='na'?'':z.label;
   const riceHtml=buildRiceHtml(out);
-  $('recoveryHeadline').textContent=out.headline;
-  $('recoveryDetail').textContent=out.detail;
-  $('recoveryMeta').textContent=meta;
-  const riceEl=$('riceSteps');
-  if(riceHtml){riceEl.innerHTML=riceHtml;riceEl.hidden=false;}else{riceEl.hidden=true;riceEl.innerHTML='';}
   $('hRecoveryHeadline').textContent=out.headline;
   $('hRecoveryDetail').textContent=out.detail;
   $('hRecoveryMeta').textContent=meta;
@@ -1195,7 +1129,7 @@ function renderRecovery(series){
 }
 
 /* ===== Home & Stats tab rendering (presentation only — same data & math) ===== */
-const homeTab=$('homeTab'),statsTab=$('statsTab'),monitorTab=$('monitorTab'),advancedTab=$('advancedTab');
+const homeTab=$('homeTab'),statsTab=$('statsTab'),monitorTab=$('monitorTab');
 function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function pickHomeMessage(series){
   const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
@@ -1219,7 +1153,6 @@ function showTab(name){
   homeTab.hidden=name!=='home';
   statsTab.hidden=name!=='stats';
   monitorTab.hidden=name!=='monitor';
-  advancedTab.hidden=name!=='advanced';
   if(name==='monitor'&&mon.active)setTimeout(()=>{if(mon.chart)mon.chart.resize();},0);
   document.querySelectorAll('.top-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
   window.scrollTo({top:0,behavior:'instant'});
@@ -1431,86 +1364,12 @@ function zoneOf(acwr){
   return{key:'high',label:'High risk',color:'#D60000'};
 }
 
-const zoneBandsPlugin={
-  id:'zoneBands',
-  beforeDatasetsDraw(c){
-    const{ctx,chartArea:a,scales:{y}}=c;
-    const bands=[
-      {from:0,to:.8,color:'rgba(119,119,119,.10)'},
-      {from:.8,to:1.3,color:'rgba(107,142,35,.09)'},
-      {from:1.3,to:1.5,color:'rgba(191,90,0,.10)'},
-      {from:1.5,to:y.max,color:'rgba(164,0,0,.08)'}
-    ];
-    ctx.save();
-    for(const b of bands){
-      const top=Math.max(a.top,y.getPixelForValue(b.to));
-      const bot=Math.min(a.bottom,y.getPixelForValue(b.from));
-      if(bot-top<2)continue;
-      ctx.fillStyle=b.color;
-      ctx.fillRect(a.left,top,a.right-a.left,bot-top);
-    }
-    ctx.strokeStyle='rgba(28,28,28,.3)';
-    ctx.setLineDash([4,4]);
-    ctx.lineWidth=1;
-    [.8,1.3,1.5].forEach(v=>{
-      const p=y.getPixelForValue(v);
-      if(p>=a.top&&p<=a.bottom){ctx.beginPath();ctx.moveTo(a.left,p);ctx.lineTo(a.right,p);ctx.stroke();}
-    });
-    ctx.restore();
-  }
-};
 
-function ensureChart(){
-  if(chart||typeof Chart==='undefined')return;
-  Chart.defaults.font.family='"Space Grotesk",sans-serif';
-  chart=new Chart($('acwrChart'),{
-    type:'line',
-    data:{labels:[],datasets:[{label:'ACWR',data:[],borderColor:'#0A0A0A',borderWidth:2.5,tension:.35,spanGaps:false,pointRadius:3.5,pointHoverRadius:5.5,pointBackgroundColor:[],pointBorderColor:'#0A0A0A',pointBorderWidth:1.5,fill:false}]},
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      scales:{
-        y:{min:0,suggestedMax:2,title:{display:true,text:'ACWR',color:'#75715F'},ticks:{color:'#0A0A0A',font:{weight:'600'},callback:v=>v.toFixed(1)},grid:{color:'rgba(10,10,10,.08)'}},
-        x:{ticks:{color:'#0A0A0A',font:{weight:'600'},maxTicksLimit:8,maxRotation:0},grid:{display:false}}
-      },
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#0A0A0A',titleColor:'#F5F2EA',bodyColor:'#F5F2EA',cornerRadius:0,padding:12,displayColors:false,
-          callbacks:{
-            label(it){const v=it.parsed.y;return v==null?'ACWR: not calculable yet':'ACWR: '+v.toFixed(2)+' — '+zoneOf(v).label;},
-            afterBody(it){const m=lastSeries[it[0].dataIndex];return m?['','Acute EWMA: '+Math.round(m.acute)+' AU','Chronic EWMA: '+Math.round(m.chronic)+' AU']:[];}
-          }
-        }
-      }
-    },
-    plugins:[zoneBandsPlugin]
-  });
-}
 
 function render(){
   const series=ewmaSeries();
   lastSeries=series.slice(-30);
-  const labels=[],values=[],colors=[];
-  for(const m of lastSeries){
-    labels.push(fromISO(m.date).toLocaleDateString(undefined,{month:'short',day:'numeric'}));
-    values.push(m.acwr);
-    colors.push(zoneOf(m.acwr).color);
-  }
   const today=lastSeries[lastSeries.length-1]||{acute:0,chronic:0,acwr:null};
-  acuteVal.textContent=Math.round(today.acute);
-  chronicVal.textContent=Math.round(today.chronic);
-  const z=zoneOf(today.acwr);
-  acwrVal.textContent=today.acwr==null?'—':today.acwr.toFixed(2);
-  zoneDot.style.background=z.key==='na'?'#fff':z.color;
-  zoneText.textContent=z.label;
-  if(chart){
-    chart.data.labels=labels;
-    chart.data.datasets[0].data=values;
-    chart.data.datasets[0].pointBackgroundColor=colors;
-    chart.update();
-  }
   renderTable();
   renderRecovery(series);
   renderHomeTab(series);
@@ -1524,9 +1383,9 @@ function tdCell(t,cls){const td=document.createElement('td');td.textContent=t;if
   for(const r of restDays)rows.push({kind:'r',date:r.date,created:r.created,ref:r});
   rows.sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created);
   if(!rows.length){
-    histBody.innerHTML='<tr><td colspan="4" class="empty">Nothing logged yet — add a workout from the Home tab</td></tr>';
+    histBody.innerHTML='<tr><td colspan="5" class="empty">Nothing logged yet — add a workout from the Home tab</td></tr>';
   }else{
-    for(const row of rows.slice(0,10)){
+    for(const row of rows){
       const tr=document.createElement('tr');
       const dt=fromISO(row.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
       if(row.kind==='w'){
@@ -1546,6 +1405,13 @@ function tdCell(t,cls){const td=document.createElement('td');td.textContent=t;if
           tdCell('Rest · '+reason,'rest-cell')
         );
       }
+      const td=document.createElement('td');
+      const btn=document.createElement('button');
+      btn.className='del';
+      btn.textContent='Delete';
+      btn.dataset[row.kind==='w'?'del':'delRest']=row.ref.id;
+      td.appendChild(btn);
+      tr.appendChild(td);
       histBody.appendChild(tr);
     }
 
@@ -1584,20 +1450,8 @@ form.addEventListener('submit',e=>{
   flashMsg('Workout saved.');
 });
 
-const rpeScale=$('rpeScale');
-for(let i=1;i<=10;i++){
-  const b=document.createElement('button');
-  b.type='button';
-  b.className='rpe-tick';
-  b.textContent=i;
-  b.style.left=((i-1)/9*100)+'%';
-  b.setAttribute('aria-label','Set intensity '+i);
-  b.addEventListener('click',()=>{rpeInput.value=i;syncRpe();});
-  rpeScale.appendChild(b);
-}
 function syncRpe(){
   rpeVal.textContent=rpeInput.value;
-  
 }
 rpeInput.addEventListener('input',syncRpe);
 
@@ -1701,8 +1555,6 @@ function init(){
   dateInput.value=todayStr();
   restDate.value=todayStr();
   syncRpe();
-  if(typeof Chart==='undefined'){$('chartFallback').style.display='flex';}
-  ensureChart();
   if(window.location.hash==='#welcome'){/* legacy hash — app-first now */}
   load();
   loadRest();
@@ -1741,7 +1593,7 @@ navLinks.forEach(a=>{
     e.preventDefault();
     if(a.id==='aboutLink'){showWelcome();return;}
     showApp();
-    showTab(a.dataset.navtab||'advanced');
+    showTab('stats');
   });
 });
 
