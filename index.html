@@ -1408,6 +1408,25 @@ function ensureChart(){
 function render(){
   const series=ewmaSeries();
   lastSeries=series.slice(-30);
+  const labels=[],values=[],colors=[];
+  for(const m of lastSeries){
+    labels.push(fromISO(m.date).toLocaleDateString(undefined,{month:'short',day:'numeric'}));
+    values.push(m.acwr);
+    colors.push(zoneOf(m.acwr).color);
+  }
+  const today=lastSeries[lastSeries.length-1]||{acute:0,chronic:0,acwr:null};
+  acuteVal.textContent=Math.round(today.acute);
+  chronicVal.textContent=Math.round(today.chronic);
+  const z=zoneOf(today.acwr);
+  acwrVal.textContent=today.acwr==null?'—':today.acwr.toFixed(2);
+  zoneDot.style.background=z.key==='na'?'#fff':z.color;
+  zoneText.textContent=z.label;
+  if(chart){
+    chart.data.labels=labels;
+    chart.data.datasets[0].data=values;
+    chart.data.datasets[0].pointBackgroundColor=colors;
+    chart.update();
+  }
   renderTable();
   renderRecovery(series);
   renderHomeTab(series);
@@ -1794,12 +1813,20 @@ function monShow(phase){
   $('monLoading').hidden=phase!=='loading';
   $('monConnected').hidden=phase!=='connected';
   $('monDone').hidden=phase!=='done';
-  $('monStatusMeta').textContent=phase==='intro'?'not connected':phase==='loading'?'searching…':phase==='connected'?(mon.active?'connected · recording':'connected'):'session complete';
+  $('monStatusMeta').textContent=phase==='intro'?'not connected':phase==='loading'?'searching…':phase==='connected'?(mon.active?'connected · recording':'connected · resting'):'session complete';
+}
+function monResetSession(){
+  mon.secs=0;mon.peak=0;mon.calories=0;mon.history=[];
+  $('monElapsed').textContent='0:00';
+  $('monCals').textContent='0';
+  $('monInt').textContent='—';
+  if(mon.chart){mon.chart.data.datasets[0].data=[];mon.chart.update('none');}
 }
 function monSetHr(v){
-  mon.hr=v;if(v>mon.peak)mon.peak=v;
+  mon.hr=v;
   $('monHrNum').textContent=v||'—';
-  if(v>0){
+  if(mon.active&&v>0){
+    if(v>mon.peak)mon.peak=v;
     mon.history.push(v);
     const est=Math.round(monEstimateIntensity(v));
     $('monInt').textContent=est+'/10';
@@ -1818,12 +1845,22 @@ function monEstimateIntensity(bpm){
   return Math.min(10,Math.max(1,1+9*(bpm-rest)/(hrMax-rest)));
 }
 function monTick(){
-  mon.secs++;
-  const m=Math.floor(mon.secs/60),s=mon.secs%60;
-  $('monElapsed').textContent=m+':'+String(s).padStart(2,'0');
-  const base=mon.active?138:74;
-  const wobble=Math.round(Math.sin(mon.secs/7)*9+Math.sin(mon.secs/3.3)*4+(Math.random()*8-4));
-  monSetHr(Math.max(52,base+wobble));
+  if(mon.active){
+    mon.secs++;
+    const m=Math.floor(mon.secs/60),s=mon.secs%60;
+    $('monElapsed').textContent=m+':'+String(s).padStart(2,'0');
+    // workout simulation: warm-up ramp, then working HR with occasional interval surges
+    const ramp=Math.min(1,mon.secs/40);
+    const base=98+ramp*58;
+    const surge=(mon.secs>50&&Math.floor(mon.secs/45)%2===0)?13:0;
+    const wobble=Math.round(Math.sin(mon.secs/6)*8+Math.sin(mon.secs/2.7)*4+(Math.random()*7-3.5));
+    monSetHr(Math.max(92,Math.min(188,Math.round(base+surge+wobble))));
+  }else{
+    // connected, not logging: realistic resting heartbeat, no totals accumulating
+    mon.secs++;
+    const wobble=Math.round(Math.sin(mon.secs/5)*3+Math.sin(mon.secs/1.9)*2+(Math.random()*4-2));
+    monSetHr(Math.max(58,Math.min(84,70+wobble)));
+  }
 }
 function startMonitorScan(){
   monShow('loading');
@@ -1833,6 +1870,7 @@ function startMonitorScan(){
   setTimeout(()=>{
     clearInterval(iv);
     mon.phase='connected';monShow('connected');
+    monResetSession();
     monDotBeat(false);
     if(!mon.timer)mon.timer=setInterval(monTick,1000);
   },2200);
@@ -1857,7 +1895,8 @@ function ensureHrChart(){
 $('monConnectBtn').addEventListener('click',()=>{ensureHrChart();startMonitorScan();});
 $('monStartBtn').addEventListener('click',()=>{
   if(mon.active)return;
-  mon.active=true;mon.peak=0;mon.calories=0;mon.history=[];
+  monResetSession();
+  mon.active=true;
   monShow('connected');
   $('monStartBtn').textContent='Recording… tap End session when done';
   $('monStartBtn').style.display='none';
@@ -1888,17 +1927,18 @@ function endMonitorSession(){
   monShow('done');
 }
 $('monAgainBtn').addEventListener('click',()=>{
-  mon.active=false;mon.secs=0;mon.peak=0;mon.calories=0;mon.history=[];mon.phase='connected';
+  mon.active=false;mon.phase='connected';
+  monResetSession();
   $('monStartBtn').textContent='Start logging';$('monStartBtn').style.display='';
   const eb=$('monEndBtn');if(eb)eb.style.display='none';
-  $('monElapsed').textContent='0:00';$('monCals').textContent='0';$('monInt').textContent='—';
-  if(mon.chart){mon.chart.data.datasets[0].data=[];mon.chart.update('none');}
   monShow('connected');
 });
 $('monDisconnectBtn').addEventListener('click',()=>{
   if(mon.timer){clearInterval(mon.timer);mon.timer=null;}
-  mon.active=false;mon.phase='idle';mon.secs=0;mon.hr=0;mon.peak=0;mon.calories=0;mon.history=[];
-  if(mon.chart){mon.chart.data.datasets[0].data=[];mon.chart.update('none');}
+  mon.active=false;mon.phase='idle';
+  monResetSession();
+  mon.hr=0;
+  $('monHrNum').textContent='—';
   $('monStartBtn').textContent='Start logging';$('monStartBtn').style.display='';
   const eb=$('monEndBtn');if(eb)eb.style.display='none';
   monShow('intro');
