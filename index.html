@@ -563,6 +563,7 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
 
   <div class="top-tabs" id="topTabs">
     <button type="button" data-tab="home" class="on">Home</button>
+    <button type="button" data-tab="log">Log</button>
     <button type="button" data-tab="stats">Stats</button>
     <button type="button" data-tab="monitor">Monitor</button>
   </div>
@@ -647,23 +648,38 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
     </section>
 
     <button class="log-btn" id="homeLogBtn" type="button">＋ Log a workout</button>
-    <button class="chip" id="repeatChip" type="button" hidden>↻ Repeat last</button>
-    <button class="chip" id="sampleChip" type="button" hidden>🌱 Load a sample season (for testing)</button>
-
-    <form class="home-form" id="homeLogForm" hidden novalidate>
-      <label for="hName">Name — optional</label>
-      <input type="text" id="hName" maxlength="40" placeholder="e.g. Practice, scrimmage, lifts…">
-      <label for="hDur">Duration — minutes</label>
-      <input type="number" id="hDur" min="1" max="600" step="1" placeholder="e.g. 90">
-      <label for="hRpe">Intensity — <span id="hRpeVal">5</span>/10</label>
-      <input type="range" id="hRpe" min="1" max="10" step="1" value="5">
-      <div class="load-preview" id="hLoadPreview">= 0 points</div>
-      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px">Save workout</button>
-      <p class="home-hint">Need a past date or a rest day? Use the <b>Advanced</b> tab.</p>
-    </form>
     <p class="flash" id="homeFlash"></p>
 
     <p class="foot-note">Strain score = recent ÷ usual load (ACWR) · monitoring guide, not medical advice</p>
+  </section>
+
+  <!-- ================= LOG TAB ================= -->
+  <section id="logTab" hidden>
+    <h1 class="stats-title">Log a session</h1>
+
+    <section class="card">
+      <div class="card-title">
+        <h2>Today's workout</h2>
+        <span class="meta" id="logDateMeta"></span>
+      </div>
+      <form class="home-form" id="homeLogForm" novalidate style="border:none;padding:0;margin:0;background:none">
+        <label for="hName">Name — optional</label>
+        <input type="text" id="hName" maxlength="40" placeholder="e.g. Practice, scrimmage, lifts…">
+        <label for="hDur">Duration — minutes</label>
+        <input type="number" id="hDur" min="1" max="600" step="1" placeholder="e.g. 90">
+        <label for="hRpe">Intensity — <span id="hRpeVal">5</span>/10</label>
+        <input type="range" id="hRpe" min="1" max="10" step="1" value="5">
+        <div class="load-preview" id="hLoadPreview">= 0 points</div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:14px">Save workout</button>
+      </form>
+      <p class="flash" id="logFlash"></p>
+    </section>
+
+    <button class="chip" id="repeatChip" type="button" hidden>↻ Repeat last</button>
+    <button class="chip" id="goMonitorChip" type="button">⌚ Or let the Watch log it for you — Monitor tab</button>
+    <button class="chip" id="sampleChip" type="button" hidden>🌱 Load a sample season (for testing)</button>
+
+    <p class="home-hint" style="margin-top:12px">Workout from an earlier day? Use <b>Log a past session</b> on the Stats tab.</p>
   </section>
 
   <!-- ================= STATS TAB ================= -->
@@ -1129,7 +1145,7 @@ function renderRecovery(series){
 }
 
 /* ===== Home & Stats tab rendering (presentation only — same data & math) ===== */
-const homeTab=$('homeTab'),statsTab=$('statsTab'),monitorTab=$('monitorTab');
+const homeTab=$('homeTab'),logTab=$('logTab'),statsTab=$('statsTab'),monitorTab=$('monitorTab');
 function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function pickHomeMessage(series){
   const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
@@ -1151,9 +1167,11 @@ function pickHomeMessage(series){
 }
 function showTab(name){
   homeTab.hidden=name!=='home';
+  logTab.hidden=name!=='log';
   statsTab.hidden=name!=='stats';
   monitorTab.hidden=name!=='monitor';
   if(name==='monitor'&&mon.active)setTimeout(()=>{if(mon.chart)mon.chart.resize();},0);
+  if(name==='log'){const dm=$('logDateMeta');if(dm)dm.textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});}
   document.querySelectorAll('.top-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
   window.scrollTo({top:0,behavior:'instant'});
 }
@@ -1527,7 +1545,8 @@ function loadDemoScenario(key){
   restDays=d.restDays;
   render();
   showTab('home');
-  homeFlashMsg('Demo data loaded — exit anytime to get your own data back.');
+  const fe=(document.getElementById('logTab')&&!document.getElementById('logTab').hidden)?logFlashMsg:homeFlashMsg;
+  fe('Demo data loaded — exit anytime to get your own data back.');
 }
 function enterDemo(){loadDemoScenario(currentDemoKey);}
 function exitDemo(){
@@ -1541,7 +1560,8 @@ function exitDemo(){
   persist();persistRest();
   render();
   showTab('home');
-  homeFlashMsg('Demo closed — your own data is back.');
+  const fx=(document.getElementById('logTab')&&!document.getElementById('logTab').hidden)?logFlashMsg:homeFlashMsg;
+  fx('Demo closed — your own data is back.');
 }
 
 $('clearBtn').addEventListener('click',()=>{
@@ -1600,11 +1620,16 @@ navLinks.forEach(a=>{
 $('demoBtn').addEventListener('click',()=>{showApp();if(demoActive){exitDemo();}else{enterDemo();}});
 [$('tryDemoBtn'),$('tryDemoBtn2')].forEach(b=>b.addEventListener('click',()=>{showApp();enterDemo();}));
 
-/* ===== Home tab interactions ===== */
-$('homeLogBtn').addEventListener('click',()=>{const f=$('homeLogForm');f.hidden=!f.hidden;if(!f.hidden)$('hDur').focus();});
+/* ===== Home & Log tab interactions ===== */
+$('homeLogBtn').addEventListener('click',()=>{showTab('log');setTimeout(()=>$('hDur').focus(),50);});
 function syncHomePreview(){$('hRpeVal').textContent=$('hRpe').value;$('hLoadPreview').textContent='= '+Math.round(($('hDur').value||0)*$('hRpe').value)+' points';}
 $('hRpe').addEventListener('input',syncHomePreview);
 $('hDur').addEventListener('input',syncHomePreview);
+function logFlashMsg(text,err){
+  const el=$('logFlash');
+  el.textContent=text;el.classList.toggle('err',!!err);el.style.opacity='1';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2600);
+}
 function homeFlashMsg(text,err){
   const el=$('homeFlash');
   el.textContent=text;el.classList.toggle('err',!!err);el.style.opacity='1';
@@ -1614,24 +1639,25 @@ $('homeLogForm').addEventListener('submit',e=>{
   e.preventDefault();
   const duration=parseInt($('hDur').value,10),rpe=parseInt($('hRpe').value,10);
   const notes=($('hName').value||'').trim().slice(0,40);
-  if(!duration||duration<1){homeFlashMsg('Enter a duration of at least 1 minute.',true);return;}
+  if(!duration||duration<1){logFlashMsg('Enter a duration of at least 1 minute.',true);return;}
   workouts.push({id:uid(),date:todayStr(),duration,rpe,notes,created:Date.now()});
   persist();render();
   $('hDur').value='';$('hName').value='';
   syncHomePreview();
-  homeFlashMsg('Workout saved — '+duration+' min × '+rpe+'.');
+  logFlashMsg('Workout saved — '+duration+' min × '+rpe+'. Your strain score is updated.');
 });
 $('repeatChip').addEventListener('click',()=>{
   const last=[...workouts].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created)[0];
   if(!last)return;
   workouts.push({id:uid(),date:todayStr(),duration:last.duration,rpe:last.rpe,notes:last.notes,created:Date.now()});
   persist();render();
-  homeFlashMsg('Repeat logged — '+last.duration+' min × '+last.rpe+'.');
+  logFlashMsg('Repeat logged — '+last.duration+' min × '+last.rpe+'.');
 });
 $('sampleChip').addEventListener('click',()=>{
   loadSampleSeason();
-  homeFlashMsg('Sample season loaded — log a big session to watch the spike.');
+  logFlashMsg('Sample season loaded — log a big session to watch the spike.');
 });
+$('goMonitorChip').addEventListener('click',()=>showTab('monitor'));
 document.querySelectorAll('.top-tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 $('guestAuthBtn').addEventListener('click',()=>openAuth('signup'));
 document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.addEventListener('click',()=>loadDemoScenario(b.dataset.demo)));
