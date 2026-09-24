@@ -733,7 +733,7 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
 
     <section class="card" id="monCard">
       <div class="card-title">
-        <h2>Chest strap monitor</h2>
+        <h2>Asclepius Watch</h2>
         <span class="meta" id="monStatusMeta">not connected</span>
       </div>
 
@@ -778,7 +778,7 @@ body.ui4 .range-toggle .rt.on{background:var(--acc-soft2);box-shadow:none;color:
       </div>
     </section>
 
-    <p class="foot-note">Simulated demo monitor — real Bluetooth HR straps plug into the same flow.</p>
+    <p class="foot-note">Asclepius Watch (demo) — the real wrist device connects over Bluetooth with this same flow.</p>
   </section>
 
   <!-- ================= ADVANCED TAB (original view) ================= -->
@@ -1806,7 +1806,7 @@ $('range7Btn').addEventListener('click',()=>{statsRange=7;$('range7Btn').classLi
 $('range30Btn').addEventListener('click',()=>{statsRange=30;$('range30Btn').classList.add('on');$('range7Btn').classList.remove('on');render();});
 
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
-   Real straps (Web Bluetooth HRM) would slot into startMonitorScan() — same UI flow. */
+   Real wrist HR devices (Web Bluetooth) would slot into startMonitorScan() — same UI flow. */
 const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,sim:null,chart:null};
 function monShow(phase){
   $('monIntro').hidden=phase!=='intro';
@@ -1864,7 +1864,7 @@ function monTick(){
 }
 function startMonitorScan(){
   monShow('loading');
-  const steps=['Searching for nearby devices…','Found: Polar H10 (demo) — pairing…','Reading heart-rate service…'];
+  const steps=['Searching for your Asclepius Watch…','Watch found — pairing…','Reading heart-rate sensor…'];
   let i=0;$('monLoadingText').textContent=steps[0];
   const iv=setInterval(()=>{i++;if(i<steps.length)$('monLoadingText').textContent=steps[i];},700);
   setTimeout(()=>{

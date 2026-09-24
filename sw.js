@@ -1,7 +1,7 @@
 /* Asclepius service worker — offline-first app shell */
 /* Bump the version on every content change — otherwise returning visitors
    (and installed PWAs) keep the stale cached app forever. */
-const CACHE = 'asclepius-v24';
+const CACHE = 'asclepius-v25';
 const ASSETS = [
   './',
   './index.html',
