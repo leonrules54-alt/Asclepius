@@ -1311,9 +1311,12 @@ function weeklyLoadSVG(lm,series){
     lbls.push(wnames[d.getDay()]);
   }
   if(!vals.some(v=>v>0))return '<p class="empty">Log a workout to see your week</p>';
-  // overload threshold = 1.5× your normal daily load (same 1.5 boundary as the strain zones), floor 500
-  const chronic=series&&series.length?series[series.length-1].chronic:0;
-  const thr=Math.max(500,Math.round(1.5*chronic));
+  // overload threshold = 1.5× your normal — "normal" = average daily load of the week BEFORE the shown week,
+  // the baseline your current week is being compared against (same 1.5 boundary as the strain zones)
+  let base=0,bn=0;
+  for(let i=13;i>=7;i--){base+=(lm[toISO(addDays(new Date(),-i))]||0);bn++;}
+  base=bn?base/bn:0;
+  const thr=Math.max(300,Math.round(1.5*base));
   const W=340,H=150,L=30,R=8,T=12,B=22;
   let ymax=Math.max(500,Math.ceil(Math.max(...vals)/500)*500);
   ymax=Math.max(ymax,Math.ceil(thr*1.15/500)*500);
@@ -1322,9 +1325,9 @@ function weeklyLoadSVG(lm,series){
   let s='';
   [.5,1].forEach(f=>{const g=Math.round(ymax*f);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="rgba(28,28,28,.12)" stroke-dasharray="3 3"/><text x="'+(L-4)+'" y="'+(y(g)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">'+(g>=1000?(g/1000)+'k':g)+'</text>';});
   s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="rgba(28,28,28,.4)" stroke-width="1.5"/>';
-  // overload threshold: dotted red line with label
+  // overload threshold: dotted line with plain-language label
   s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(thr)+'" y2="'+y(thr)+'" stroke="#A40000" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>';
-  s+='<text x="'+(W-R)+'" y="'+(y(thr)-3)+'" font-size="7" font-weight="bold" text-anchor="end" fill="#A40000">overload</text>';
+  s+='<text x="'+(W-R)+'" y="'+(y(thr)-3)+'" font-size="7" font-weight="bold" text-anchor="end" fill="#A40000">overload · 1.5× your normal</text>';
   lbls.forEach((lb,i)=>{s+='<text x="'+x(i)+'" y="'+(H-6)+'" font-size="7" text-anchor="middle" fill="#5A5751">'+lb+'</text>';});
   const solid=vals.map((v,i)=>[+x(i).toFixed(1),+y(v).toFixed(1)]);
   const d=wavePath(solid);
