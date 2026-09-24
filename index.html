@@ -1284,17 +1284,25 @@ function renderHomeTab(series){
   $('guestBanner').hidden=!!signedInName;
 }
 function statTile(b,s,sm){return '<div class="tile"><b>'+b+'</b><span>'+s+'</span><small>'+sm+'</small></div>';}
+function waveSeg(p0,p1,p2,p3){
+  const c1x=(p1[0]+(p2[0]-p0[0])/6).toFixed(1),c1y=(p1[1]+(p2[1]-p0[1])/6).toFixed(1);
+  const c2x=(p2[0]-(p3[0]-p1[0])/6).toFixed(1),c2y=(p2[1]-(p3[1]-p1[1])/6).toFixed(1);
+  return 'C'+c1x+','+c1y+' '+c2x+','+c2y+' '+p2[0]+','+p2[1];
+}
 function wavePath(solid){
   let d='M'+solid[0][0]+','+solid[0][1];
   for(let i=0;i<solid.length-1;i++){
-    const p0=solid[Math.max(0,i-1)],p1=solid[i],p2=solid[i+1],p3=solid[Math.min(solid.length-1,i+2)];
-    const c1x=(p1[0]+(p2[0]-p0[0])/6).toFixed(1),c1y=(p1[1]+(p2[1]-p0[1])/6).toFixed(1);
-    const c2x=(p2[0]-(p3[0]-p1[0])/6).toFixed(1),c2y=(p2[1]-(p3[1]-p1[1])/6).toFixed(1);
-    d+='C'+c1x+','+c1y+' '+c2x+','+c2y+' '+p2[0]+','+p2[1];
+    d+=waveSeg(solid[Math.max(0,i-1)],solid[i],solid[i+1],solid[Math.min(solid.length-1,i+2)]);
   }
   return d;
 }
-function weeklyLoadSVG(lm){
+function overloadColor(v,thr){
+  if(v<=thr)return'var(--green)';
+  const t=Math.min(1,(v-thr)/(thr*0.5));
+  const r=Math.round(240-26*t),g=Math.round(192-192*t);
+  return 'rgb('+r+','+g+',0)';
+}
+function weeklyLoadSVG(lm,series){
   const vals=[],lbls=[];
   const wnames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   for(let i=6;i>=0;i--){
@@ -1303,20 +1311,35 @@ function weeklyLoadSVG(lm){
     lbls.push(wnames[d.getDay()]);
   }
   if(!vals.some(v=>v>0))return '<p class="empty">Log a workout to see your week</p>';
+  // overload threshold = 1.5× your normal daily load (same 1.5 boundary as the strain zones), floor 500
+  const chronic=series&&series.length?series[series.length-1].chronic:0;
+  const thr=Math.max(500,Math.round(1.5*chronic));
   const W=340,H=150,L=30,R=8,T=12,B=22;
-  const ymax=Math.max(500,Math.ceil(Math.max(...vals)/500)*500);
+  let ymax=Math.max(500,Math.ceil(Math.max(...vals)/500)*500);
+  ymax=Math.max(ymax,Math.ceil(thr*1.15/500)*500);
   const x=i=>L+(W-L-R)*i/(vals.length-1);
   const y=v=>T+(H-T-B)*(1-v/ymax);
   let s='';
   [.5,1].forEach(f=>{const g=Math.round(ymax*f);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="rgba(28,28,28,.12)" stroke-dasharray="3 3"/><text x="'+(L-4)+'" y="'+(y(g)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">'+(g>=1000?(g/1000)+'k':g)+'</text>';});
   s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="rgba(28,28,28,.4)" stroke-width="1.5"/>';
+  // overload threshold: dotted red line with label
+  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(thr)+'" y2="'+y(thr)+'" stroke="#A40000" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>';
+  s+='<text x="'+(W-R)+'" y="'+(y(thr)-3)+'" font-size="7" font-weight="bold" text-anchor="end" fill="#A40000">overload</text>';
   lbls.forEach((lb,i)=>{s+='<text x="'+x(i)+'" y="'+(H-6)+'" font-size="7" text-anchor="middle" fill="#5A5751">'+lb+'</text>';});
   const solid=vals.map((v,i)=>[+x(i).toFixed(1),+y(v).toFixed(1)]);
   const d=wavePath(solid);
-  s+='<defs><linearGradient id="weekFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".22"/><stop offset="100%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".02"/></linearGradient></defs>';
+  s+='<defs>';
+  s+='<linearGradient id="weekFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".18"/><stop offset="100%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".02"/></linearGradient>';
+  // above the threshold: yellow right at the line → deep red at the top of the chart
+  s+='<linearGradient id="weekOver" gradientUnits="userSpaceOnUse" x1="0" y1="'+y(thr).toFixed(1)+'" x2="0" y2="'+T+'"><stop offset="0%" stop-color="rgb(240,190,0)"/><stop offset="100%" stop-color="rgb(214,0,0)"/></linearGradient>';
+  s+='<clipPath id="weekBelow"><rect x="'+L+'" y="'+y(thr).toFixed(1)+'" width="'+(W-L-R)+'" height="'+(H-B-y(thr)).toFixed(1)+'"/></clipPath>';
+  s+='<clipPath id="weekAbove"><rect x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(y(thr)-T).toFixed(1)+'"/></clipPath>';
+  s+='</defs>';
   s+='<path d="'+d+' L'+solid[6][0]+','+y(0).toFixed(1)+' L'+solid[0][0]+','+y(0).toFixed(1)+' Z" fill="url(#weekFill)" stroke="none"/>';
-  s+='<path d="'+d+'" fill="none" stroke="var(--chart-line,#1C1C1C)" stroke-width="2.5" stroke-linecap="round"/>';
-  s+='<circle cx="'+solid[6][0]+'" cy="'+solid[6][1]+'" r="3.2" fill="var(--chart-line,#1C1C1C)"/>';
+  // green wherever the wave is below the overload line, yellow→red wherever it's above
+  s+='<path d="'+d+'" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" clip-path="url(#weekBelow)"/>';
+  s+='<path d="'+d+'" fill="none" stroke="url(#weekOver)" stroke-width="2.5" stroke-linecap="round" clip-path="url(#weekAbove)"/>';
+  s+='<circle cx="'+solid[6][0]+'" cy="'+solid[6][1]+'" r="3.2" fill="'+overloadColor(vals[6],thr)+'"/>';
   return '<svg class="stats-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily training load this week">'+s+'</svg>';
 }
 function statsChartSVG(series,days){
@@ -1358,7 +1381,7 @@ function renderStatsTab(series){
   $('calRangeLbl').textContent=statsRange===7?'last week':'last 30 days';
   $('statsChartWrap').innerHTML=data.length>=2?statsChartSVG(series,statsRange):'<p class="empty">Not enough data yet — log a few workouts</p>';
   const lm=dailyLoads();
-  $('weekStrip').innerHTML=weeklyLoadSVG(lm);
+  $('weekStrip').innerHTML=weeklyLoadSVG(lm,series);
   if(!data.length){$('statTiles').innerHTML='';$('statsCal').innerHTML='';return;}
   const sessions=data.filter(m=>(lm[m.date]||0)>0).length;
   const rests=data.length-sessions;
