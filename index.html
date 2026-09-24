@@ -1933,14 +1933,14 @@ function startMonitorScan(){
   monShow('loading');
   const steps=['Searching for your Asclepius Watch…','Watch found — pairing…','Reading heart-rate sensor…'];
   let i=0;$('monLoadingText').textContent=steps[0];
-  const iv=setInterval(()=>{i++;if(i<steps.length)$('monLoadingText').textContent=steps[i];},700);
+  const iv=setInterval(()=>{i++;if(i<steps.length)$('monLoadingText').textContent=steps[i];},1050);
   setTimeout(()=>{
     clearInterval(iv);
     mon.phase='connected';monShow('connected');
     monResetSession();
     monDotBeat(false);
     if(!mon.timer)mon.timer=setInterval(monTick,1000);
-  },2200);
+  },3300);
 }
 function monDotBeat(on){$('monDot').classList.toggle('flat',!on);}
 function ensureHrChart(){
