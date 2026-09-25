@@ -531,7 +531,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
       <p class="flash" id="logFlash"></p>
     </section>
 
-    <button class="chip" id="repeatChip" type="button" hidden>↻ Repeat last</button>
     <button class="chip" id="goMonitorChip" type="button">⌚ Or let the Watch log it for you — Monitor tab</button>
     <button class="chip" id="sampleChip" type="button" hidden>🌱 Load a sample season (for testing)</button>
 
@@ -1071,10 +1070,6 @@ function renderHomeTab(series){
   const msg=pickHomeMessage(series);
   $('homeMsg').textContent=msg.h;
   $('homeMsgSub').textContent=msg.sub;
-  const last=[...workouts].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created)[0];
-  const rc=$('repeatChip');
-  if(last){rc.hidden=false;rc.textContent='↻ Repeat last · '+(last.notes?last.notes+' · ':'')+last.duration+' min × '+last.rpe;}
-  else rc.hidden=true;
   $('sampleChip').hidden=!!workouts.length||!!restDays.length;
   $('guestBanner').hidden=!!signedInName;
 }
@@ -1479,13 +1474,6 @@ $('homeLogForm').addEventListener('submit',e=>{
   $('hDur').value='';$('hName').value='';
   syncHomePreview();
   logFlashMsg('Workout saved — '+duration+' min × '+rpe+'. Your strain score is updated.');
-});
-$('repeatChip').addEventListener('click',()=>{
-  const last=[...workouts].sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created)[0];
-  if(!last)return;
-  workouts.push({id:uid(),date:todayStr(),duration:last.duration,rpe:last.rpe,notes:last.notes,created:Date.now()});
-  persist();render();
-  logFlashMsg('Repeat logged — '+last.duration+' min × '+last.rpe+'.');
 });
 $('sampleChip').addEventListener('click',()=>{
   loadSampleSeason();
