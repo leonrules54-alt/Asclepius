@@ -165,7 +165,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   .row3{grid-template-columns:1fr}
   .rest-cta .btn{width:100%}
   .chart-wrap{height:260px}
-  main{padding:20px 14px 48px}
+  main{padding:20px 14px 104px}
   .card{padding:16px}
   .status-card{padding:14px}
   .score{font-size:3.3rem}
@@ -260,8 +260,10 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .stats-title{font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.5rem;margin:0 0 14px;letter-spacing:-.01em}
 .stats-chart{width:100%;height:auto;display:block;--chart-line:#1C1C1C}
 .foot-note{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin:6px 0 0}
-.top-tabs{display:flex;gap:8px;margin-bottom:18px}
+.top-tabs{position:fixed;left:0;right:0;bottom:0;z-index:55;display:flex;gap:8px;margin:0;padding:10px max(14px,calc(50vw - 416px)) calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:2px solid var(--ink)}
 .top-tabs button{flex:1;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;padding:10px 6px;cursor:pointer}
+.top-tabs button{display:flex;flex-direction:column;align-items:center;gap:3px}
+.top-tabs button svg{width:21px;height:21px;display:block}
 .top-tabs button.on{background:var(--yellow);box-shadow:3px 3px 0 var(--ink)}
 .top-tabs button:not(.on):hover{background:rgba(255,214,0,.35)}
 
@@ -422,8 +424,8 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 <main id="appView" hidden>
 
   <div class="top-tabs" id="topTabs">
-    <button type="button" data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6c.35 0 .7.11.99.34l7.3 5.85c.45.36.71.9.71 1.48V19.4a2.1 2.1 0 0 1-2.1 2.1h-3.62a1.05 1.05 0 0 1-1.05-1.05v-4.2a2.23 2.23 0 0 0-4.46 0v4.2c0 .58-.47 1.05-1.05 1.05H6.2a2.1 2.1 0 0 1-2.1-2.1V10.27c0-.58.26-1.12.71-1.48l7.3-5.85c.29-.23.64-.34.99-.34Z"/></svg><span>Home</span></button>
-    <button type="button" data-tab="log"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2.6" y="9.3" width="3.9" height="5.4" rx="1.7"/><rect x="17.5" y="9.3" width="3.9" height="5.4" rx="1.7"/><rect x="7.7" y="6.4" width="8.6" height="11.2" rx="2.7"/></svg><span>Log</span></button>
+    <button type="button" data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6 3 9.8v9.6a2 2 0 0 0 2 2h4.4v-5.1a2.6 2.6 0 0 1 5.2 0v5.1H19a2 2 0 0 0 2-2V9.8Z"/></svg><span>Home</span></button>
+    <button type="button" data-tab="log"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5 3h5a2.2 2.2 0 0 1 2.2 2.2v13.6A2.2 2.2 0 0 1 10 21H5a2.2 2.2 0 0 1-2.2-2.2V5.2A2.2 2.2 0 0 1 5 3Zm.3 4.05a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 1 0 0-2.3Zm0 7.6a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 1 0 0-2.3Z"/><path d="M16.53 12.47A1.6 1.6 0 0 0 14.27 14.73L17.87 18.33 21.2 19.4 20.13 16.07Z"/></svg><span>Log</span></button>
     <button type="button" data-tab="stats"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.6" y="13.2" width="4.6" height="7.3" rx="1.7"/><rect x="9.7" y="8.2" width="4.6" height="12.3" rx="1.7"/><rect x="15.8" y="3.8" width="4.6" height="16.7" rx="1.7"/></svg><span>Stats</span></button>
     <button type="button" data-tab="monitor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 12.6h3.7l1.9-5.6 4 11 2-5.4h6.8"/></svg><span>Monitor</span></button>
   </div>
