@@ -222,8 +222,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .rr-acwr em{font-style:normal;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;margin-left:4px}
 .load-explain{font-size:.68rem;color:var(--muted);margin:0 0 14px}
 .load-explain b{color:var(--ink)}
-.guest-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:2px solid var(--ink);background:var(--yellow);padding:10px 14px;font-size:.78rem;font-weight:600;margin-bottom:14px}
-.guest-banner .btn{padding:6px 10px;font-size:.68rem}
 .demo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px dashed var(--ink);background:#fff;padding:10px 14px;margin-bottom:14px}
 .demo-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:var(--yellow);border:2px solid var(--ink);padding:3px 8px}
 .dchip{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.72rem;padding:6px 10px;cursor:pointer}
@@ -437,10 +435,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
       <span id="greetDate">—</span>
     </div>
 
-    <div class="guest-banner" id="guestBanner" hidden>
-      <span>👀 Guest mode</span>
-      <button type="button" class="btn" id="guestAuthBtn">Sign up / Log in</button>
-    </div>
 
     <div class="demo-bar" id="demoBar" hidden>
       <span class="demo-tag">Demo data</span>
@@ -714,7 +708,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 
 </main>
 
-<footer id="appFoot" hidden>Data stays in your browser · ACWR is a monitoring guide, not medical advice</footer>
+<footer id="appFoot" hidden>ACWR is a monitoring guide, not medical advice</footer>
 
 <script>
 const STORAGE_KEY='tendon-tracker-workouts-v1';
@@ -1071,7 +1065,6 @@ function renderHomeTab(series){
   $('homeMsg').textContent=msg.h;
   $('homeMsgSub').textContent=msg.sub;
   $('sampleChip').hidden=!!workouts.length||!!restDays.length;
-  $('guestBanner').hidden=!!signedInName;
 }
 function statTile(b,s,sm){return '<div class="tile"><b>'+b+'</b><span>'+s+'</span><small>'+sm+'</small></div>';}
 function waveSeg(p0,p1,p2,p3){
@@ -1481,7 +1474,6 @@ $('sampleChip').addEventListener('click',()=>{
 });
 $('goMonitorChip').addEventListener('click',()=>showTab('monitor'));
 document.querySelectorAll('.top-tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
-$('guestAuthBtn').addEventListener('click',()=>openAuth('signup'));
 document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.addEventListener('click',()=>loadDemoScenario(b.dataset.demo)));
 $('demoExitBtn').addEventListener('click',exitDemo);
 
@@ -1635,12 +1627,12 @@ function monTick(){
     mon.secs++;
     const m=Math.floor(mon.secs/60),s=mon.secs%60;
     $('monElapsed').textContent=m+':'+String(s).padStart(2,'0');
-    // workout simulation: warm-up ramp, then working HR with occasional interval surges
-    const ramp=Math.min(1,mon.secs/40);
-    const base=98+ramp*58;
-    const surge=(mon.secs>50&&Math.floor(mon.secs/45)%2===0)?13:0;
-    const wobble=Math.round(Math.sin(mon.secs/6)*8+Math.sin(mon.secs/2.7)*4+(Math.random()*7-3.5));
-    monSetHr(Math.max(92,Math.min(188,Math.round(base+surge+wobble))));
+    // gradual warm-up: smooth ramp from resting ~70 to working plateau ~150 over 90s
+    const prog=Math.min(1,mon.secs/90);const ease=prog*prog*(3-2*prog);
+    const base=70+ease*80;
+    const surge=(mon.secs>100&&Math.floor(mon.secs/70)%2===0)?6:0;
+    const wobble=Math.round(Math.sin(mon.secs/6)*5+Math.sin(mon.secs/2.7)*2.5+(Math.random()*6-3));
+    monSetHr(Math.max(68,Math.min(168,Math.round(base+surge+wobble))));
   }else{
     // connected, not logging: realistic resting heartbeat, no totals accumulating
     mon.secs++;
