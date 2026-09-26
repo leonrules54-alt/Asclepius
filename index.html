@@ -1627,10 +1627,10 @@ function monTick(){
     mon.secs++;
     const m=Math.floor(mon.secs/60),s=mon.secs%60;
     $('monElapsed').textContent=m+':'+String(s).padStart(2,'0');
-    // gradual warm-up: smooth ramp from resting ~70 to working plateau ~150 over 90s
-    const prog=Math.min(1,mon.secs/90);const ease=prog*prog*(3-2*prog);
+    // gradual warm-up: smooth ramp from resting ~70 to working plateau ~150 over ~35s
+    const prog=Math.min(1,mon.secs/35);const ease=prog*prog*(3-2*prog);
     const base=70+ease*80;
-    const surge=(mon.secs>100&&Math.floor(mon.secs/70)%2===0)?6:0;
+    const surge=(mon.secs>45&&Math.floor(mon.secs/60)%2===0)?6:0;
     const wobble=Math.round(Math.sin(mon.secs/6)*5+Math.sin(mon.secs/2.7)*2.5+(Math.random()*6-3));
     monSetHr(Math.max(68,Math.min(168,Math.round(base+surge+wobble))));
   }else{
