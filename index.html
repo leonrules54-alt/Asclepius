@@ -725,7 +725,7 @@ const CLOUD_CONFIG={
   supabaseUrl:'https://fghtorhodemmpeawkirq.supabase.co',           // from Supabase → Settings → API
   supabaseAnonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnaHRvcmhvZGVtbXBlYXdraXFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjAwNjgsImV4cCI6MjEwNTY5NjA2OH0.onRJCTi5PrmjPwtyUYq-XYXjp9FYosDrGUI_Yn9qZJY'
 };
-const CLOUD_ENABLED=!!(CLOUD_CONFIG.clerkPublishableKey&&CLOUD_CONFIG.supabaseUrl&&CLOUD_CONFIG.supabaseAnonKey);
+const CLOUD_ENABLED=false;  /* cloud sync dormant — local accounts (any password) handle auth; flip to true to re-enable Clerk+Supabase */
 let sb=null,cloudUser=null,cloudUnavailable=false,syncTimer=null;
 
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Failed to load '+src));document.head.appendChild(s);});}
