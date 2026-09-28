@@ -197,11 +197,8 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .chip{width:100%;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.78rem;padding:9px;cursor:pointer;margin-bottom:6px;text-align:center}
 .chip:hover{background:var(--yellow)}
 .chip[hidden]{display:none}
-.rice-fab{position:fixed;right:16px;bottom:calc(108px + env(safe-area-inset-bottom));width:46px;height:46px;border:2px solid var(--ink);background:var(--yellow);box-shadow:3px 3px 0 var(--ink);font-size:1.15rem;cursor:pointer;z-index:56}
-.rice-fab:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 .demo-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:2px dashed var(--ink);background:var(--yellow);padding:8px 12px;margin-bottom:14px;font-size:.72rem;font-weight:600}
 .demo-banner .db-actions{display:flex;gap:6px}
-body:not(.authed) .rice-fab{display:none}
 .modal-box .rice-steps{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 4px}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stats-row .stat{padding:12px 10px}
@@ -664,7 +661,6 @@ body:not(.authed) .rice-fab{display:none}
       <p class="modal-note">General guidance — see a professional if pain lasts over 48h.</p>
     </div>
   </div>
-  <button id="riceFab" class="rice-fab" type="button" aria-label="Recovery steps">🩹</button>
 </main>
 
 <footer id="appFoot" hidden>ACWR is a monitoring guide, not medical advice</footer>
@@ -770,7 +766,8 @@ function openCloudAuth(){
   try{
     const back=window.location.pathname+window.location.search; // path only — Clerk strips absolute URLs to '/'
     Clerk.openSignIn({forceRedirectUrl:back,fallbackRedirectUrl:back,redirectUrl:back});
-  }catch(e){cloudUnavailable=true;setSyncState('off');}
+}catch(e){cloudUnavailable=true;setSyncState('off');}
+  openAuth('signup');  /* Clerk missing/blocked -> local modal fallback */
 }
 let workouts=[];
 let restDays=[];
@@ -1311,7 +1308,6 @@ function openRice(){
   body.innerHTML=hRice.innerHTML||RICE_STEPS.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
   m.hidden=false;
 }
-$('riceFab').addEventListener('click',openRice);
 $('riceOpenBtn').addEventListener('click',openRice);
 $('riceClose').addEventListener('click',()=>{$('riceModal').hidden=true;});
 $('riceModal').addEventListener('click',e=>{if(e.target===$('riceModal'))$('riceModal').hidden=true;});
@@ -1335,6 +1331,7 @@ function setAuthMode(m){
 document.querySelectorAll('.auth-tab').forEach(t=>t.addEventListener('click',()=>setAuthMode(t.dataset.mode)));
 
 function openAuth(mode){
+  if(CLOUD_ENABLED&&!cloudUnavailable){openCloudAuth();return;}
   if(CLOUD_ENABLED){openCloudAuth();return;}
   authMode=mode||authMode;
   setAuthMode(authMode);
