@@ -199,6 +199,9 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .chip[hidden]{display:none}
 .rice-fab{position:fixed;right:16px;bottom:calc(108px + env(safe-area-inset-bottom));width:46px;height:46px;border:2px solid var(--ink);background:var(--yellow);box-shadow:3px 3px 0 var(--ink);font-size:1.15rem;cursor:pointer;z-index:56}
 .rice-fab:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.demo-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:2px dashed var(--ink);background:var(--yellow);padding:8px 12px;margin-bottom:14px;font-size:.72rem;font-weight:600}
+.demo-banner .db-actions{display:flex;gap:6px}
+body:not(.authed) .rice-fab{display:none}
 .modal-box .rice-steps{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 4px}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stats-row .stat{padding:12px 10px}
@@ -346,6 +349,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   <div class="nav-links">
     <a href="#about" id="aboutLink">About</a>
   </div>
+  <button id="demoNavBtn" class="btn btn-sm" hidden>Demo</button>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
   <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
@@ -356,7 +360,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     <h1>Asclepius</h1>
     <p class="w-sub">The math-powered load tracker that tells you when to push, when to ease off, and when to rest — before an injury beats you to it.</p>
     <div class="w-cta">
-      <button id="openAppBtn" class="btn btn-primary">Open the app</button>
+      <button id="openAppBtn" class="btn btn-primary">Demo</button>
       <button id="openSignupBtn" class="btn auth-cta">Sign up</button>
     </div>
   </header>
@@ -383,7 +387,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   <div class="w-footer">
     <p>Asclepius is a service that utilizes math and the biological sciences to prevent athletic injuries. It pushes towards the <b>democratization of elite sports science</b>, ensuring that every student athlete — regardless of family income — has the tools to train safely, stay healthy, and stay in the game.</p>
     <div class="w-cta">
-      <button id="openAppBtn2" class="btn btn-primary">Open the app</button>
+      <button id="openAppBtn2" class="btn btn-primary">Demo</button>
       <button id="openSignupBtn2" class="btn auth-cta">Sign up</button>
     </div>
   </div>
@@ -422,6 +426,10 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     <div class="greet">
       <h1 id="greetLine">Hey 👋</h1>
       <span id="greetDate">—</span>
+    </div>
+    <div class="demo-banner" id="demoBanner" hidden>
+      <span>👀 Demo preview — sample data, nothing is saved.</span>
+      <span class="db-actions"><button type="button" class="btn btn-sm" id="demoSignupBtn">Sign up to keep it</button><button type="button" class="btn btn-sm" id="demoExitBtn">Exit</button></span>
     </div>
 
 
@@ -789,13 +797,14 @@ async function initCloud(){
 }
 async function onCloudSession(session){
   if(!session){
-    if(cloudUser){cloudUser=null;signedInName='';localStorage.removeItem(NAME_KEY);updateAuthUI();render();}
+  if(cloudUser){cloudUser=null;signedInName='';localStorage.removeItem(NAME_KEY);previewMode=false;$('demoBanner').hidden=true;updateAuthUI();showWelcome();}
     return;
   }
   const u=Clerk.user;if(!u)return;
   cloudUser=u;
   const name=u.firstName||u.username||(u.primaryEmailAddress?u.primaryEmailAddress.emailAddress.split('@')[0]:'athlete');
-  signedInName=name;localStorage.setItem(NAME_KEY,name);
+signedInName=name;localStorage.setItem(NAME_KEY,name);
+  previewMode=false;$('demoBanner').hidden=true;
   updateAuthUI();closeAuth();showApp();render();
   await syncNow();
 }
@@ -825,9 +834,9 @@ function todayStr(){return toISO(new Date());}
 function uid(){return 'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 
 function load(){try{workouts=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){workouts=[];}}
-function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));scheduleSync();}
+function persist(){if(previewMode)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));scheduleSync();}
 function loadRest(){try{restDays=JSON.parse(localStorage.getItem(REST_KEY))||[];}catch(e){restDays=[];}}
-function persistRest(){localStorage.setItem(REST_KEY,JSON.stringify(restDays));scheduleSync();}
+function persistRest(){if(previewMode)return;localStorage.setItem(REST_KEY,JSON.stringify(restDays));scheduleSync();}
 
 function restDayStats(ctx){
   let total=0,unplanned=0,injury=0,soreness=0;
@@ -1323,15 +1332,44 @@ function init(){
   loadRest();
   signedInName=localStorage.getItem(NAME_KEY)||'';
   updateAuthUI();
-  showApp();
+  if(signedInName)showApp();else showWelcome();
   render();
   if(CLOUD_ENABLED)initCloud();
+}
+
+function loadSampleSeason(){
+  for(let i=28;i>=1;i--){
+    const d=addDays(new Date(),-i);
+    if(d.getDay()===0)continue;
+    workouts.push({id:uid(),date:toISO(d),duration:90,rpe:5,notes:'Sample practice',created:Date.now()-i*86400000});
+  }
 }
 
 /* ===== Welcome / app views ===== */
 const welcomeView=$('welcome'),appView=$('appView'),appFoot=$('appFoot');
 function syncNav(){document.body.classList.toggle('on-welcome',!welcomeView.hidden);}
+let previewMode=false;
+function syncChrome(){document.body.classList.toggle('authed',!!signedInName||previewMode);}
+function enterPreview(){
+  if(!workouts.length&&!restDays.length)loadSampleSeason();
+  previewMode=true;
+  $('demoBanner').hidden=false;
+  syncChrome();
+  showApp();
+  render();
+  showTab('home');
+}
+function exitPreview(){
+  previewMode=false;
+  $('demoBanner').hidden=true;
+  workouts=[];restDays=[];
+  load();loadRest();
+  syncChrome();
+  render();
+  if(!signedInName)showWelcome();
+}
 function showApp(){
+  if(!signedInName&&!previewMode){openAuth('signup');return;}
   welcomeView.hidden=true;
   appView.hidden=false;
   appFoot.hidden=false;
@@ -1431,7 +1469,10 @@ function openAuth(mode){
 function closeAuth(){authModal.hidden=true;authFlash.textContent='';authForm.reset();}
 authBtn.addEventListener('click',()=>openAuth());
 [$('openSignupBtn'),$('openSignupBtn2')].forEach(b=>b.addEventListener('click',()=>openAuth('signup')));
-[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',()=>{showApp();showTab('home');}));
+[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',enterPreview));
+$('demoNavBtn').addEventListener('click',enterPreview);
+$('demoSignupBtn').addEventListener('click',()=>openAuth('signup'));
+$('demoExitBtn').addEventListener('click',exitPreview);
 authClose.addEventListener('click',closeAuth);
 authModal.addEventListener('click',e=>{if(e.target===authModal)closeAuth();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth();});
@@ -1447,9 +1488,12 @@ function updateAuthUI(){
     $('userChip').hidden=true;
     document.body.classList.remove('signed-in');
   }
+  $('demoNavBtn').hidden=!!signedInName;
+  syncChrome();
 }
 
 function finishSignIn(name){
+  previewMode=false;$('demoBanner').hidden=true;
   signedInName=name;
   localStorage.setItem(NAME_KEY,name);
   updateAuthUI();
@@ -1460,11 +1504,11 @@ function finishSignIn(name){
 
 $('logoutBtn').addEventListener('click',()=>{
   if(CLOUD_ENABLED&&cloudUser){try{Clerk.signOut();}catch(e){}return;}
-  signedInName='';
+  previewMode=false;$('demoBanner').hidden=true;workouts=[];restDays=[];load();loadRest();signedInName='';
   localStorage.removeItem(NAME_KEY);
   updateAuthUI();
   render();
-  showTab('home');
+  showWelcome();
 });
 
 authForm.addEventListener('submit',e=>{
@@ -1483,6 +1527,8 @@ authForm.addEventListener('submit',e=>{
     signedInName=name;
     localStorage.setItem(NAME_KEY,name);
     updateAuthUI();
+    previewMode=false;$('demoBanner').hidden=true;syncChrome();
+    showApp();showTab('home');
     closeAuth();
     render();
     homeFlashMsg('Account created — your guest data is now saved under “'+name+'”.');
