@@ -244,7 +244,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 /* ===== Welcome page ===== */
 .welcome{max-width:820px;margin:0 auto;padding:56px 24px 80px}
 .w-hero{text-align:center;padding:40px 0 40px}
-.welcome .w-hero h1{font-family:'Archivo Black','Arial Black',sans-serif;font-size:clamp(3rem,9vw,5.4rem);line-height:1;margin:18px 0 18px;letter-spacing:-.01em}
+.welcome .w-hero h1{font-family:'Archivo Black','Arial Black',sans-serif;font-size:clamp(3rem,9vw,5.4rem);line-height:1;margin:44px 0 18px;letter-spacing:-.01em}
 .w-kicker{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);background:var(--yellow);border:2px solid var(--ink);padding:5px 12px;box-shadow:3px 3px 0 var(--ink)}
 .w-sub{color:var(--muted);font-size:1.05rem;max-width:46ch;margin:0 auto 28px}
 .w-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
@@ -469,7 +469,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     
 
 
-    <button type="button" class="chip" id="homeLogChip" hidden>＋ Log a workout</button>
 
     <p class="flash" id="homeFlash"></p>
 
@@ -1300,9 +1299,6 @@ $('homeLogForm').addEventListener('submit',e=>{
   logFlashMsg('Workout saved — '+duration+' min × '+rpe+'. Your strain score is updated.');
 });
 $('goMonitorChip').addEventListener('click',()=>showTab('monitor'));
-const homeLogChip=$('homeLogChip');
-homeLogChip.hidden=false;
-homeLogChip.addEventListener('click',()=>{showTab('log');});
 function openRice(){
   const m=$('riceModal'),body=$('riceModalBody'),hRice=$('hRiceSteps');
   body.innerHTML=hRice.innerHTML||RICE_STEPS.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
