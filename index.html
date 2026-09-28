@@ -232,24 +232,8 @@ body:not(.authed) .rice-fab{display:none}
 .home-hint{font-size:.66rem;color:var(--muted);margin:10px 0 0}
 .data-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .see-all{font-size:.72rem;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--yellow);cursor:pointer}
-.week{display:flex;gap:7px;align-items:flex-end;height:84px}
-.wday{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
-.wbar{width:100%;border:2px solid var(--ink)}
-.wbar.rest{background:transparent!important;border-style:dashed;height:4px!important}
-.wday.today .wbar{box-shadow:0 0 0 3px var(--yellow)}
-.wday span{font-size:.6rem;font-weight:700;letter-spacing:.05em;color:var(--muted)}
-.wday.today span{color:var(--ink);background:var(--yellow);padding:0 3px}
-.cal{display:grid;grid-template-columns:repeat(15,1fr);gap:4px}
-.sq{aspect-ratio:1;border:1.5px solid var(--ink)}
-.sq.g{background:rgba(107,142,35,.55)} .sq.o{background:rgba(191,90,0,.6)}
-.sq.r{background:rgba(164,0,0,.65)} .sq.x{background:rgba(119,119,119,.25)}
 .cal-legend{display:flex;gap:12px;margin-top:10px;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);flex-wrap:wrap}
 .cal-legend i{width:8px;height:8px;display:inline-block;margin-right:4px;border:1.5px solid var(--ink)}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.tile{border:2px solid var(--ink);background:#fff;padding:12px 14px;box-shadow:4px 4px 0 rgba(28,28,28,.14)}
-.tile b{display:block;font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.4rem;line-height:1.15;letter-spacing:-.01em}
-.tile span{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-.tile small{display:block;font-size:.66rem;color:var(--muted);margin-top:3px;font-weight:600}
 .stats-title{font-family:'Archivo Black','Arial Black',sans-serif;font-size:1.5rem;margin:0 0 14px;letter-spacing:-.01em}
 .stats-chart{width:100%;height:auto;display:block;--chart-line:#1C1C1C}
 .foot-note{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;margin:6px 0 0}
@@ -518,68 +502,6 @@ body:not(.authed) .rice-fab{display:none}
     </section>
 
     <button class="chip" id="goMonitorChip" type="button">⌚ Or let the Watch log it for you — Monitor tab</button>
-
-    <p class="home-hint" style="margin-top:12px">Workout from an earlier day? Use <b>Log a past session</b> on the Stats tab.</p>
-  </section>
-
-  <!-- ================= STATS TAB ================= -->
-  <section id="statsTab" hidden>
-    <h1 class="stats-title">My data</h1>
-
-    <section class="card">
-      <div class="card-title">
-        <h2>Strain score · <span id="statsRangeLbl">last 30 days</span></h2>
-        <div class="range-toggle" role="group" aria-label="Chart range">
-          <button type="button" id="range7Btn" class="rt">Last week</button>
-          <button type="button" id="range30Btn" class="rt on">Last 30 days</button>
-        </div>
-      </div>
-      <div id="statsChartWrap"></div>
-      <div class="cal-legend" style="margin-top:8px">
-        <span><i style="background:rgba(107,142,35,.55)"></i>Safe</span>
-        <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
-        <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
-      </div>
-    </section>
-
-    <div class="tiles" id="statTiles"></div>
-
-    <section class="card">
-      <div class="card-title"><h2>Weekly activity</h2><span class="meta">daily training load</span></div>
-      <div id="weekStrip"></div>
-    </section>
-
-    <section class="card">
-      <div class="card-title"><h2>Every day · <span id="calRangeLbl">last 30 days</span></h2></div>
-      <div class="cal" id="statsCal"></div>
-      <div class="cal-legend">
-        <span><i style="background:rgba(107,142,35,.55)"></i>Safe</span>
-        <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
-        <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
-        <span><i style="background:rgba(119,119,119,.25)"></i>Rest</span>
-      </div>
-    </section>
-
-    <section class="card" id="history">
-      <div class="card-title">
-        <h2>History</h2>
-        <span class="hist-meta" id="histMeta"></span>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr><th>Date</th><th>Duration</th><th>Intensity</th><th>Load</th><th></th></tr>
-          </thead>
-          <tbody id="histBody"></tbody>
-        </table>
-      </div>
-      <details class="formula-hint" style="margin-top:14px">
-        <summary>How is this calculated?</summary>
-        <p><b>EWMA</b> (Exponentially Weighted Moving Average) — Load = minutes × intensity. Each day's EWMA = λ × today's load + (1 − λ) × yesterday's EWMA, so recent sessions count more but nothing drops off a cliff. Acute λ = 25% (~7-day window), chronic λ = 2/29 (~28-day window).</p>
-        <p><b>ACWR</b> (Acute:Chronic Workload Ratio) = acute EWMA ÷ chronic EWMA. Above 1.5 means you're doing a lot more than your body's recently adapted to.</p>
-      </details>
-    </section>
-
     <details class="card details-card">
       <summary class="details-sum">＋ Log a past session</summary>
       <div class="details-body">
@@ -610,7 +532,7 @@ body:not(.authed) .rice-fab{display:none}
     <details class="card details-card">
       <summary class="details-sum">😴 Mark a rest day</summary>
       <div class="details-body">
-        <div class="row3">
+        <div class="row2">
           <div>
             <label for="restDate">Date</label>
             <input type="date" id="restDate">
@@ -623,24 +545,60 @@ body:not(.authed) .rice-fab{display:none}
               <option value="injury">Injury</option>
             </select>
           </div>
-          <div class="rest-cta">
-            <button type="button" id="restBtn" class="btn">Log rest day</button>
-          </div>
         </div>
+        <button type="button" id="restLogBtn" class="btn btn-primary" style="width:100%;margin-top:12px">Log rest day</button>
         <p class="home-hint" style="margin-top:10px">No load — doesn't affect the strain score.</p>
       </div>
     </details>
 
+  </section>
+
+  <!-- ================= STATS TAB ================= -->
+  <section id="statsTab" hidden>
+    <h1 class="stats-title">My data</h1>
+
     <section class="card">
       <div class="card-title">
-        <h2>Data</h2>
-        <span class="meta" id="histMeta2"></span>
+        <h2>Strain score · <span id="statsRangeLbl">last 30 days</span></h2>
+        <div class="range-toggle" role="group" aria-label="Chart range">
+          <button type="button" id="range7Btn" class="rt">Last week</button>
+          <button type="button" id="range30Btn" class="rt on">Last 30 days</button>
+        </div>
       </div>
-      <p style="font-size:.8rem;color:var(--muted);margin:0 0 12px">Everything is stored on this device unless you're signed in — then it syncs to your account.</p>
-      <button id="clearBtn" class="btn btn-sm btn-danger">Clear All Data</button>
+      <div id="statsChartWrap"></div>
+      <div class="cal-legend" style="margin-top:8px">
+        <span><i style="background:rgba(107,142,35,.55)"></i>Safe</span>
+        <span><i style="background:rgba(191,90,0,.6)"></i>Elevated</span>
+        <span><i style="background:rgba(164,0,0,.65)"></i>High</span>
+      </div>
     </section>
 
-    <p class="foot-note">Same EWMA math as always — friendlier wrapper.</p>
+
+
+
+    <section class="card" id="history">
+      <div class="card-title">
+        <h2>History</h2>
+        <span class="hist-meta" id="histMeta"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Duration</th><th>Intensity</th><th>Load</th><th></th></tr>
+          </thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+      <details class="formula-hint" style="margin-top:14px">
+        <summary>How is this calculated?</summary>
+        <p><b>EWMA</b> (Exponentially Weighted Moving Average) — Load = minutes × intensity. Each day's EWMA = λ × today's load + (1 − λ) × yesterday's EWMA, so recent sessions count more but nothing drops off a cliff. Acute λ = 25% (~7-day window), chronic λ = 2/29 (~28-day window).</p>
+        <p><b>ACWR</b> (Acute:Chronic Workload Ratio) = acute EWMA ÷ chronic EWMA. Above 1.5 means you're doing a lot more than your body's recently adapted to.</p>
+      </details>
+    </section>
+
+
+
+
   </section>
 
   <!-- ================= MONITOR TAB ================= -->
@@ -825,7 +783,7 @@ const $=id=>document.getElementById(id);
 const form=$('workoutForm'),dateInput=$('dateInput'),durationInput=$('durationInput'),rpeInput=$('rpeInput'),rpeVal=$('rpeVal'),flash=$('flash');
 const acuteVal=$('acuteVal'),chronicVal=$('chronicVal'),acwrVal=$('acwrVal'),zoneDot=$('zoneDot'),zoneText=$('zoneText');
 const histBody=$('histBody'),histMeta=$('histMeta');
-const restDate=$('restDate'),restReason=$('restReason'),restBtn=$('restBtn');
+const restDate=$('restDate'),restReason=$('restReason');
 
 function toISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fromISO(s){const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
@@ -1057,7 +1015,6 @@ function renderHomeTab(series){
   const msg=pickHomeMessage(series);
   $('homeMsg').textContent=msg.h;
 }
-function statTile(b,s,sm){return '<div class="tile"><b>'+b+'</b><span>'+s+'</span><small>'+sm+'</small></div>';}
 function waveSeg(p0,p1,p2,p3){
   const c1x=(p1[0]+(p2[0]-p0[0])/6).toFixed(1),c1y=(p1[1]+(p2[1]-p0[1])/6).toFixed(1);
   const c2x=(p2[0]-(p3[0]-p1[0])/6).toFixed(1),c2y=(p2[1]-(p3[1]-p1[1])/6).toFixed(1);
@@ -1070,64 +1027,6 @@ function wavePath(solid){
   }
   return d;
 }
-function overloadColor(v,thr){
-  if(v<=thr*0.72)return'var(--green)';
-  if(v<=thr){
-    const t=(v-thr*0.72)/(thr*0.28);
-    const r=Math.round(107+(240-107)*t),g=Math.round(142+(190-142)*t);
-    return 'rgb('+r+','+g+',0)';
-  }
-  const t=Math.min(1,(v-thr)/(thr*0.5));
-  const r=Math.round(240-26*t),g=Math.round(192-192*t);
-  return 'rgb('+r+','+g+',0)';
-}
-function weeklyLoadSVG(lm,series){
-  const vals=[],lbls=[];
-  const wnames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  for(let i=6;i>=0;i--){
-    const d=addDays(new Date(),-i);
-    vals.push(lm[toISO(d)]||0);
-    lbls.push(wnames[d.getDay()]);
-  }
-  if(!vals.some(v=>v>0))return '<p class="empty">Log a workout to see your week</p>';
-  // overload threshold = 1.5× your normal — "normal" = average daily load of the week BEFORE the shown week,
-  // the baseline your current week is being compared against (same 1.5 boundary as the strain zones)
-  let base=0,bn=0;
-  for(let i=13;i>=7;i--){base+=(lm[toISO(addDays(new Date(),-i))]||0);bn++;}
-  base=bn?base/bn:0;
-  const thr=Math.max(300,Math.round(1.5*base));
-  const W=340,H=150,L=30,R=8,T=12,B=22;
-  let ymax=Math.max(500,Math.ceil(Math.max(...vals)/500)*500);
-  ymax=Math.max(ymax,Math.ceil(thr*1.15/500)*500);
-  const x=i=>L+(W-L-R)*i/(vals.length-1);
-  const y=v=>T+(H-T-B)*(1-v/ymax);
-  let s='';
-  [.5,1].forEach(f=>{const g=Math.round(ymax*f);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="rgba(28,28,28,.12)" stroke-dasharray="3 3"/><text x="'+(L-4)+'" y="'+(y(g)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">'+(g>=1000?(g/1000)+'k':g)+'</text>';});
-  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="rgba(28,28,28,.4)" stroke-width="1.5"/>';
-  // overload threshold: dotted line with plain-language label
-  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(thr)+'" y2="'+y(thr)+'" stroke="#A40000" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>';
-  s+='<text x="'+(W-R)+'" y="'+(y(thr)-3)+'" font-size="7" font-weight="bold" text-anchor="end" fill="#A40000">overload · 1.5× your normal</text>';
-  lbls.forEach((lb,i)=>{s+='<text x="'+x(i)+'" y="'+(H-6)+'" font-size="7" text-anchor="middle" fill="#5A5751">'+lb+'</text>';});
-  const solid=vals.map((v,i)=>[+x(i).toFixed(1),+y(v).toFixed(1)]);
-  const d=wavePath(solid);
-  s+='<defs>';
-  s+='<linearGradient id="weekFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".18"/><stop offset="100%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".02"/></linearGradient>';
-  // approach band: green well below the line → yellow as you near it (smooth, not a hard swap)
-  s+='<linearGradient id="weekNear" gradientUnits="userSpaceOnUse" x1="0" y1="'+y(thr*0.72).toFixed(1)+'" x2="0" y2="'+y(thr).toFixed(1)+'"><stop offset="0%" stop-color="var(--green)"/><stop offset="100%" stop-color="rgb(240,190,0)"/></linearGradient>';
-  // above the threshold: yellow right at the line → deep red at the top of the chart
-  s+='<linearGradient id="weekOver" gradientUnits="userSpaceOnUse" x1="0" y1="'+y(thr).toFixed(1)+'" x2="0" y2="'+T+'"><stop offset="0%" stop-color="rgb(240,190,0)"/><stop offset="100%" stop-color="rgb(214,0,0)"/></linearGradient>';
-  s+='<clipPath id="weekDeep"><rect x="'+L+'" y="'+y(thr*0.72).toFixed(1)+'" width="'+(W-L-R)+'" height="'+(H-B-y(thr*0.72)).toFixed(1)+'"/></clipPath>';
-  s+='<clipPath id="weekNearBand"><rect x="'+L+'" y="'+y(thr).toFixed(1)+'" width="'+(W-L-R)+'" height="'+(y(thr*0.72)-y(thr)).toFixed(1)+'"/></clipPath>';
-  s+='<clipPath id="weekAbove"><rect x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(y(thr)-T).toFixed(1)+'"/></clipPath>';
-  s+='</defs>';
-  s+='<path d="'+d+' L'+solid[6][0]+','+y(0).toFixed(1)+' L'+solid[0][0]+','+y(0).toFixed(1)+' Z" fill="url(#weekFill)" stroke="none"/>';
-  // deep green low, blending to yellow near the line, yellow→red above it
-  s+='<path d="'+d+'" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" clip-path="url(#weekDeep)"/>';
-  s+='<path d="'+d+'" fill="none" stroke="url(#weekNear)" stroke-width="2.5" stroke-linecap="round" clip-path="url(#weekNearBand)"/>';
-  s+='<path d="'+d+'" fill="none" stroke="url(#weekOver)" stroke-width="2.5" stroke-linecap="round" clip-path="url(#weekAbove)"/>';
-  s+='<circle cx="'+solid[6][0]+'" cy="'+solid[6][1]+'" r="3.2" fill="'+overloadColor(vals[6],thr)+'"/>';
-  return '<svg class="stats-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily training load this week">'+s+'</svg>';
-}
 function statsChartSVG(series,days){
   const data=series.slice(-days);
   if(data.length<2)return'';
@@ -1137,7 +1036,10 @@ function statsChartSVG(series,days){
   let s='';
   const bands=[[0,.8,'rgba(119,119,119,.14)'],[.8,1.3,'rgba(107,142,35,.12)'],[1.3,1.5,'rgba(191,90,0,.14)'],[1.5,YMAX,'rgba(164,0,0,.12)']];
   for(const b of bands)s+='<rect x="'+L+'" y="'+y(b[1])+'" width="'+(W-L-R)+'" height="'+(y(b[0])-y(b[1]))+'" fill="'+b[2]+'"/>';
-  [.8,1.3,1.5].forEach(g=>{s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="rgba(28,28,28,.3)" stroke-dasharray="3 3"/><text x="'+(L-4)+'" y="'+(y(g)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">'+g+'</text>';});
+  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(.8)+'" y2="'+y(.8)+'" stroke="rgba(28,28,28,.3)" stroke-dasharray="3 3"/><text x="'+(L-4)+'" y="'+(y(.8)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">0.8</text>';
+  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(1.3)+'" y2="'+y(1.3)+'" stroke="#E65C00" stroke-width="1.1" stroke-dasharray="4 3" opacity=".8"/><text x="'+(L-4)+'" y="'+(y(1.3)+3)+'" font-size="7" text-anchor="end" fill="#E65C00">1.3</text>';
+  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(1.5)+'" y2="'+y(1.5)+'" stroke="#D60000" stroke-width="1.2" stroke-dasharray="5 4"/><text x="'+(L-4)+'" y="'+(y(1.5)+3)+'" font-size="7" text-anchor="end" fill="#D60000">1.5</text>';
+  s+='<text x="'+(W-R)+'" y="'+(y(1.5)-3)+'" font-size="7" font-weight="bold" text-anchor="end" fill="#D60000">risk line</text>';
   s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="#1C1C1C" stroke-width="1.5"/><text x="'+(L-4)+'" y="'+(y(0)+3)+'" font-size="7" text-anchor="end" fill="#5A5751">0</text>';
   const tickEvery=days>14?10:1;
   const tickIdx=[];for(let i=0;i<data.length;i+=tickEvery)tickIdx.push(i);
@@ -1153,39 +1055,25 @@ function statsChartSVG(series,days){
   const solid=pts.filter(Boolean);
   if(solid.length>=2){
     const d=wavePath(solid);
-    s+='<defs><linearGradient id="strainFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".22"/><stop offset="100%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".02"/></linearGradient></defs>';
+    s+='<defs><linearGradient id="strainFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".22"/><stop offset="100%" stop-color="var(--chart-line,#1C1C1C)" stop-opacity=".02"/></linearGradient>';
+    s+='<clipPath id="scLow"><rect x="'+L+'" y="'+y(1.3)+'" width="'+(W-L-R)+'" height="'+(y(0)-y(1.3))+'"/></clipPath>';
+    s+='<clipPath id="scMid"><rect x="'+L+'" y="'+y(1.5)+'" width="'+(W-L-R)+'" height="'+(y(1.3)-y(1.5))+'"/></clipPath>';
+    s+='<clipPath id="scHi"><rect x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(y(1.5)-T)+'"/></clipPath>';
+    s+='</defs>';
     s+='<path d="'+d+' L'+solid[solid.length-1][0]+','+y(0).toFixed(1)+' L'+solid[0][0]+','+y(0).toFixed(1)+' Z" fill="url(#strainFill)" stroke="none"/>';
-    s+='<path d="'+d+'" fill="none" stroke="var(--chart-line,#1C1C1C)" stroke-width="2.5" stroke-linecap="round"/>';
-    const lastP=solid[solid.length-1];
-    s+='<circle cx="'+lastP[0]+'" cy="'+lastP[1]+'" r="3.2" fill="var(--chart-line,#1C1C1C)"/>';
+    // line recolors by zone: green below 1.3, orange 1.3-1.5, red above 1.5
+    s+='<path d="'+d+'" fill="none" stroke="#00A63E" stroke-width="2.5" stroke-linecap="round" clip-path="url(#scLow)"/>';
+    s+='<path d="'+d+'" fill="none" stroke="#E65C00" stroke-width="2.5" stroke-linecap="round" clip-path="url(#scMid)"/>';
+    s+='<path d="'+d+'" fill="none" stroke="#D60000" stroke-width="2.5" stroke-linecap="round" clip-path="url(#scHi)"/>';
+    const lastP=solid[solid.length-1],lastAcwr=data[solid.length-1].acwr;
+    s+='<circle cx="'+lastP[0]+'" cy="'+lastP[1]+'" r="3.2" fill="'+zoneOf(lastAcwr).color+'"/>';
   }
   return '<svg class="stats-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily strain score">'+s+'</svg>';
 }
 function renderStatsTab(series){
   const data=series.slice(-statsRange);
   $('statsRangeLbl').textContent=statsRange===7?'last week':'last 30 days';
-  $('calRangeLbl').textContent=statsRange===7?'last week':'last 30 days';
   $('statsChartWrap').innerHTML=data.length>=2?statsChartSVG(series,statsRange):'<p class="empty">Not enough data yet — log a few workouts</p>';
-  const lm=dailyLoads();
-  $('weekStrip').innerHTML=weeklyLoadSVG(lm,series);
-  if(!data.length){$('statTiles').innerHTML='';$('statsCal').innerHTML='';return;}
-  const sessions=data.filter(m=>(lm[m.date]||0)>0).length;
-  const rests=data.length-sessions;
-  let streak=0;
-  for(let i=data.length-1;i>=0;i--){
-    const load=lm[data[i].date]||0;
-    if(load>0&&data[i].acwr!=null&&data[i].acwr>=1.5)break;
-    streak++;
-  }
-  let mi=0;data.forEach((m,i)=>{if((lm[m.date]||0)>(lm[data[mi].date]||0))mi=i;});
-  const ago=data.length-1-mi;
-  const rangeLbl=statsRange===7?'week':'30d';
-  $('statTiles').innerHTML=
-    statTile(streak+'d','Days since the red zone','rest days count — that’s the point')+
-    statTile(sessions,'Sessions · '+rangeLbl,'practices, games, workouts')+
-    statTile(rests,'Rest days · '+rangeLbl,rests===0?'zero — consider one':'your body’s timeouts')+
-    statTile(Math.round(lm[data[mi].date]||0).toLocaleString()+' AU','Biggest day',ago===0?'today':ago+' day'+(ago===1?'':'s')+' ago');
-  $('statsCal').innerHTML=data.map(m=>'<div class="sq '+dayBucket(lm[m.date]||0,m.acwr)+'"></div>').join('');
 }
 
 function zoneOf(acwr){
@@ -1253,8 +1141,6 @@ function tdCell(t,cls){const td=document.createElement('td');td.textContent=t;if
   if(workouts.length)parts.push(workouts.length+' session'+(workouts.length>1?'s':'')+' · '+Math.round(total).toLocaleString()+' AU total');
   if(restDays.length)parts.push(restDays.length+' rest day'+(restDays.length>1?'s':''));
   histMeta.textContent=parts.join(' · ');
-  const hm2=$('histMeta2');
-  if(hm2)hm2.textContent=parts.join(' · ')||'nothing logged yet';
 }
 
 function flashMsg(text,err){
@@ -1304,7 +1190,7 @@ histBody.addEventListener('click',e=>{
   }
 });
 
-restBtn.addEventListener('click',()=>{
+$('restLogBtn').addEventListener('click',()=>{
   const date=restDate.value;
   if(!date){flashMsg('Pick a date for the rest day.',true);return;}
   const reason=restReason.value;
@@ -1313,14 +1199,6 @@ restBtn.addEventListener('click',()=>{
   render();
   restDate.value=todayStr();
   flashMsg('Rest day logged ('+reason+'). No load added — ACWR unchanged.');
-});
-
-
-$('clearBtn').addEventListener('click',()=>{
-  if(!workouts.length&&!restDays.length)return;
-  if(confirm('Delete all workouts and rest days? This cannot be undone.')){
-    workouts=[];restDays=[];persist();persistRest();cloudDeleteAll();render();
-  }
 });
 
 function init(){
@@ -1541,9 +1419,6 @@ authForm.addEventListener('submit',e=>{
 $('syncPill').addEventListener('click',()=>{if($('syncPill').classList.contains('err'))syncNow();});
 
 /* ===== Stats range toggle (presentation only) ===== */
-$('range7Btn').addEventListener('click',()=>{statsRange=7;$('range7Btn').classList.add('on');$('range30Btn').classList.remove('on');render();});
-$('range30Btn').addEventListener('click',()=>{statsRange=30;$('range30Btn').classList.add('on');$('range7Btn').classList.remove('on');render();});
-
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
    Real wrist HR devices (Web Bluetooth) would slot into startMonitorScan() — same UI flow. */
 const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,sim:null,chart:null};
