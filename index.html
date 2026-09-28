@@ -99,9 +99,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--yell
 .formula-hint p{margin:8px 0 0;font-size:.72rem;line-height:1.5}
 
 .demo{max-width:1000px;margin:0 auto;padding:24px 16px 80px}
-.demo-bar{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:0 0 14px}
-.demo-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin:0}
-.demo-sub{margin:2px 0 0;font-size:.78rem;color:var(--muted)}
 .scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 22px}
 .scenario{appearance:none;border:2px solid var(--ink);background:#fff;color:var(--ink);text-align:left;cursor:pointer;font-family:inherit;padding:12px 14px}
 .scenario b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
@@ -158,8 +155,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   input[type=range]::-moz-range-thumb{width:22px;height:22px}
   #welcomeText{display:none}
   .nav-links{position:static;transform:none;order:-1}
-  .demo-bar{gap:6px}
-  .dchip{font-size:.66rem;padding:5px 8px}
   .stats{grid-template-columns:1fr}
   .row2{grid-template-columns:1fr}
   .row3{grid-template-columns:1fr}
@@ -202,6 +197,9 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .chip{width:100%;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.78rem;padding:9px;cursor:pointer;margin-bottom:6px;text-align:center}
 .chip:hover{background:var(--yellow)}
 .chip[hidden]{display:none}
+.rice-fab{position:fixed;right:16px;bottom:calc(108px + env(safe-area-inset-bottom));width:46px;height:46px;border:2px solid var(--ink);background:var(--yellow);box-shadow:3px 3px 0 var(--ink);font-size:1.15rem;cursor:pointer;z-index:56}
+.rice-fab:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.modal-box .rice-steps{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 4px}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stats-row .stat{padding:12px 10px}
 .stats-row .stat .lbl{font-size:.56rem;margin-bottom:6px;letter-spacing:.09em}
@@ -222,12 +220,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .rr-acwr em{font-style:normal;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;margin-left:4px}
 .load-explain{font-size:.68rem;color:var(--muted);margin:0 0 14px}
 .load-explain b{color:var(--ink)}
-.demo-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:2px dashed var(--ink);background:#fff;padding:10px 14px;margin-bottom:14px}
-.demo-tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:var(--yellow);border:2px solid var(--ink);padding:3px 8px}
-.dchip{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.72rem;padding:6px 10px;cursor:pointer}
-.dchip:hover{background:var(--yellow)}
-.dchip.on{background:var(--ink);color:var(--paper)}
-.dchip[hidden]{display:none}
 .home-form{border:2px solid var(--ink);background:#fff;padding:16px;margin:4px 0 14px}
 .home-form label{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:10px 0 5px}
 .home-form label:first-of-type{margin-top:0}
@@ -354,7 +346,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   <div class="nav-links">
     <a href="#about" id="aboutLink">About</a>
   </div>
-  <button id="demoBtn" class="btn btn-sm" style="margin-left:auto">Demo</button>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
   <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
@@ -367,7 +358,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     <div class="w-cta">
       <button id="openAppBtn" class="btn btn-primary">Open the app</button>
       <button id="openSignupBtn" class="btn auth-cta">Sign up</button>
-      <button id="tryDemoBtn" class="btn">Try demo data</button>
     </div>
   </header>
 
@@ -395,7 +385,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     <div class="w-cta">
       <button id="openAppBtn2" class="btn btn-primary">Open the app</button>
       <button id="openSignupBtn2" class="btn auth-cta">Sign up</button>
-      <button id="tryDemoBtn2" class="btn">Try demo data</button>
     </div>
   </div>
 </section>
@@ -422,9 +411,9 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 <main id="appView" hidden>
 
   <div class="top-tabs" id="topTabs">
-    <button type="button" data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6 3 9.8v9.6a2 2 0 0 0 2 2h4.4v-5.1a2.6 2.6 0 0 1 5.2 0v5.1H19a2 2 0 0 0 2-2V9.8Z"/></svg><span>Home</span></button>
+    <button type="button" data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6 3 9.8v9.6a2 2 0 0 0 2 2h4.4v-5.1a2.6 2.6 0 0 1 5.2 0v5.1H19a2 2 0 0 0 2-2V9.8Z"/></svg><span>Today</span></button>
     <button type="button" data-tab="log"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5 3h5a2.2 2.2 0 0 1 2.2 2.2v13.6A2.2 2.2 0 0 1 10 21H5a2.2 2.2 0 0 1-2.2-2.2V5.2A2.2 2.2 0 0 1 5 3Zm.3 4.05a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 1 0 0-2.3Zm0 7.6a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 1 0 0-2.3Z"/><path d="M16.53 12.47A1.6 1.6 0 0 0 14.27 14.73L17.87 18.33 21.2 19.4 20.13 16.07Z"/></svg><span>Log</span></button>
-    <button type="button" data-tab="stats"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.6" y="13.2" width="4.6" height="7.3" rx="1.7"/><rect x="9.7" y="8.2" width="4.6" height="12.3" rx="1.7"/><rect x="15.8" y="3.8" width="4.6" height="16.7" rx="1.7"/></svg><span>Stats</span></button>
+    <button type="button" data-tab="stats"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.6" y="13.2" width="4.6" height="7.3" rx="1.7"/><rect x="9.7" y="8.2" width="4.6" height="12.3" rx="1.7"/><rect x="15.8" y="3.8" width="4.6" height="16.7" rx="1.7"/></svg><span>Trends</span></button>
     <button type="button" data-tab="monitor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 12.6h3.7l1.9-5.6 4 11 2-5.4h6.8"/></svg><span>Monitor</span></button>
   </div>
 
@@ -436,19 +425,12 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     </div>
 
 
-    <div class="demo-bar" id="demoBar" hidden>
-      <span class="demo-tag">Demo data</span>
-      <button type="button" class="dchip" data-demo="recovered"><span class="ddot" style="background:var(--green)"></span>Fully recovered</button>
-      <button type="button" class="dchip" data-demo="semi"><span class="ddot" style="background:var(--orange)"></span>Ramping up</button>
-      <button type="button" class="dchip" data-demo="rest"><span class="ddot" style="background:var(--red)"></span>Needs a rest day</button>
-      <button type="button" class="dchip" id="demoExitBtn" style="margin-left:auto;color:var(--red)">✕ Exit demo</button>
-    </div>
 
     <section class="status-card">
       <div class="score-row">
         <div>
           <div class="score" id="readinessNum">—</div>
-          <div class="score-cap" id="scoreCap">your score shows up after your first workout</div>
+          <div class="score-cap" id="scoreCap"></div>
         </div>
         <div class="score-side">
           <div class="score-lbl">Strain score</div>
@@ -483,24 +465,26 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
         <div class="sub" id="hTrendSub">vs last week</div>
       </div>
     </section>
-    <p class="load-explain">A workout's <b>load</b> = minutes × intensity (a 90-min practice at effort 5 ≈ <b>450</b>). The strain score compares this week to your normal: <b>1.00 = exactly normal</b>.</p>
+    <p class="load-explain"><b>Load</b> = minutes × intensity · Strain score = this week ÷ your normal</p>
 
     <section class="card" id="homeAdvice">
       <div class="card-title">
-        <h2>Advice for today</h2>
+        <h2>Recovery</h2>
         <span class="meta" id="hRecoveryMeta"></span>
       </div>
       <p id="hRecoveryHeadline" class="recovery-headline"></p>
-      <p id="hRecoveryDetail" class="recovery-detail"></p>
+      <button type="button" class="chip" id="riceOpenBtn" hidden>🩹 Open recovery steps (RICE)</button>
       <div id="hRiceSteps" class="rice-steps" hidden></div>
     </section>
 
     
 
 
+    <button type="button" class="chip" id="homeLogChip" hidden>＋ Log a workout</button>
+
     <p class="flash" id="homeFlash"></p>
 
-    <p class="foot-note">Strain score = recent ÷ usual load (ACWR) · monitoring guide, not medical advice</p>
+    <p class="foot-note">Monitoring guide, not medical advice</p>
   </section>
 
   <!-- ================= LOG TAB ================= -->
@@ -526,7 +510,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     </section>
 
     <button class="chip" id="goMonitorChip" type="button">⌚ Or let the Watch log it for you — Monitor tab</button>
-    <button class="chip" id="sampleChip" type="button" hidden>🌱 Load a sample season (for testing)</button>
 
     <p class="home-hint" style="margin-top:12px">Workout from an earlier day? Use <b>Log a past session</b> on the Stats tab.</p>
   </section>
@@ -706,6 +689,16 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
     <p class="foot-note">Asclepius Watch (demo) — the real wrist device connects over Bluetooth with this same flow.</p>
   </section>
 
+  <div id="riceModal" class="modal" hidden>
+    <div class="modal-box">
+      <button id="riceClose" class="modal-x" aria-label="Close">&times;</button>
+      <h2>Recovery steps</h2>
+      <p class="modal-sub" id="riceModalSub"></p>
+      <div id="riceModalBody"></div>
+      <p class="modal-note">General guidance — see a professional if pain lasts over 48h.</p>
+    </div>
+  </div>
+  <button id="riceFab" class="rice-fab" type="button" aria-label="Recovery steps">🩹</button>
 </main>
 
 <footer id="appFoot" hidden>ACWR is a monitoring guide, not medical advice</footer>
@@ -736,7 +729,7 @@ function setSyncState(state,msg){
   p.textContent=state==='saving'?'☁ saving…':state==='err'?('⚠ '+msg).slice(0,26):'☁ synced';
 }
 function cloudReady(){return CLOUD_ENABLED&&sb&&Clerk.session&&cloudUser&&!cloudUnavailable;}
-function scheduleSync(){if(!cloudReady()||demoActive)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,800);}
+function scheduleSync(){if(!cloudReady())return;clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,800);}
 function entryRows(){
   const rows=[];
   for(const w of workouts)rows.push({id:w.id,kind:'w',entry_date:w.date,payload:{duration:w.duration,rpe:w.rpe,notes:w.notes||''},created:w.created||0,deleted:false});
@@ -802,7 +795,6 @@ async function onCloudSession(session){
   const u=Clerk.user;if(!u)return;
   cloudUser=u;
   const name=u.firstName||u.username||(u.primaryEmailAddress?u.primaryEmailAddress.emailAddress.split('@')[0]:'athlete');
-  if(demoActive)exitDemo();
   signedInName=name;localStorage.setItem(NAME_KEY,name);
   updateAuthUI();closeAuth();showApp();render();
   await syncNow();
@@ -818,9 +810,6 @@ let restDays=[];
 let chart=null;
 let lastSeries=[];
 let signedInName=null;
-let demoActive=false;
-let demoBackup=null;
-let currentDemoKey='rest';
 let statsRange=30;
 
 const $=id=>document.getElementById(id);
@@ -836,9 +825,9 @@ function todayStr(){return toISO(new Date());}
 function uid(){return 'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 
 function load(){try{workouts=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){workouts=[];}}
-function persist(){if(demoActive)return;localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));scheduleSync();}
+function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(workouts));scheduleSync();}
 function loadRest(){try{restDays=JSON.parse(localStorage.getItem(REST_KEY))||[];}catch(e){restDays=[];}}
-function persistRest(){if(demoActive)return;localStorage.setItem(REST_KEY,JSON.stringify(restDays));scheduleSync();}
+function persistRest(){localStorage.setItem(REST_KEY,JSON.stringify(restDays));scheduleSync();}
 
 function restDayStats(ctx){
   let total=0,unplanned=0,injury=0,soreness=0;
@@ -918,8 +907,7 @@ function computeRecovery(series,ctx){
   const out={headline:'',detail:'',rice:false};
   if(today.acwr===null){
     out.headline='Log your first workout to get personalized guidance.';
-    out.detail='Once you\u2019ve got a few sessions in, this will tell you when you\u2019re safe to push and when to back off — based on your actual training load.';
-    if(rest.unplanned)out.detail+=' You\u2019ve logged '+rest.unplanned+' unplanned rest day'+(rest.unplanned===1?'':'s')+' for soreness/injury — if it hurts, resting is the right call.';
+    out.detail='';
     return out;
   }
   if(z.key==='high'||(z.key==='optimal'&&highMono)||unplanned){
@@ -984,11 +972,13 @@ function renderRecovery(series){
   const z=zoneOf(today.acwr);
   const meta=z.key==='na'?'':z.label;
   const riceHtml=buildRiceHtml(out);
-  $('hRecoveryHeadline').textContent=out.headline;
-  $('hRecoveryDetail').textContent=out.detail;
+  if($('hRecoveryHeadline'))$('hRecoveryHeadline').textContent=out.headline;
   $('hRecoveryMeta').textContent=meta;
   const hRice=$('hRiceSteps');
-  if(riceHtml){hRice.innerHTML=riceHtml;hRice.hidden=false;}else{hRice.hidden=true;hRice.innerHTML='';}
+  const openBtn=$('riceOpenBtn');
+  if(riceHtml){hRice.innerHTML=riceHtml;hRice.hidden=false;openBtn.hidden=false;openBtn.textContent='🩹 Open recovery steps (RICE)';}
+  else{hRice.hidden=true;hRice.innerHTML='';openBtn.hidden=true;}
+  $('riceModalSub').textContent=out.headline||'General recovery guidance.';
   $('hAcuteVal').textContent=Math.round(today.acute);
   $('hChronicVal').textContent=Math.round(today.chronic);
 }
@@ -998,7 +988,7 @@ const homeTab=$('homeTab'),logTab=$('logTab'),statsTab=$('statsTab'),monitorTab=
 function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function pickHomeMessage(series){
   const today=series[series.length-1]||{acute:0,chronic:0,acwr:null};
-  if(today.acwr==null)return{h:'Log your first workout to see your strain score.',sub:'Every session sharpens the picture.'};
+  if(today.acwr==null)return{h:'Log your first workout to see your strain score.',sub:''};
   const z=zoneOf(today.acwr);
   const trend=computeTrend(series);
   const ms=monotonyAndStrain();
@@ -1041,12 +1031,6 @@ function renderHomeTab(series){
   $('readinessNum').textContent=today.acwr==null?'—':today.acwr.toFixed(2);
   $('readinessNum').classList.toggle('is-empty',today.acwr==null);
   $('readinessNum').style.color=(today.acwr==null||z.key==='under'||z.key==='na')?'var(--ink)':z.color;
-  const cap=$('scoreCap');
-  if(today.acwr==null)cap.textContent='your score shows up after your first workout';
-  else if(z.key==='under')cap.textContent='below your normal — body is fresh';
-  else if(z.key==='optimal')cap.textContent='this week matches what your body is used to';
-  else if(z.key==='elevated')cap.textContent='above your normal — go a bit lighter';
-  else cap.textContent='way above your normal — rest today';
   const tv=$('hTrendVal');
   const trend=computeTrend(series);
   if(trend===null){tv.textContent='—';tv.style.color='var(--ink)';$('hTrendSub').textContent='not enough history';}
@@ -1063,8 +1047,6 @@ function renderHomeTab(series){
   else{mk.style.display='';mk.style.left=Math.min(97,Math.max(3,today.acwr/2*100))+'%';}
   const msg=pickHomeMessage(series);
   $('homeMsg').textContent=msg.h;
-  $('homeMsgSub').textContent=msg.sub;
-  $('sampleChip').hidden=!!workouts.length||!!restDays.length;
 }
 function statTile(b,s,sm){return '<div class="tile"><b>'+b+'</b><span>'+s+'</span><small>'+sm+'</small></div>';}
 function waveSeg(p0,p1,p2,p3){
@@ -1296,16 +1278,6 @@ function syncRpe(){
 }
 rpeInput.addEventListener('input',syncRpe);
 
-function loadSampleSeason(){
-  if(workouts.length||restDays.length){flashMsg('Sample data can only be loaded on an empty tracker.',true);return;}
-  for(let i=28;i>=1;i--){
-    const d=addDays(new Date(),-i);
-    if(d.getDay()===0)continue;
-    workouts.push({id:uid(),date:toISO(d),duration:90,rpe:5,notes:'Practice',created:Date.now()-i*86400000});
-  }
-  persist();render();
-  flashMsg('Sample season loaded — '+workouts.length+' practices. Clear anytime with Clear All Data.');
-}
 
 histBody.addEventListener('click',e=>{
   const btn=e.target.closest('button[data-del]');
@@ -1334,58 +1306,6 @@ restBtn.addEventListener('click',()=>{
   flashMsg('Rest day logged ('+reason+'). No load added — ACWR unchanged.');
 });
 
-/* ===== Demo mode: fills the real app with sample data; exit restores yours (never persisted while active) ===== */
-const DEMO_LOADS={
-  recovered:[350,240,410,180,390,0,320,340,230,400,190,380,0,310,360,250,420,200,400,0,330,360,250,420,0,390,0,350,340,340],
-  semi:[210,140,260,120,240,0,200,220,150,270,130,250,0,210,230,160,280,140,260,0,210,246,262,361,312,394,0,344,377,369],
-  rest:[190,120,220,110,200,0,170,190,120,220,110,200,0,170,190,120,220,110,200,0,170,304,334,388,0,410,365,433,418,410]
-};
-const DEMO_REST={
-  recovered:[[3,'planned']],
-  semi:[],
-  rest:[[5,'injury']]
-};
-const DEMO_NOTES=['Hardwood practice','Sand workout','Strength + plyo','Mobility + easy jog','Jump session','Physio isometrics','Tempo run','Conditioning circuit'];
-function makeDemoData(scenario){
-  const loads=DEMO_LOADS[scenario];
-  const workouts=[];
-  loads.forEach((load,i)=>{
-    if(!load)return;
-    const rpe=load>=500?9:load>=400?8:load>=300?7:load>=200?6:4;
-    workouts.push({id:uid(),date:toISO(addDays(new Date(),-(29-i))),duration:Math.round(load/rpe),rpe,notes:DEMO_NOTES[i%DEMO_NOTES.length],created:Date.now()-(29-i)*86400000});
-  });
-  const restDays=(DEMO_REST[scenario]||[]).map(([ago,reason])=>({id:uid(),date:toISO(addDays(new Date(),-ago)),reason,created:Date.now()-ago*86400000}));
-  return{workouts,restDays};
-}
-function loadDemoScenario(key){
-  currentDemoKey=key;
-  if(!demoActive){demoBackup={workouts,restDays};demoActive=true;}
-  $('demoBtn').textContent='Exit demo';
-  $('demoBar').hidden=false;
-  document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.classList.toggle('on',b.dataset.demo===key));
-  const d=makeDemoData(key);
-  workouts=d.workouts;
-  restDays=d.restDays;
-  render();
-  showTab('home');
-  const fe=(document.getElementById('logTab')&&!document.getElementById('logTab').hidden)?logFlashMsg:homeFlashMsg;
-  fe('Demo data loaded — exit anytime to get your own data back.');
-}
-function enterDemo(){loadDemoScenario(currentDemoKey);}
-function exitDemo(){
-  if(!demoActive)return;
-  demoActive=false;
-  workouts=demoBackup.workouts;
-  restDays=demoBackup.restDays;
-  demoBackup=null;
-  $('demoBtn').textContent='Demo';
-  $('demoBar').hidden=true;
-  persist();persistRest();
-  render();
-  showTab('home');
-  const fx=(document.getElementById('logTab')&&!document.getElementById('logTab').hidden)?logFlashMsg:homeFlashMsg;
-  fx('Demo closed — your own data is back.');
-}
 
 $('clearBtn').addEventListener('click',()=>{
   if(!workouts.length&&!restDays.length)return;
@@ -1440,8 +1360,6 @@ navLinks.forEach(a=>{
   });
 });
 
-$('demoBtn').addEventListener('click',()=>{showApp();if(demoActive){exitDemo();}else{enterDemo();}});
-[$('tryDemoBtn'),$('tryDemoBtn2')].forEach(b=>b.addEventListener('click',()=>{showApp();enterDemo();}));
 
 /* ===== Home & Log tab interactions ===== */
 function syncHomePreview(){$('hRpeVal').textContent=$('hRpe').value;$('hLoadPreview').textContent='= '+Math.round(($('hDur').value||0)*$('hRpe').value)+' points';}
@@ -1468,14 +1386,20 @@ $('homeLogForm').addEventListener('submit',e=>{
   syncHomePreview();
   logFlashMsg('Workout saved — '+duration+' min × '+rpe+'. Your strain score is updated.');
 });
-$('sampleChip').addEventListener('click',()=>{
-  loadSampleSeason();
-  logFlashMsg('Sample season loaded — log a big session to watch the spike.');
-});
 $('goMonitorChip').addEventListener('click',()=>showTab('monitor'));
+const homeLogChip=$('homeLogChip');
+homeLogChip.hidden=false;
+homeLogChip.addEventListener('click',()=>{showTab('log');});
+function openRice(){
+  const m=$('riceModal'),body=$('riceModalBody'),hRice=$('hRiceSteps');
+  body.innerHTML=hRice.innerHTML||RICE_STEPS.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
+  m.hidden=false;
+}
+$('riceFab').addEventListener('click',openRice);
+$('riceOpenBtn').addEventListener('click',openRice);
+$('riceClose').addEventListener('click',()=>{$('riceModal').hidden=true;});
+$('riceModal').addEventListener('click',e=>{if(e.target===$('riceModal'))$('riceModal').hidden=true;});
 document.querySelectorAll('.top-tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
-document.querySelectorAll('.dchip[data-demo]').forEach(b=>b.addEventListener('click',()=>loadDemoScenario(b.dataset.demo)));
-$('demoExitBtn').addEventListener('click',exitDemo);
 
 /* ===== UI theme switch (presentation only — no logic touched) ===== */
 
@@ -1555,7 +1479,6 @@ authForm.addEventListener('submit',e=>{
     if(taken){authFlash.textContent='That name is already registered — log in instead.';return;}
     accounts.push(name);
     saveAccounts(accounts);
-    if(demoActive)exitDemo();
     persist();persistRest();
     signedInName=name;
     localStorage.setItem(NAME_KEY,name);
