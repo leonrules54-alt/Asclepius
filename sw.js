@@ -1,7 +1,7 @@
 /* Asclepius service worker — offline-first app shell */
 /* Bump the version on every content change — otherwise returning visitors
    (and installed PWAs) keep the stale cached app forever. */
-const CACHE = 'asclepius-v54';
+const CACHE = 'asclepius-v55';
 const ASSETS = [
   './',
   './index.html',
@@ -34,7 +34,7 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request)
+      fetch(e.request, { cache: 'no-store' })
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, copy));
