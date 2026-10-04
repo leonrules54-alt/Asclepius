@@ -1541,7 +1541,7 @@ function alarmBeep(){
     if(!AC)return;
     if(!monAlarm.ctx)monAlarm.ctx=new AC();
     const c=monAlarm.ctx;
-    if(c.state==='suspended')c.resume();
+    if(c.state!=='running')c.resume();
     const t=c.currentTime;
     [880,660].forEach((f,i)=>{
       const o=c.createOscillator(),g=c.createGain(),s=t+i*0.17;
@@ -1553,6 +1553,17 @@ function alarmBeep(){
       o.start(s);o.stop(s+0.16);
     });
   }catch(e){/* audio waits for a user gesture — visuals still alarm */}
+}
+function alarmAudioUnlock(){
+  // Mobile browsers only start an AudioContext inside a real tap, so create
+  // and resume it on the Connect/Start taps — later beeps from the timer
+  // then play on iOS/Android instead of staying silently suspended.
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    if(!monAlarm.ctx)monAlarm.ctx=new AC();
+    if(monAlarm.ctx.state!=='running')monAlarm.ctx.resume();
+  }catch(e){}
 }
 function monAlarmRaise(msg){
   $('monAlarmText').textContent=msg;
@@ -1684,9 +1695,10 @@ function ensureHrChart(){
     }
   });
 }
-$('monConnectBtn').addEventListener('click',()=>{if(!monGate(true))return;startMonitorScan();});
+$('monConnectBtn').addEventListener('click',()=>{if(!monGate(true))return;alarmAudioUnlock();startMonitorScan();});
 $('monAlarmSilence').addEventListener('click',monAlarmSilence);
 function connectToDevice(device){
+  alarmAudioUnlock();
   mon.source=device;
   monShow('connected');
   monResetSession();
@@ -1698,6 +1710,7 @@ function connectToDevice(device){
 }
 $('monStartBtn').addEventListener('click',()=>{
   if(mon.active)return;
+  alarmAudioUnlock();
   monResetSession();
   mon.active=true;
   monShow('connected');
