@@ -301,6 +301,9 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .mon-alarm .ma-text{flex:1;line-height:1.4}
 .mon-alarm .ma-btn{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;cursor:pointer;flex:0 0 auto}
 .mon-alarm .ma-btn:hover{background:var(--yellow)}
+.mon-alarm{flex-wrap:wrap}
+.mon-alarm .ma-hint{flex:1 0 100%;margin-top:6px;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);padding:4px 8px;font-size:.66rem;font-weight:700;text-align:center}
+.mon-alarm .ma-hint[hidden]{display:none}
 body.alarm-on::after{content:"";position:fixed;inset:0;z-index:90;pointer-events:none;box-shadow:inset 0 0 140px 45px rgba(214,0,0,.85);animation:alarmPulse .55s ease-in-out infinite alternate}
 @keyframes alarmPulse{from{opacity:.3}to{opacity:1}}
 body.alarm-on #monConnected{animation:alarmShake .26s linear infinite}
@@ -639,7 +642,7 @@ body.alarm-on .mon-hr-num{color:#D60000}
       </div>
 
       <div id="monConnected" hidden>
-        <div class="mon-alarm" id="monAlarm" hidden><span class="ma-icon">⚠️</span><span class="ma-text" id="monAlarmText"></span><button type="button" class="ma-btn" id="monAlarmSilence">Silence</button></div>
+        <div class="mon-alarm" id="monAlarm" hidden><span class="ma-icon">⚠️</span><span class="ma-text" id="monAlarmText"></span><button type="button" class="ma-btn" id="monAlarmSilence">Silence</button><span class="ma-hint" id="maSoundHint" hidden>🔇 Tap anywhere to turn the sound on</span></div>
         <div class="mon-hr">
           <span class="mon-hr-num" id="monHrNum">—</span>
           <span class="mon-hr-unit">BPM</span>
@@ -1537,6 +1540,7 @@ const ALARM_SECS=45*60;    // one session should not run past 45 minutes
 const monAlarm={on:false,silenced:false,beep:null,ctx:null};
 function alarmBeep(){
   try{
+    if(navigator.vibrate)navigator.vibrate(150);
     const AC=window.AudioContext||window.webkitAudioContext;
     if(!AC)return;
     if(!monAlarm.ctx)monAlarm.ctx=new AC();
@@ -1562,7 +1566,26 @@ function alarmAudioUnlock(){
     const AC=window.AudioContext||window.webkitAudioContext;
     if(!AC)return;
     if(!monAlarm.ctx)monAlarm.ctx=new AC();
-    if(monAlarm.ctx.state!=='running')monAlarm.ctx.resume();
+    if(monAlarm.ctx.state!=='running'){const r=monAlarm.ctx.resume();if(r&&r.catch)r.catch(()=>{});}
+  }catch(e){}
+  alarmUnlockMedia();
+}
+function alarmUnlockMedia(){
+  // iOS also wants a real media element play() inside the tap to arm audio output
+  try{
+    if(!monAlarm.media){
+      const b=new Uint8Array(52),dv=new DataView(b.buffer);
+      const wr=(o,s)=>{for(let i=0;i<s.length;i++)b[o+i]=s.charCodeAt(i);};
+      wr(0,'RIFF');dv.setUint32(4,44,true);wr(8,'WAVE');wr(12,'fmt ');
+      dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);
+      dv.setUint32(24,8000,true);dv.setUint32(28,8000,true);
+      dv.setUint16(32,1,true);dv.setUint16(34,8,true);
+      wr(36,'data');dv.setUint32(40,8,true);b.fill(128,44,52);
+      monAlarm.media=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));
+      monAlarm.media.volume=0.01;
+    }
+    const p=monAlarm.media.play();
+    if(p&&p.catch)p.catch(()=>{});
   }catch(e){}
 }
 function monAlarmRaise(msg){
@@ -1604,7 +1627,13 @@ function monAlarmCheck(){
   if(!msg){monAlarmClear();return;}
   if(monAlarm.silenced)return;
   monAlarmRaise(msg);
+  // live sound-lock hint: if mobile audio never unlocked, a tap anywhere fixes it
+  $('maSoundHint').hidden=!!(monAlarm.ctx&&monAlarm.ctx.state==='running');
 }
+['pointerup','touchend','keydown'].forEach(ev=>document.addEventListener(ev,{
+  // any real tap re-arms mobile audio (iOS ignores resume calls from timers)
+  handleEvent(){if(monAlarm.ctx&&monAlarm.ctx.state!=='running'){const r=monAlarm.ctx.resume();if(r&&r.catch)r.catch(()=>{});}}
+},true));
 function monTick(){
   if(mon.active){
     mon.secs++;
