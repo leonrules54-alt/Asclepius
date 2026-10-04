@@ -199,6 +199,13 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .chip[hidden]{display:none}
 .demo-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:2px dashed var(--ink);background:var(--yellow);padding:8px 12px;margin-bottom:14px;font-size:.72rem;font-weight:600}
 .demo-banner .db-actions{display:flex;gap:6px}
+.demo-opts{display:grid;gap:8px}
+.demo-opt{display:grid;grid-template-columns:14px 1fr;gap:2px 10px;align-items:center;border:2px solid var(--ink);background:#fff;font-family:inherit;text-align:left;padding:11px 12px;cursor:pointer;transition:transform .08s}
+.demo-opt:hover{background:var(--yellow)}
+.demo-opt:active{transform:translate(2px,2px)}
+.demo-opt i{grid-row:1/3;align-self:center;width:14px;height:14px;border-radius:50%;border:2px solid var(--ink)}
+.demo-opt b{font-size:.85rem}
+.demo-opt span{grid-column:2;font-size:.7rem;color:var(--muted);line-height:1.35}
 .modal-box .rice-steps{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 4px}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stats-row .stat{padding:12px 10px}
@@ -333,7 +340,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   <div class="nav-links">
     <a href="#about" id="aboutLink">About</a>
   </div>
-  <button id="demoNavBtn" class="btn btn-sm" hidden>Demo</button>
+  <button id="demoNavBtn" class="btn btn-sm">Demo</button>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
   <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
@@ -412,8 +419,8 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
       <span id="greetDate">—</span>
     </div>
     <div class="demo-banner" id="demoBanner" hidden>
-      <span>👀 Demo preview — sample data, nothing is saved.</span>
-      <span class="db-actions"><button type="button" class="btn btn-sm" id="demoSignupBtn">Sign up to keep it</button><button type="button" class="btn btn-sm" id="demoExitBtn">Exit</button></span>
+      <span id="demoBannerTxt">👀 Demo preview — sample data, nothing is saved.</span>
+      <span class="db-actions"><button type="button" class="btn btn-sm" id="demoExitBtn">Exit</button></span>
     </div>
 
 
@@ -667,6 +674,19 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
   </div>
 </main>
 
+  <div id="demoModal" class="modal" hidden>
+    <div class="modal-box">
+      <button id="demoClose" class="modal-x" aria-label="Close">&times;</button>
+      <h2>Try the demo</h2>
+      <p class="modal-sub">Pick a sample season to explore — four weeks of data you can play with, never saved.</p>
+      <div class="demo-opts">
+        <button type="button" class="demo-opt" data-profile="healthy"><i style="background:#00A63E"></i><b>Healthy</b><span>Steady balanced training — safe zone, ACWR around 1.0</span></button>
+        <button type="button" class="demo-opt" data-profile="between"><i style="background:#E65C00"></i><b>In between</b><span>Load creeping up — ease-off zone, ACWR around 1.4</span></button>
+        <button type="button" class="demo-opt" data-profile="needsrest"><i style="background:#D60000"></i><b>Needs rest</b><span>Hard spike plus a soreness day — high risk, ACWR around 1.6</span></button>
+      </div>
+      <p class="modal-note">Sample data only — Demo never touches your real logs.</p>
+    </div>
+  </div>
 <footer id="appFoot" hidden>ACWR is a monitoring guide, not medical advice</footer>
 
 <script>
@@ -1216,12 +1236,19 @@ function init(){
   if(CLOUD_ENABLED)initCloud();
 }
 
-function loadSampleSeason(){
-  for(let i=28;i>=1;i--){
+const SAMPLE_META={healthy:'Healthy',between:'In between',needsrest:'Needs rest'};
+const SAMPLE_TPL={healthy:[null,[60,4],[45,3],[75,5],[60,4],[90,5],[90,6]],between:[null,[70,4],[70,4],[70,4],[70,4],[70,4],[90,5]],needsrest:[null,[70,4],[70,4],[70,4],[70,4],[70,4],[90,5]]};
+const SAMPLE_WEEK={healthy:null,between:[[110,6],[110,6],[110,6],[110,6],[110,6],[110,6],[110,6]],needsrest:[[140,8],[140,8],[140,8],null,[140,8],[140,8],[140,8]]};
+function loadSampleSeason(profile){
+  const tpl=SAMPLE_TPL[profile]||SAMPLE_TPL.healthy;
+  const week=SAMPLE_WEEK[profile]||null;
+  for(let i=28;i>=0;i--){
     const d=addDays(new Date(),-i);
-    if(d.getDay()===0)continue;
-    workouts.push({id:uid(),date:toISO(d),duration:90,rpe:5,notes:'Sample practice',created:Date.now()-i*86400000});
+    const s=week&&i<7?week[i]:tpl[d.getDay()];
+    if(!s)continue;
+    workouts.push({id:uid(),date:toISO(d),duration:s[0],rpe:s[1],notes:'Sample practice',created:Date.now()-i*86400000});
   }
+  if(profile==='needsrest')restDays.push({id:uid(),date:toISO(addDays(new Date(),-3)),reason:'soreness',created:Date.now()-3*86400000});
 }
 
 /* ===== Welcome / app views ===== */
@@ -1229,9 +1256,14 @@ const welcomeView=$('welcome'),appView=$('appView'),appFoot=$('appFoot');
 function syncNav(){document.body.classList.toggle('on-welcome',!welcomeView.hidden);}
 let previewMode=false;
 function syncChrome(){document.body.classList.toggle('authed',!!signedInName||previewMode);}
-function enterPreview(){
-  if(!workouts.length&&!restDays.length)loadSampleSeason();
+function openDemoPicker(){$('demoModal').hidden=false;}
+function closeDemoPicker(){$('demoModal').hidden=true;}
+function enterPreview(profile){
+  if(!SAMPLE_META[profile])profile='healthy';
+  workouts=[];restDays=[];
+  loadSampleSeason(profile);
   previewMode=true;
+  $('demoBannerTxt').textContent='👀 Demo preview — '+SAMPLE_META[profile]+' sample season, nothing is saved.';
   $('demoBanner').hidden=false;
   syncChrome();
   showApp();
@@ -1352,13 +1384,15 @@ function openAuth(mode){
 function closeAuth(){authModal.hidden=true;authFlash.textContent='';authForm.reset();}
 authBtn.addEventListener('click',()=>openAuth());
 [$('openSignupBtn'),$('openSignupBtn2')].forEach(b=>b.addEventListener('click',()=>openAuth('signup')));
-[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',enterPreview));
-$('demoNavBtn').addEventListener('click',enterPreview);
-$('demoSignupBtn').addEventListener('click',()=>openAuth('signup'));
+[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',openDemoPicker));
+$('demoNavBtn').addEventListener('click',openDemoPicker);
 $('demoExitBtn').addEventListener('click',exitPreview);
+$('demoClose').addEventListener('click',closeDemoPicker);
+$('demoModal').addEventListener('click',e=>{if(e.target===$('demoModal'))closeDemoPicker();});
+document.querySelectorAll('.demo-opt').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.profile;closeDemoPicker();enterPreview(p);}));
 authClose.addEventListener('click',closeAuth);
 authModal.addEventListener('click',e=>{if(e.target===authModal)closeAuth();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuth();closeDemoPicker();}});
 
 function updateAuthUI(){
   if(signedInName){
@@ -1371,7 +1405,6 @@ function updateAuthUI(){
     $('userChip').hidden=true;
     document.body.classList.remove('signed-in');
   }
-  $('demoNavBtn').hidden=!!signedInName;
   syncChrome();
 }
 
