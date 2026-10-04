@@ -1303,7 +1303,10 @@ $('homeLogForm').addEventListener('submit',e=>{
   syncHomePreview();
   logFlashMsg('Workout saved — '+duration+' min × '+rpe+'. Your strain score is updated.');
 });
-$('goMonitorChip').addEventListener('click',()=>showTab('monitor'));
+$('goMonitorChip').addEventListener('click',()=>{
+  if(!monGate(true))return;
+  showTab('monitor');
+});
 function openRice(){
   const m=$('riceModal'),body=$('riceModalBody'),hRice=$('hRiceSteps');
   body.innerHTML=hRice.innerHTML||RICE_STEPS.map(s=>'<div class="rice-step"><b>'+s.k+'</b><span>'+s.d+'</span></div>').join('');
@@ -1312,7 +1315,11 @@ function openRice(){
 $('riceOpenBtn').addEventListener('click',openRice);
 $('riceClose').addEventListener('click',()=>{$('riceModal').hidden=true;});
 $('riceModal').addEventListener('click',e=>{if(e.target===$('riceModal'))$('riceModal').hidden=true;});
-document.querySelectorAll('.top-tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.querySelectorAll('.top-tabs button').forEach(b=>b.addEventListener('click',()=>{
+  const tab=b.dataset.tab;
+  if(tab==='monitor'&&!monGate(true))return;
+  showTab(tab);
+}));
 
 /* ===== UI theme switch (presentation only — no logic touched) ===== */
 
@@ -1420,9 +1427,19 @@ $('syncPill').addEventListener('click',()=>{if($('syncPill').classList.contains(
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
    Real wrist HR devices (Web Bluetooth) would slot into startMonitorScan() — same UI flow. */
 const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,chart:null,source:null};
-const DEVICE_LIST=[['iPhone 15 Pro','iphone-15-pro','iOS 17.2'],['iPhone SE','iphone-se','iOS 17.2'],['MacBook Pro 16","macbook-16','macOS 14'],['Pixel 8 Pro','android-pixel8pro','Android 14']];
+const DEVICE_LIST=[['iPhone 15 Pro','iphone-15-pro','iOS 17.2'],['iPhone SE','iphone-se','iOS 17.2'],['MacBook Pro 16','macbook-16','macOS 14'],['ThinkPad X1 Carbon','windows-thinkpad-x1','Windows 11'],['Pixel 8 Pro','android-pixel8pro','Android 14'],['Dell XPS 15','windows-dell-xps15','Windows 11'],['Surface Laptop 5','windows-surface-laptop5','Windows 11'],['Sony Xperia 1 IV','android-sony-xperia-1iv','Android 14']];
 // mock devices each emit a different real-world curve (iphone: 70→~100→150, mac: rest+small steps, android: faster rise + occasional spike)
-const MOCK_DEVICES=['iPhone 15 Pro','iPhone SE','MacBook Pro 16','Pixel 8 Pro'];
+const MOCK_DEVICES=['iPhone 15 Pro','iPhone SE','MacBook Pro 16','ThinkPad X1 Carbon','Pixel 8 Pro','Dell XPS 15','Surface Laptop 5','Sony Xperia 1 IV'];
+function monGate(requireAuth){
+  // Gate the monitor: only signed-in users or demo-preview visitors can reach it.
+  // Signed-out visitors who try to open it get the sign-in modal instead.
+  if(!requireAuth)return;
+  if(!signedInName&&!previewMode){
+    openAuth('signup');
+    return false;
+  }
+  return true;
+}
 function newDevice(label,key,mesh){
   const d={label:label,key:key,type:'mock',_t:0,timer:null,phase:'idle',battery:85,mesh:mesh||'online'};
   d.timer=setInterval(()=>{d._t+=0.05;d.phase='reading';},200);
@@ -1562,7 +1579,7 @@ function ensureHrChart(){
     }
   });
 }
-$('monConnectBtn').addEventListener('click',()=>{startMonitorScan();});
+$('monConnectBtn').addEventListener('click',()=>{if(!monGate(true))return;startMonitorScan();});
 function connectToDevice(device){
   mon.source=device;
   monShow('connected');
