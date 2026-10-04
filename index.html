@@ -1420,9 +1420,9 @@ $('syncPill').addEventListener('click',()=>{if($('syncPill').classList.contains(
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
    Real wrist HR devices (Web Bluetooth) would slot into startMonitorScan() — same UI flow. */
 const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,chart:null,source:null};
-const DEVICE_LIST=[['iPhone 15 Pro','iphone-15-pro','iOS 17.2'],['iPhone SE','iphone-se','iOS 17.2']];
+const DEVICE_LIST=[['iPhone 15 Pro','iphone-15-pro','iOS 17.2'],['iPhone SE','iphone-se','iOS 17.2'],['MacBook Pro 16","macbook-16','macOS 14'],['Pixel 8 Pro','android-pixel8pro','Android 14']];
 // mock devices each emit a different real-world curve (iphone: 70→~100→150, mac: rest+small steps, android: faster rise + occasional spike)
-const MOCK_DEVICES=['iPhone 15 Pro','iPhone SE'];
+const MOCK_DEVICES=['iPhone 15 Pro','iPhone SE','MacBook Pro 16','Pixel 8 Pro'];
 function newDevice(label,key,mesh){
   const d={label:label,key:key,type:'mock',_t:0,timer:null,phase:'idle',battery:85,mesh:mesh||'online'};
   d.timer=setInterval(()=>{d._t+=0.05;d.phase='reading';},200);
