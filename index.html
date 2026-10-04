@@ -296,6 +296,16 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 /* ===== UI THEME SWITCH (shared control) ===== */
 
 /* ===== Monitor tab ===== */
+.mon-alarm{display:flex;align-items:center;gap:10px;background:#D60000;color:#fff;border:2px solid var(--ink);padding:10px 12px;margin:0 0 12px;font-size:.78rem;font-weight:700;box-shadow:0 0 0 3px rgba(214,0,0,.35)}
+.mon-alarm[hidden]{display:none}
+.mon-alarm .ma-text{flex:1;line-height:1.4}
+.mon-alarm .ma-btn{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:700;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;cursor:pointer;flex:0 0 auto}
+.mon-alarm .ma-btn:hover{background:var(--yellow)}
+body.alarm-on::after{content:"";position:fixed;inset:0;z-index:90;pointer-events:none;box-shadow:inset 0 0 140px 45px rgba(214,0,0,.85);animation:alarmPulse .55s ease-in-out infinite alternate}
+@keyframes alarmPulse{from{opacity:.3}to{opacity:1}}
+body.alarm-on #monConnected{animation:alarmShake .26s linear infinite}
+@keyframes alarmShake{0%,100%{transform:translate(0,0)}20%{transform:translate(-2px,1px)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,-2px)}80%{transform:translate(1px,2px)}}
+body.alarm-on .mon-hr-num{color:#D60000}
 /* Device scan results */
 .device-list{display:flex;flex-direction:column;gap:8px}
 .device-chip{border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;padding:10px 12px;width:100%;text-align:left}
@@ -629,6 +639,7 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
       </div>
 
       <div id="monConnected" hidden>
+        <div class="mon-alarm" id="monAlarm" hidden><span class="ma-icon">⚠️</span><span class="ma-text" id="monAlarmText"></span><button type="button" class="ma-btn" id="monAlarmSilence">Silence</button></div>
         <div class="mon-hr">
           <span class="mon-hr-num" id="monHrNum">—</span>
           <span class="mon-hr-unit">BPM</span>
@@ -1483,6 +1494,7 @@ function monShow(phase){
   $('monStatusMeta').classList.toggle('on',phase==='connected'||phase==='done');
 }
 function monResetSession(){
+  monAlarmClear();
   mon.secs=0;mon.peak=0;mon.calories=0;mon.history=[];mon.pending=[];
   $('monElapsed').textContent='0:00';
   $('monCals').textContent='0';
@@ -1518,12 +1530,77 @@ function monEstimateIntensity(bpm){
   const age=17,hrMax=220-age,rest=62;
   return Math.min(10,Math.max(1,1+9*(bpm-rest)/(hrMax-rest)));
 }
+/* Session alarm — fires when live intensity, session duration, or today's
+   ACWR vs your own history says this session has gone too far. */
+const ALARM_INTENSITY=5.5; // 1-10 scale ≈ 133 BPM at the app's age-17 HRmax estimate
+const ALARM_SECS=45*60;    // one session should not run past 45 minutes
+const monAlarm={on:false,silenced:false,beep:null,ctx:null};
+function alarmBeep(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    if(!monAlarm.ctx)monAlarm.ctx=new AC();
+    const c=monAlarm.ctx;
+    if(c.state==='suspended')c.resume();
+    const t=c.currentTime;
+    [880,660].forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain(),s=t+i*0.17;
+      o.type='square';o.frequency.value=f;
+      g.gain.setValueAtTime(0.001,s);
+      g.gain.exponentialRampToValueAtTime(0.2,s+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,s+0.14);
+      o.connect(g);g.connect(c.destination);
+      o.start(s);o.stop(s+0.16);
+    });
+  }catch(e){/* audio waits for a user gesture — visuals still alarm */}
+}
+function monAlarmRaise(msg){
+  $('monAlarmText').textContent=msg;
+  if(monAlarm.on)return;
+  monAlarm.on=true;monAlarm.silenced=false;
+  $('monAlarm').hidden=false;
+  document.body.classList.add('alarm-on');
+  if(!monAlarm.beep){alarmBeep();monAlarm.beep=setInterval(alarmBeep,1400);}
+}
+function monAlarmClear(){
+  monAlarm.on=false;monAlarm.silenced=false;
+  $('monAlarm').hidden=true;
+  document.body.classList.remove('alarm-on');
+  if(monAlarm.beep){clearInterval(monAlarm.beep);monAlarm.beep=null;}
+}
+function monAlarmSilence(){
+  // stays quiet until the triggering condition clears, then re-arms
+  monAlarm.silenced=true;
+  if(monAlarm.beep){clearInterval(monAlarm.beep);monAlarm.beep=null;}
+  document.body.classList.remove('alarm-on');
+  $('monAlarm').hidden=true;
+}
+function monAlarmReason(){
+  const s=ewmaSeries(),t=s[s.length-1];
+  if(t&&t.acwr!==null&&t.acwr>=1.5)return 'Strain score is already High risk (ACWR '+t.acwr.toFixed(2)+') — end the session and rest.';
+  const est=mon.hr?monEstimateIntensity(mon.hr):0;
+  if(est>=ALARM_INTENSITY)return 'Intensity too high — '+mon.hr+' BPM at '+Math.round(est)+'/10. Ease off before you redline.';
+  const mins=Math.max(1,Math.round(mon.secs/60));
+  const p=ewmaSeries({workouts:workouts.concat([{id:'__alarm',date:todayStr(),duration:mins,rpe:Math.max(1,Math.round(est)||1),created:Date.now()}])});
+  const pt=p[p.length-1];
+  if(pt&&pt.acwr!==null&&pt.acwr>=1.5)return 'At '+mins+' min this session would push your strain score to '+pt.acwr.toFixed(2)+' (High risk) — wrap it up.';
+  if(mon.secs>=ALARM_SECS)return Math.round(mon.secs/60)+' minutes straight — long enough for one session. Cool down.';
+  return null;
+}
+function monAlarmCheck(){
+  if(!mon.active){monAlarmClear();return;}
+  const msg=monAlarmReason();
+  if(!msg){monAlarmClear();return;}
+  if(monAlarm.silenced)return;
+  monAlarmRaise(msg);
+}
 function monTick(){
   if(mon.active){
     mon.secs++;
     const m=Math.floor(mon.secs/60),s=mon.secs%60;
     $('monElapsed').textContent=m+':'+String(s).padStart(2,'0');
     monSetHr(mon.source ? mon.source.getValue() : 70);
+    monAlarmCheck();
   }else{
     // connected, not logging: realistic resting heartbeat, no totals accumulating
     monSetHr(mon.source ? mon.source.getValue() : 70);
@@ -1608,6 +1685,7 @@ function ensureHrChart(){
   });
 }
 $('monConnectBtn').addEventListener('click',()=>{if(!monGate(true))return;startMonitorScan();});
+$('monAlarmSilence').addEventListener('click',monAlarmSilence);
 function connectToDevice(device){
   mon.source=device;
   monShow('connected');
@@ -1638,6 +1716,7 @@ $('monStartBtn').addEventListener('click',()=>{
   homeFlashMsg('Recording — the monitor is now tracking your session.');
 });
 function endMonitorSession(){
+  monAlarmClear();
   mon.active=false;monDotBeat(false);
   const avg=mon.history.length?Math.round(mon.history.reduce((a,b)=>a+b,0)/mon.history.length):0;
   const est=Math.round(monEstimateIntensity(avg||120));
