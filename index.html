@@ -1537,10 +1537,11 @@ function monEstimateIntensity(bpm){
    ACWR vs your own history says this session has gone too far. */
 const ALARM_INTENSITY=5.5; // 1-10 scale ≈ 133 BPM at the app's age-17 HRmax estimate
 const ALARM_SECS=45*60;    // one session should not run past 45 minutes
-const monAlarm={on:false,silenced:false,beep:null,ctx:null};
+const monAlarm={on:false,silenced:false,beep:null,ctx:null,media:null,soundOk:false};
 function alarmBeep(){
+  try{if(navigator.vibrate)navigator.vibrate(150);}catch(e){}
+  if(monAlarm.soundOk)return; // looping <audio> does the rhythm and ignores the iOS silent switch
   try{
-    if(navigator.vibrate)navigator.vibrate(150);
     const AC=window.AudioContext||window.webkitAudioContext;
     if(!AC)return;
     if(!monAlarm.ctx)monAlarm.ctx=new AC();
@@ -1570,23 +1571,46 @@ function alarmAudioUnlock(){
   }catch(e){}
   alarmUnlockMedia();
 }
+function alarmSoundEl(){
+  // 1.4s loopable WAV: a 0.15s 880Hz chirp then silence = one chirp per beep cycle.
+  // Played through <audio> (media session) so it is audible on an iPhone on silent.
+  if(monAlarm.media)return monAlarm.media;
+  const N=11200,b=new Uint8Array(44+N),dv=new DataView(b.buffer);
+  const wr=(o,s)=>{for(let i=0;i<s.length;i++)b[o+i]=s.charCodeAt(i);};
+  wr(0,'RIFF');dv.setUint32(4,36+N,true);wr(8,'WAVE');wr(12,'fmt ');
+  dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);
+  dv.setUint32(24,8000,true);dv.setUint32(28,8000,true);
+  dv.setUint16(32,1,true);dv.setUint16(34,8,true);
+  wr(36,'data');dv.setUint32(40,N,true);
+  for(let i=0;i<N;i++){
+    const t=i/8000;
+    b[44+i]=t<0.15?((Math.floor(t*1760)%2)?88:168):128;
+  }
+  monAlarm.media=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));
+  monAlarm.media.loop=true;
+  monAlarm.media.volume=0.01;
+  return monAlarm.media;
+}
 function alarmUnlockMedia(){
-  // iOS also wants a real media element play() inside the tap to arm audio output
+  // play it quietly inside the Connect/Start tap so iOS allows it to play later
   try{
-    if(!monAlarm.media){
-      const b=new Uint8Array(52),dv=new DataView(b.buffer);
-      const wr=(o,s)=>{for(let i=0;i<s.length;i++)b[o+i]=s.charCodeAt(i);};
-      wr(0,'RIFF');dv.setUint32(4,44,true);wr(8,'WAVE');wr(12,'fmt ');
-      dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);
-      dv.setUint32(24,8000,true);dv.setUint32(28,8000,true);
-      dv.setUint16(32,1,true);dv.setUint16(34,8,true);
-      wr(36,'data');dv.setUint32(40,8,true);b.fill(128,44,52);
-      monAlarm.media=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));
-      monAlarm.media.volume=0.01;
-    }
-    const p=monAlarm.media.play();
-    if(p&&p.catch)p.catch(()=>{});
+    const m=alarmSoundEl();
+    const p=m.play();
+    if(p&&p.catch)p.then(()=>{m.pause();m.currentTime=0;}).catch(()=>{});
   }catch(e){}
+}
+function alarmSoundPlay(){
+  try{
+    const m=alarmSoundEl();
+    m.volume=0.55;m.currentTime=0;
+    const p=m.play();
+    if(p&&p.catch)p.then(()=>{monAlarm.soundOk=true;}).catch(()=>{monAlarm.soundOk=false;});
+    else monAlarm.soundOk=true;
+  }catch(e){monAlarm.soundOk=false;}
+}
+function alarmSoundStop(){
+  monAlarm.soundOk=false;
+  try{if(monAlarm.media){monAlarm.media.pause();monAlarm.media.currentTime=0;}}catch(e){}
 }
 function monAlarmRaise(msg){
   $('monAlarmText').textContent=msg;
@@ -1594,10 +1618,12 @@ function monAlarmRaise(msg){
   monAlarm.on=true;monAlarm.silenced=false;
   $('monAlarm').hidden=false;
   document.body.classList.add('alarm-on');
+  alarmSoundPlay();
   if(!monAlarm.beep){alarmBeep();monAlarm.beep=setInterval(alarmBeep,1400);}
 }
 function monAlarmClear(){
   monAlarm.on=false;monAlarm.silenced=false;
+  alarmSoundStop();
   $('monAlarm').hidden=true;
   document.body.classList.remove('alarm-on');
   if(monAlarm.beep){clearInterval(monAlarm.beep);monAlarm.beep=null;}
@@ -1605,6 +1631,7 @@ function monAlarmClear(){
 function monAlarmSilence(){
   // stays quiet until the triggering condition clears, then re-arms
   monAlarm.silenced=true;
+  alarmSoundStop();
   if(monAlarm.beep){clearInterval(monAlarm.beep);monAlarm.beep=null;}
   document.body.classList.remove('alarm-on');
   $('monAlarm').hidden=true;
@@ -1628,7 +1655,7 @@ function monAlarmCheck(){
   if(monAlarm.silenced)return;
   monAlarmRaise(msg);
   // live sound-lock hint: if mobile audio never unlocked, a tap anywhere fixes it
-  $('maSoundHint').hidden=!!(monAlarm.ctx&&monAlarm.ctx.state==='running');
+  $('maSoundHint').hidden=!!(monAlarm.soundOk||(monAlarm.ctx&&monAlarm.ctx.state==='running'));
 }
 ['pointerup','touchend','keydown'].forEach(ev=>document.addEventListener(ev,{
   // any real tap re-arms mobile audio (iOS ignores resume calls from timers)
