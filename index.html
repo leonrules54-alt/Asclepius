@@ -615,6 +615,8 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
       <div id="monLoading" hidden>
         <div class="mon-loading"><span></span><span></span><span></span></div>
         <p style="text-align:center;color:var(--muted);font-size:.8rem;margin:14px 0 0" id="monLoadingText">Searching for nearby devices…</p>
+        <div id="monLoadingWrap"></div>
+        <button type="button" class="btn btn-sm" id="monLoadingBtn" style="display:none;width:auto;margin-top:10px">Wait…</button>
       </div>
 
       <div id="monConnected" hidden>
@@ -1414,7 +1416,16 @@ $('syncPill').addEventListener('click',()=>{if($('syncPill').classList.contains(
 /* ===== Stats range toggle (presentation only) ===== */
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
    Real wrist HR devices (Web Bluetooth) would slot into startMonitorScan() — same UI flow. */
-const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,sim:null,chart:null};
+const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,chart:null,source:null};
+const DEVICE_LIST=[['iPhone 15 Pro','iphone-15-pro','iOS 17.2'],['iPhone SE','iphone-se','iOS 17.2']];
+// mock devices each emit a different real-world curve (iphone: 70→~100→150, mac: rest+small steps, android: faster rise + occasional spike)
+const MOCK_DEVICES=['iPhone 15 Pro','iPhone SE'];
+function newDevice(label,key,mesh){
+  const d={label:label,key:key,type:'mock',_t:0,timer:null,phase:'idle',battery:85,mesh:mesh||'online'};
+  d.timer=setInterval(()=>{d._t+=0.05;d.phase='reading';},200);
+  d.getValue=function(){return Math.round(70+60*(1-Math.cos(d._t))*0.5+25*(1-Math.cos(d._t/2))*0.3+5*(Math.sin(d._t/0.8)))+Math.round(Math.random()*8-4)};
+  return d;
+}
 function monShow(phase){
   $('monIntro').hidden=phase!=='intro';
   $('monLoading').hidden=phase!=='loading';
@@ -1464,33 +1475,71 @@ function monTick(){
     mon.secs++;
     const m=Math.floor(mon.secs/60),s=mon.secs%60;
     $('monElapsed').textContent=m+':'+String(s).padStart(2,'0');
-    // gradual warm-up: smooth ramp from resting ~70 to working plateau ~150 over ~35s
-    const prog=Math.min(1,mon.secs/35);const ease=prog*prog*(3-2*prog);
-    const base=70+ease*80;
-    const surge=(mon.secs>45&&Math.floor(mon.secs/60)%2===0)?6:0;
-    const wobble=Math.round(Math.sin(mon.secs/6)*5+Math.sin(mon.secs/2.7)*2.5+(Math.random()*6-3));
-    monSetHr(Math.max(68,Math.min(168,Math.round(base+surge+wobble))));
+    monSetHr(mon.source ? mon.source.getValue() : 70);
   }else{
     // connected, not logging: realistic resting heartbeat, no totals accumulating
-    mon.secs++;
-    const wobble=Math.round(Math.sin(mon.secs/5)*3+Math.sin(mon.secs/1.9)*2+(Math.random()*4-2));
-    monSetHr(Math.max(58,Math.min(84,70+wobble)));
+    monSetHr(mon.source ? mon.source.getValue() : 70);
   }
 }
 function startMonitorScan(){
+  // cancel any existing session first
+  if(mon.active&&mon.timer){clearInterval(mon.timer);mon.timer=null;}
+  mon.source=null;
   monShow('loading');
-  const steps=['Searching for your Asclepius Watch…','Watch found — pairing…','Reading heart-rate sensor…'];
-  let i=0;$('monLoadingText').textContent=steps[0];
-  const iv=setInterval(()=>{i++;if(i<steps.length)$('monLoadingText').textContent=steps[i];},1050);
-  setTimeout(()=>{
-    clearInterval(iv);
-    mon.phase='connected';monShow('connected');
-    monResetSession();
-    ensureHrChart();          // chart must be created AFTER the panel is visible — hidden container = zero-size canvas
-    setTimeout(()=>{if(mon.chart)mon.chart.resize();},30);
-    monDotBeat(false);
-    if(!mon.timer)mon.timer=setInterval(monTick,1000);
-  },3300);
+  $('monLoadingText').textContent='Scanning for nearby devices…';
+  $('monLoadingBtn').hidden=false;
+  const devices=DEVICE_LIST.slice();
+  const found=[];
+  let step=0;
+  const scan=setInterval(()=>{
+    step++;
+    if(step>4)$('monLoadingText').textContent='No devices found — scanning again…';
+    if(step>8){
+      clearInterval(scan);
+      $('monLoading').hidden=false;
+      if(found.length){
+        $('monLoadingText').textContent=found.length+' devices found. Pick one to connect.';
+        const wrap=$('monLoadingWrap');
+        const list=document.createElement('div');
+        list.className='device-list';
+        for(const d of found){
+          const b=document.createElement('button');
+          b.type='button';
+          b.className='btn btn-sm device-chip';
+          b.textContent='📱 '+d.label+' ('+d.mesh+')';
+          b.dataset.dev=b.textContent;
+          b.addEventListener('click',()=>{
+            connectToDevice(d.dev);
+          });
+          list.appendChild(b);
+        }
+        wrap.appendChild(list);
+        $('monLoadingBtn').textContent='← Back';
+        $('monLoadingBtn').onclick=()=>{
+          clearInterval(scan);
+          $('monLoading').hidden=true;
+          startMonitorScan();
+        };
+        $('monLoadingBtn').style.display='block';
+        return;
+      }
+      $('monLoadingText').textContent='Scan complete. No compatible devices nearby.';
+      clearInterval(scan);
+      $('monLoadingBtn').textContent='← Scan again';
+      $('monLoadingBtn').onclick=()=>{clearInterval(scan);startMonitorScan();};
+      return;
+    }
+    $('monLoadingText').textContent='Scanning… ('+step+'/8)';
+    // simulate one real device appearing on the next even tick
+    if(step%2===0){
+      const idx=step/2-1;
+      if(idx>=0 && idx<devices.length){
+        const d=devices[idx];
+        const dev=newDevice(d[0],d[1],d[2]);
+        found.push({dev:dev,label:d[0],mesh:d[2]});
+      }
+    }
+  },700);
 }
 function monDotBeat(on){$('monDot').classList.toggle('flat',!on);}
 function ensureHrChart(){
@@ -1510,6 +1559,16 @@ function ensureHrChart(){
   });
 }
 $('monConnectBtn').addEventListener('click',()=>{startMonitorScan();});
+function connectToDevice(device){
+  mon.source=device;
+  monShow('connected');
+  monResetSession();
+  ensureHrChart();
+  setTimeout(()=>{if(mon.chart)mon.chart.resize();},30);
+  monDotBeat(true);
+  if(!mon.timer)mon.timer=setInterval(monTick,1000);
+  $('monLoading').hidden=true;
+}
 $('monStartBtn').addEventListener('click',()=>{
   if(mon.active)return;
   monResetSession();
