@@ -507,7 +507,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
       <p class="flash" id="logFlash"></p>
     </section>
 
-    <button class="chip" id="goMonitorChip" type="button">⌚ Or let the Watch log it for you — Monitor tab</button>
     <details class="card details-card">
       <summary class="details-sum">＋ Log a past session</summary>
       <div class="details-body">
@@ -1334,10 +1333,6 @@ $('homeLogForm').addEventListener('submit',e=>{
   $('hDur').value='';$('hName').value='';
   syncHomePreview();
   logFlashMsg('Workout saved — '+duration+' min × '+rpe+'. Your strain score is updated.');
-});
-$('goMonitorChip').addEventListener('click',()=>{
-  if(!monGate(true))return;
-  showTab('monitor');
 });
 function openRice(){
   const m=$('riceModal'),body=$('riceModalBody'),hRice=$('hRiceSteps');
