@@ -611,8 +611,8 @@ body.alarm-on .mon-hr-num{color:#D60000}
       </div>
 
       <div id="monIntro">
-        <p style="font-size:.88rem;color:var(--muted);margin:0 0 16px">Pair a compatible Bluetooth heart-rate watch in the Asclepius Watch companion, monitor your pulse live, then send the session back to your workout log.</p>
-        <a class="btn btn-primary" id="watchCompanionLink" href="./watch/site/" target="_blank" rel="noopener">Open Asclepius Watch</a>
+        <p style="font-size:.88rem;color:var(--muted);margin:0 0 16px">Pair a Bluetooth heart-rate monitor to track your session live — Asclepius reads your heart rate, estimates workout intensity automatically, and fills in the log for you when you're done.</p>
+        <button type="button" class="btn btn-primary" id="monConnectBtn">Connect</button>
       </div>
 
       <div id="monLoading" hidden>
@@ -654,7 +654,7 @@ body.alarm-on .mon-hr-num{color:#D60000}
       </div>
     </section>
 
-    <p class="foot-note">The Asclepius Watch companion pairs with compatible Bluetooth heart-rate devices and sends finished sessions straight to your log.</p>
+    <p class="foot-note">Readings stream from the connected monitor and save straight to your workout log.</p>
   </section>
 
   <div id="riceModal" class="modal" hidden>
@@ -674,7 +674,6 @@ body.alarm-on .mon-hr-num{color:#D60000}
 const STORAGE_KEY='tendon-tracker-workouts-v1';
 const REST_KEY='asclepius-rest-days-v1';
 const NAME_KEY='asclepius-name-v1';
-const WATCH_COMPANION_URL='https://site-cyan-psi-99.vercel.app/';
 
 /* ===== Cloud config (Clerk login + Supabase storage) =====
    Paste your three keys below and they take effect on the next reload.
@@ -1218,11 +1217,6 @@ function consumeWatchImport(){
 function init(){
   dateInput.value=todayStr();
   restDate.value=todayStr();
-  const watchLink=$('watchCompanionLink');
-  if(watchLink){
-    const returnTo=window.location.origin+window.location.pathname;
-    watchLink.href=WATCH_COMPANION_URL+'?returnTo='+encodeURIComponent(returnTo);
-  }
   syncRpe();
   if(window.location.hash==='#welcome'){/* legacy hash — app-first now */}
   load();
@@ -1484,7 +1478,14 @@ function monGate(requireAuth){
 function newDevice(label,key,mesh){
   const d={label:label,key:key,type:'mock',_t:0,timer:null,phase:'idle',battery:85,mesh:mesh||'online'};
   d.timer=setInterval(()=>{d._t+=0.05;d.phase='reading';},200);
-  d.getValue=function(){return Math.round(70+60*(1-Math.cos(d._t))*0.5+25*(1-Math.cos(d._t/2))*0.3+5*(Math.sin(d._t/0.8)))+Math.round(Math.random()*8-4)};
+  d.getValue=function(){
+    // Resting pulse stays normal; once logging starts it climbs the way a real
+    // session does — quick ramp, then a slow drift toward a working peak.
+    const breath=4*Math.sin(d._t/1.6);
+    if(!mon.active)return Math.round(68+breath+Math.random()*4-2);
+    const base=72+78*(1-Math.exp(-Math.max(0,mon.secs)/120));
+    return Math.round(Math.min(168,base+breath*1.4+Math.random()*6-3));
+  };
   return d;
 }
 function monShow(phase){
