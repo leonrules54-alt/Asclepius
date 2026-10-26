@@ -148,7 +148,6 @@ footer{padding:26px 24px 48px;text-align:center;font-size:.72rem;color:var(--mut
 button,a,summary,input,select{-webkit-tap-highlight-color:transparent}
 input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),input[type=text]:not(.cl-rootBox input),select:not(.cl-rootBox select){font-size:16px}
 @media(max-width:680px){
-  .nav .sync-pill{display:none}
   .nav{flex-wrap:wrap;gap:8px 14px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px}
   input[type=range]::-webkit-slider-thumb{width:24px;height:24px;margin-top:-9px}
   input[type=range]::-moz-range-thumb{width:22px;height:22px}
@@ -276,9 +275,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .auth-tab:not(.on):hover{background:rgba(255,214,0,.35)}
 .user-chip{display:inline-flex;align-items:center;gap:10px}
 .user-chip[hidden]{display:none}
-.sync-pill{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--ink);background:#fff;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;cursor:default}
-.sync-pill.saving{background:var(--yellow)}
-.sync-pill.err{background:var(--red);color:#fff;cursor:pointer}
 #welcomeText{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 #welcomeText b{color:var(--ink)}/* Clerk modal isolation: app's bare-element selectors (h1, label, input[type=text]…) leak into Clerk's portal and wreck its layout — exclude Clerk's tree (.cl-rootBox) everywhere */
 .cl-rootBox *{box-sizing:border-box}
@@ -344,7 +340,7 @@ body.alarm-on .mon-hr-num{color:#D60000}
     <a href="#about" id="aboutLink">About</a>
   </div>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
-  <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
+  <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
 
 <section class="welcome" id="welcome">
@@ -693,13 +689,7 @@ const CLOUD_ENABLED=!!(CLOUD_CONFIG.clerkPublishableKey&&CLOUD_CONFIG.supabaseUr
 let sb=null,cloudUser=null,cloudUnavailable=false,syncTimer=null;
 
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Failed to load '+src));document.head.appendChild(s);});}
-function setSyncState(state,msg){
-  const p=$('syncPill');
-  if(!p||!CLOUD_ENABLED)return;
-  if(state==='off'||!signedInName){p.hidden=true;return;}
-  p.hidden=false;p.classList.toggle('err',state==='err');
-  p.textContent=state==='saving'?'☁ saving…':state==='err'?'☁ offline':'☁ synced';
-}
+function setSyncState(){/* background sync stays silent — no status UI */}
 function cloudReady(){return CLOUD_ENABLED&&sb&&Clerk.session&&cloudUser&&!cloudUnavailable;}
 function scheduleSync(){if(!cloudReady())return;clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,800);}
 function entryRows(){
