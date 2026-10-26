@@ -98,7 +98,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--yell
 .formula-hint[open] summary::after{content:' −'}
 .formula-hint p{margin:8px 0 0;font-size:.72rem;line-height:1.5}
 
-.demo{max-width:1000px;margin:0 auto;padding:24px 16px 80px}
 .scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 22px}
 .scenario{appearance:none;border:2px solid var(--ink);background:#fff;color:var(--ink);text-align:left;cursor:pointer;font-family:inherit;padding:12px 14px}
 .scenario b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
@@ -197,15 +196,6 @@ input[type=date],input[type=number],input[type=password]:not(.cl-rootBox input),
 .chip{width:100%;border:2px solid var(--ink);background:#fff;color:var(--ink);font-family:inherit;font-weight:600;font-size:.78rem;padding:9px;cursor:pointer;margin-bottom:6px;text-align:center}
 .chip:hover{background:var(--yellow)}
 .chip[hidden]{display:none}
-.demo-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:2px dashed var(--ink);background:var(--yellow);padding:8px 12px;margin-bottom:14px;font-size:.72rem;font-weight:600}
-.demo-banner .db-actions{display:flex;gap:6px}
-.demo-opts{display:grid;gap:8px}
-.demo-opt{display:grid;grid-template-columns:14px 1fr;gap:2px 10px;align-items:center;border:2px solid var(--ink);background:#fff;font-family:inherit;text-align:left;padding:11px 12px;cursor:pointer;transition:transform .08s}
-.demo-opt:hover{background:var(--yellow)}
-.demo-opt:active{transform:translate(2px,2px)}
-.demo-opt i{grid-row:1/3;align-self:center;width:14px;height:14px;border-radius:50%;border:2px solid var(--ink)}
-.demo-opt b{font-size:.85rem}
-.demo-opt span{grid-column:2;font-size:.7rem;color:var(--muted);line-height:1.35}
 .modal-box .rice-steps{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 4px}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stats-row .stat{padding:12px 10px}
@@ -353,7 +343,6 @@ body.alarm-on .mon-hr-num{color:#D60000}
   <div class="nav-links">
     <a href="#about" id="aboutLink">About</a>
   </div>
-  <button id="demoNavBtn" class="btn btn-sm">Demo</button>
   <button id="authBtn" class="btn btn-sm" aria-haspopup="dialog">Sign up / Log in</button>
   <span id="userChip" class="user-chip" hidden><span id="welcomeText">Welcome <b id="userEmail"></b></span><span id="syncPill" class="sync-pill" hidden title="Cloud sync status">☁ saving</span><button id="logoutBtn" class="btn btn-sm">Log out</button></span>
 </nav>
@@ -364,7 +353,7 @@ body.alarm-on .mon-hr-num{color:#D60000}
     <h1>Asclepius</h1>
     <p class="w-sub">The math-powered load tracker that tells you when to push, when to ease off, and when to rest — before an injury beats you to it.</p>
     <div class="w-cta">
-      <button id="openAppBtn" class="btn btn-primary">Demo</button>
+      <button id="openAppBtn" class="btn btn-primary">Open app</button>
       <button id="openSignupBtn" class="btn auth-cta">Sign up</button>
     </div>
   </header>
@@ -391,7 +380,7 @@ body.alarm-on .mon-hr-num{color:#D60000}
   <div class="w-footer">
     <p>Asclepius is a service that utilizes math and the biological sciences to prevent athletic injuries. It pushes towards the <b>democratization of elite sports science</b>, ensuring that every student athlete — regardless of family income — has the tools to train safely, stay healthy, and stay in the game.</p>
     <div class="w-cta">
-      <button id="openAppBtn2" class="btn btn-primary">Demo</button>
+      <button id="openAppBtn2" class="btn btn-primary">Open app</button>
       <button id="openSignupBtn2" class="btn auth-cta">Sign up</button>
     </div>
   </div>
@@ -430,10 +419,6 @@ body.alarm-on .mon-hr-num{color:#D60000}
     <div class="greet">
       <h1 id="greetLine">Hey 👋</h1>
       <span id="greetDate">—</span>
-    </div>
-    <div class="demo-banner" id="demoBanner" hidden>
-      <span id="demoBannerTxt">👀 Demo preview — sample data, nothing is saved.</span>
-      <span class="db-actions"><button type="button" class="btn btn-sm" id="demoExitBtn">Exit</button></span>
     </div>
 
 
@@ -630,8 +615,8 @@ body.alarm-on .mon-hr-num{color:#D60000}
       </div>
 
       <div id="monIntro">
-        <p style="font-size:.88rem;color:var(--muted);margin:0 0 16px">Pair a Bluetooth heart-rate monitor to track your session live — Asclepius reads your heart rate, estimates workout intensity automatically, and fills in the log for you when you're done.</p>
-        <button type="button" class="btn btn-primary" id="monConnectBtn">Connect</button>
+        <p style="font-size:.88rem;color:var(--muted);margin:0 0 16px">Pair a compatible Bluetooth heart-rate watch in the Asclepius Watch companion, monitor your pulse live, then send the session back to your workout log.</p>
+        <a class="btn btn-primary" id="watchCompanionLink" href="./watch/site/" target="_blank" rel="noopener">Open Asclepius Watch</a>
       </div>
 
       <div id="monLoading" hidden>
@@ -673,7 +658,7 @@ body.alarm-on .mon-hr-num{color:#D60000}
       </div>
     </section>
 
-    <p class="foot-note">Asclepius Watch (demo) — the real wrist device connects over Bluetooth with this same flow.</p>
+    <p class="foot-note">The Asclepius Watch companion pairs with compatible Bluetooth heart-rate devices and sends finished sessions straight to your log.</p>
   </section>
 
   <div id="riceModal" class="modal" hidden>
@@ -687,25 +672,13 @@ body.alarm-on .mon-hr-num{color:#D60000}
   </div>
 </main>
 
-  <div id="demoModal" class="modal" hidden>
-    <div class="modal-box">
-      <button id="demoClose" class="modal-x" aria-label="Close">&times;</button>
-      <h2>Try the demo</h2>
-      <p class="modal-sub">Pick a sample season to explore — four weeks of data you can play with, never saved.</p>
-      <div class="demo-opts">
-        <button type="button" class="demo-opt" data-profile="healthy"><i style="background:#00A63E"></i><b>Healthy</b><span>Steady balanced training — safe zone, ACWR around 1.0</span></button>
-        <button type="button" class="demo-opt" data-profile="between"><i style="background:#E65C00"></i><b>In between</b><span>Load creeping up — ease-off zone, ACWR around 1.4</span></button>
-        <button type="button" class="demo-opt" data-profile="needsrest"><i style="background:#D60000"></i><b>Needs rest</b><span>Hard spike plus a soreness day — high risk, ACWR around 1.6</span></button>
-      </div>
-      <p class="modal-note">Sample data only — Demo never touches your real logs.</p>
-    </div>
-  </div>
 <footer id="appFoot" hidden>ACWR is a monitoring guide, not medical advice</footer>
 
 <script>
 const STORAGE_KEY='tendon-tracker-workouts-v1';
 const REST_KEY='asclepius-rest-days-v1';
 const NAME_KEY='asclepius-name-v1';
+const WATCH_COMPANION_URL='https://site-cyan-psi-99.vercel.app/';
 
 /* ===== Cloud config (Clerk login + Supabase storage) =====
    Paste your three keys below and they take effect on the next reload.
@@ -788,14 +761,14 @@ async function initCloud(){
 }
 async function onCloudSession(session){
   if(!session){
-  if(cloudUser){cloudUser=null;signedInName='';localStorage.removeItem(NAME_KEY);previewMode=false;$('demoBanner').hidden=true;updateAuthUI();showWelcome();}
+  if(cloudUser){cloudUser=null;signedInName='';localStorage.removeItem(NAME_KEY);previewMode=false;updateAuthUI();showWelcome();}
     return;
   }
   const u=Clerk.user;if(!u)return;
   cloudUser=u;
   const name=u.firstName||u.username||(u.primaryEmailAddress?u.primaryEmailAddress.emailAddress.split('@')[0]:'athlete');
 signedInName=name;localStorage.setItem(NAME_KEY,name);
-  previewMode=false;$('demoBanner').hidden=true;
+  previewMode=false;
   updateAuthUI();closeAuth();showApp();render();
   await syncNow();
 }
@@ -803,8 +776,7 @@ function openCloudAuth(){
   try{
     const back=window.location.pathname+window.location.search; // path only — Clerk strips absolute URLs to '/'
     Clerk.openSignIn({forceRedirectUrl:back,fallbackRedirectUrl:back,redirectUrl:back});
-}catch(e){cloudUnavailable=true;setSyncState('off');}
-  openAuth('signup');  /* Clerk missing/blocked -> local modal fallback */
+  }catch(e){cloudUnavailable=true;setSyncState('off');openAuthLocal('signup');}
 }
 let workouts=[];
 let restDays=[];
@@ -1235,63 +1207,94 @@ $('restLogBtn').addEventListener('click',()=>{
   flashMsg('Rest day logged ('+reason+'). No load added — ACWR unchanged.');
 });
 
+function consumeWatchImport(){
+  const params=new URLSearchParams(window.location.hash.slice(1));
+  if(!params.has('watch-import'))return null;
+  const raw=params.get('watch-import');
+  history.replaceState(null,'',window.location.pathname+window.location.search);
+  try{
+    const entry=JSON.parse(raw);
+    const duration=Number(entry.duration),rpe=Number(entry.rpe);
+    if(entry.source!=='asclepius-watch'||!Number.isInteger(duration)||duration<1||duration>600||!Number.isInteger(rpe)||rpe<1||rpe>10)return null;
+    const bpm=value=>Number.isInteger(Number(value))&&Number(value)>=25&&Number(value)<=250?Number(value):null;
+    const avg=bpm(entry.avgBpm),peak=bpm(entry.peakBpm);
+    const notes=('Watch session'+(avg?' · avg '+avg+' bpm':'')+(peak?' · peak '+peak+' bpm':'')).slice(0,40);
+    const date=/^\d{4}-\d{2}-\d{2}$/.test(entry.date)&&toISO(fromISO(entry.date))===entry.date?entry.date:todayStr();
+    workouts.push({id:uid(),date,duration,rpe,notes,created:Date.now()});
+    persist();
+    return{duration,rpe};
+  }catch(e){return null;}
+}
 function init(){
   dateInput.value=todayStr();
   restDate.value=todayStr();
+  const watchLink=$('watchCompanionLink');
+  if(watchLink){
+    const returnTo=window.location.origin+window.location.pathname;
+    watchLink.href=WATCH_COMPANION_URL+'?returnTo='+encodeURIComponent(returnTo);
+  }
   syncRpe();
   if(window.location.hash==='#welcome'){/* legacy hash — app-first now */}
   load();
   loadRest();
   signedInName=localStorage.getItem(NAME_KEY)||'';
+  const watchImport=consumeWatchImport();
   updateAuthUI();
   if(signedInName)showApp();else showWelcome();
   render();
+  if(watchImport&&signedInName)homeFlashMsg('Watch workout added — '+watchImport.duration+' min at intensity '+watchImport.rpe+'.');
   if(CLOUD_ENABLED)initCloud();
 }
 
-const SAMPLE_META={healthy:'Healthy',between:'In between',needsrest:'Needs rest'};
-const SAMPLE_TPL={healthy:[null,[60,4],[45,3],[75,5],[60,4],[90,5],[90,6]],between:[null,[70,4],[70,4],[70,4],[70,4],[70,4],[90,5]],needsrest:[null,[70,4],[70,4],[70,4],[70,4],[70,4],[90,5]]};
-const SAMPLE_WEEK={healthy:null,between:[[110,6],[110,6],[110,6],[110,6],[110,6],[110,6],[110,6]],needsrest:[[140,8],[140,8],[140,8],null,[140,8],[140,8],[140,8]]};
-function loadSampleSeason(profile){
-  const tpl=SAMPLE_TPL[profile]||SAMPLE_TPL.healthy;
-  const week=SAMPLE_WEEK[profile]||null;
+/* Realistic season for a normal student athlete — used by the hidden
+   preview hotkey (Alt+Shift+A). Never persisted, never synced. */
+function fillSamplePerson(){
+  const notes=['Team practice','Conditioning','Lift + mobility','Scrimmage','Shooting session','Recovery run','Film + mobility'];
+  const plan=[{min:[0,0],rpe:[0,0]},{min:[55,90],rpe:[4,6]},{min:[30,50],rpe:[3,5]},{min:[55,90],rpe:[4,6]},{min:[30,50],rpe:[3,5]},{min:[50,80],rpe:[4,6]},{min:[80,115],rpe:[6,8]}];
   for(let i=28;i>=0;i--){
     const d=addDays(new Date(),-i);
-    const s=week&&i<7?week[i]:tpl[d.getDay()];
-    if(!s)continue;
-    workouts.push({id:uid(),date:toISO(d),duration:s[0],rpe:s[1],notes:'Sample practice',created:Date.now()-i*86400000});
+    const p=plan[d.getDay()];
+    if(!p||!p.min[1]||Math.random()<.12){
+      if(i<=10&&Math.random()<.4)restDays.push({id:uid(),date:toISO(d),reason:'soreness',created:Date.now()-i*86400000});
+      continue;
+    }
+    const duration=Math.round(p.min[0]+Math.random()*(p.min[1]-p.min[0]));
+    const rpe=Math.round(p.rpe[0]+Math.random()*(p.rpe[1]-p.rpe[0]));
+    workouts.push({id:uid(),date:toISO(d),duration,rpe,notes:notes[Math.floor(Math.random()*notes.length)],created:Date.now()-i*86400000});
   }
-  if(profile==='needsrest')restDays.push({id:uid(),date:toISO(addDays(new Date(),-3)),reason:'soreness',created:Date.now()-3*86400000});
 }
 
 /* ===== Welcome / app views ===== */
 const welcomeView=$('welcome'),appView=$('appView'),appFoot=$('appFoot');
 function syncNav(){document.body.classList.toggle('on-welcome',!welcomeView.hidden);}
-let previewMode=false;
+let previewMode=false,sampleSignedIn=false;
 function syncChrome(){document.body.classList.toggle('authed',!!signedInName||previewMode);}
-function openDemoPicker(){$('demoModal').hidden=false;}
-function closeDemoPicker(){$('demoModal').hidden=true;}
-function enterPreview(profile){
-  if(!SAMPLE_META[profile])profile='healthy';
-  workouts=[];restDays=[];
-  loadSampleSeason(profile);
+function sampleDataOn(){
   previewMode=true;
-  $('demoBannerTxt').textContent='👀 Demo preview — '+SAMPLE_META[profile]+' sample season, nothing is saved.';
-  $('demoBanner').hidden=false;
+  workouts=[];restDays=[];
+  fillSamplePerson();
+  if(!signedInName){signedInName='Jordan';sampleSignedIn=true;}
+  updateAuthUI();
   syncChrome();
   showApp();
   render();
   showTab('home');
 }
-function exitPreview(){
+function sampleDataOff(){
+  if(!previewMode)return;
   previewMode=false;
-  $('demoBanner').hidden=true;
   workouts=[];restDays=[];
   load();loadRest();
-  syncChrome();
+  if(sampleSignedIn){signedInName='';sampleSignedIn=false;localStorage.removeItem(NAME_KEY);}
+  updateAuthUI();
   render();
-  if(!signedInName)showWelcome();
+  if(signedInName)showApp();else showWelcome();
 }
+document.addEventListener('keydown',e=>{
+  if(!e.altKey||!e.shiftKey||e.code!=='KeyA')return;
+  e.preventDefault();
+  if(previewMode)sampleDataOff();else sampleDataOn();
+});
 function showApp(){
   if(!signedInName&&!previewMode){openAuth('signup');return;}
   welcomeView.hidden=true;
@@ -1380,8 +1383,10 @@ function setAuthMode(m){
 document.querySelectorAll('.auth-tab').forEach(t=>t.addEventListener('click',()=>setAuthMode(t.dataset.mode)));
 
 function openAuth(mode){
-  if(CLOUD_ENABLED&&!cloudUnavailable){openCloudAuth();return;}
-  if(CLOUD_ENABLED){openCloudAuth();return;}
+  if(CLOUD_ENABLED&&typeof Clerk!=='undefined'){openCloudAuth();return;}
+  openAuthLocal(mode);
+}
+function openAuthLocal(mode){
   authMode=mode||authMode;
   setAuthMode(authMode);
   authFlash.textContent='';
@@ -1393,15 +1398,10 @@ function openAuth(mode){
 function closeAuth(){authModal.hidden=true;authFlash.textContent='';authForm.reset();}
 authBtn.addEventListener('click',()=>openAuth());
 [$('openSignupBtn'),$('openSignupBtn2')].forEach(b=>b.addEventListener('click',()=>openAuth('signup')));
-[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',openDemoPicker));
-$('demoNavBtn').addEventListener('click',openDemoPicker);
-$('demoExitBtn').addEventListener('click',exitPreview);
-$('demoClose').addEventListener('click',closeDemoPicker);
-$('demoModal').addEventListener('click',e=>{if(e.target===$('demoModal'))closeDemoPicker();});
-document.querySelectorAll('.demo-opt').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.profile;closeDemoPicker();enterPreview(p);}));
+[$('openAppBtn'),$('openAppBtn2')].forEach(b=>b.addEventListener('click',()=>showApp()));
 authClose.addEventListener('click',closeAuth);
 authModal.addEventListener('click',e=>{if(e.target===authModal)closeAuth();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAuth();closeDemoPicker();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth();});
 
 function updateAuthUI(){
   if(signedInName){
@@ -1418,7 +1418,7 @@ function updateAuthUI(){
 }
 
 function finishSignIn(name){
-  previewMode=false;$('demoBanner').hidden=true;
+  previewMode=false;
   signedInName=name;
   localStorage.setItem(NAME_KEY,name);
   updateAuthUI();
@@ -1429,7 +1429,7 @@ function finishSignIn(name){
 
 $('logoutBtn').addEventListener('click',()=>{
   if(CLOUD_ENABLED&&cloudUser){try{Clerk.signOut();}catch(e){}return;}
-  previewMode=false;$('demoBanner').hidden=true;workouts=[];restDays=[];load();loadRest();signedInName='';
+  previewMode=false;workouts=[];restDays=[];load();loadRest();signedInName='';
   localStorage.removeItem(NAME_KEY);
   updateAuthUI();
   render();
@@ -1452,7 +1452,7 @@ authForm.addEventListener('submit',e=>{
     signedInName=name;
     localStorage.setItem(NAME_KEY,name);
     updateAuthUI();
-    previewMode=false;$('demoBanner').hidden=true;syncChrome();
+    previewMode=false;syncChrome();
     showApp();showTab('home');
     closeAuth();
     render();
@@ -1751,7 +1751,8 @@ function ensureHrChart(){
     }
   });
 }
-$('monConnectBtn').addEventListener('click',()=>{if(!monGate(true))return;alarmAudioUnlock();startMonitorScan();});
+const monConnectBtnEl=$('monConnectBtn');
+if(monConnectBtnEl)monConnectBtnEl.addEventListener('click',()=>{if(!monGate(true))return;alarmAudioUnlock();startMonitorScan();});
 $('monAlarmSilence').addEventListener('click',monAlarmSilence);
 function connectToDevice(device){
   alarmAudioUnlock();

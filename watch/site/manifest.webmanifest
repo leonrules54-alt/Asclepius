@@ -1,0 +1,14 @@
+{
+  "name": "Asclepius Watch",
+  "short_name": "Asclepius Watch",
+  "description": "Pair a Bluetooth heart-rate monitor and send sessions to Asclepius.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F4E0",
+  "theme_color": "#FFD600",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
