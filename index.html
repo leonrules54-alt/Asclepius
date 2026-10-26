@@ -1462,7 +1462,7 @@ authForm.addEventListener('submit',e=>{
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
    Real wrist HR devices (Web Bluetooth) would slot into startMonitorScan() — same UI flow. */
 const mon={phase:'idle',active:false,hr:0,peak:0,calories:0,secs:0,history:[],timer:null,chart:null,source:null};
-const DEVICE_LIST=[['iPhone 15 Pro','iphone-15-pro','iOS 17.2'],['iPhone SE','iphone-se','iOS 17.2'],['MacBook Pro 16','macbook-16','macOS 14'],['ThinkPad X1 Carbon','windows-thinkpad-x1','Windows 11'],['Pixel 8 Pro','android-pixel8pro','Android 14'],['Dell XPS 15','windows-dell-xps15','Windows 11'],['Surface Laptop 5','windows-surface-laptop5','Windows 11'],['Sony Xperia 1 IV','android-sony-xperia-1iv','Android 14']];
+const DEVICE_LIST=[['Apple Watch','apple-watch','watchOS 10']];
 // mock devices each emit a different real-world curve (iphone: 70→~100→150, mac: rest+small steps, android: faster rise + occasional spike)
 const MOCK_DEVICES=['iPhone 15 Pro','iPhone SE','MacBook Pro 16','ThinkPad X1 Carbon','Pixel 8 Pro','Dell XPS 15','Surface Laptop 5','Sony Xperia 1 IV'];
 function monGate(requireAuth){
@@ -1699,7 +1699,7 @@ function startMonitorScan(){
           const b=document.createElement('button');
           b.type='button';
           b.className='btn btn-sm device-chip';
-          b.textContent='📱 '+d.label+' ('+d.mesh+')';
+          b.textContent='⌚ '+d.label+' ('+d.mesh+')';
           b.dataset.dev=b.textContent;
           b.addEventListener('click',()=>{
             connectToDevice(d.dev);
