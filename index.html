@@ -1479,12 +1479,11 @@ function newDevice(label,key,mesh){
   const d={label:label,key:key,type:'mock',_t:0,timer:null,phase:'idle',battery:85,mesh:mesh||'online'};
   d.timer=setInterval(()=>{d._t+=0.05;d.phase='reading';},200);
   d.getValue=function(){
-    // Resting pulse stays normal; once logging starts it climbs the way a real
-    // session does — quick ramp, then a slow drift toward a working peak.
-    const breath=4*Math.sin(d._t/1.6);
-    if(!mon.active)return Math.round(68+breath+Math.random()*4-2);
-    const base=72+78*(1-Math.exp(-Math.max(0,mon.secs)/120));
-    return Math.round(Math.min(168,base+breath*1.4+Math.random()*6-3));
+    // Quiet monitoring, not exercise: a steady 75–80 BPM with a little
+    // breathing variation and sensor noise, no workout ramp.
+    const breath=2.1*Math.sin(d._t/1.7);
+    const jitter=Math.random()*2.4-1.2;
+    return Math.max(75,Math.min(80,Math.round(77.5+breath+jitter)));
   };
   return d;
 }
@@ -1512,8 +1511,8 @@ function monSetHr(v){
     mon.history.push(v);
     const est=Math.round(monEstimateIntensity(v));
     $('monInt').textContent=est+'/10';
-    mon.calories+=Math.max(3,Math.round(v*0.075));
-    $('monCals').textContent=mon.calories.toLocaleString();
+    mon.calories+=1/60;
+    $('monCals').textContent=Math.floor(mon.calories).toLocaleString();
   }
   if(mon.chart){
     const c=mon.chart.data.datasets[0].data;
@@ -1792,7 +1791,7 @@ function endMonitorSession(){
   const est=Math.round(monEstimateIntensity(avg||120));
   const dur=Math.max(1,Math.round(mon.secs/60));
   $('monDoneDur').textContent=Math.floor(dur/60)+':'+String(dur%60).padStart(2,'0');
-  $('monDoneCals').textContent=mon.calories.toLocaleString();
+  $('monDoneCals').textContent=Math.floor(mon.calories).toLocaleString();
   $('monDoneInt').textContent=est+'/10';
   $('monDonePeak').textContent=mon.peak||'—';
   workouts.push({id:uid(),date:todayStr(),duration:dur,rpe:est,notes:'Monitored session',created:Date.now()});
