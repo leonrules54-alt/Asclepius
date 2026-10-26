@@ -36,7 +36,7 @@ body{
 
 .nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:24px;padding:14px 24px;background:var(--paper);border-bottom:2px solid var(--ink)}
 .mark{width:13px;height:13px;background:var(--yellow);border:2px solid var(--ink);display:inline-block;margin-right:9px;vertical-align:-1px}
-.brand{font-weight:700;font-size:.98rem;border:none;background:none;padding:0;font-family:inherit;color:var(--ink);cursor:pointer}
+.brand{font-weight:700;font-size:.98rem;border:none;background:none;padding:0;font-family:inherit;color:var(--ink);cursor:pointer;touch-action:manipulation}
 .brand:hover{text-decoration:underline}
 .nav-links{display:flex;gap:20px;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--paper)}
 body.on-welcome .nav-links{display:none}
@@ -1314,7 +1314,17 @@ function showWelcome(e){
   syncNav();
   window.scrollTo({top:0,behavior:'instant'});
 }
-$('brandBtn').addEventListener('click',showWelcome);
+let brandLastTap=0;
+$('brandBtn').addEventListener('click',()=>{
+  const now=Date.now();
+  if(now-brandLastTap<450){
+    brandLastTap=0;
+    if(previewMode)sampleDataOff();else sampleDataOn();
+    return;
+  }
+  brandLastTap=now;
+  showWelcome();
+});
 const navLinks=[...document.querySelectorAll('.nav-links a')];
 navLinks.forEach(a=>{
   a.addEventListener('click',e=>{
