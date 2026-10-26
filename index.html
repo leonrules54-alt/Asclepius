@@ -1690,7 +1690,7 @@ function startMonitorScan(){
       clearInterval(scan);
       $('monLoading').hidden=false;
       if(found.length){
-        $('monLoadingText').textContent=found.length+' devices found. Pick one to connect.';
+        $('monLoadingText').textContent=found.length===1?'1 device found. Tap it to connect.':found.length+' devices found. Pick one to connect.';
         const wrap=$('monLoadingWrap');
         const list=document.createElement('div');
         list.className='device-list';
