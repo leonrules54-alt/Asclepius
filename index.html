@@ -698,7 +698,7 @@ function setSyncState(state,msg){
   if(!p||!CLOUD_ENABLED)return;
   if(state==='off'||!signedInName){p.hidden=true;return;}
   p.hidden=false;p.classList.toggle('err',state==='err');
-  p.textContent=state==='saving'?'☁ saving…':state==='err'?('⚠ '+msg).slice(0,26):'☁ synced';
+  p.textContent=state==='saving'?'☁ saving…':state==='err'?'☁ offline':'☁ synced';
 }
 function cloudReady(){return CLOUD_ENABLED&&sb&&Clerk.session&&cloudUser&&!cloudUnavailable;}
 function scheduleSync(){if(!cloudReady())return;clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,800);}
@@ -731,7 +731,7 @@ async function syncNow(){
     workouts=nw;restDays=nr;persist();persistRest();
     render();
     setSyncState('ok');
-  }catch(e){setSyncState('err','retry');}
+  }catch(e){setSyncState('err');}
 }
 async function cloudDeleteAll(){
   if(!cloudReady())return;
@@ -1463,7 +1463,6 @@ authForm.addEventListener('submit',e=>{
   }
 });
 
-$('syncPill').addEventListener('click',()=>{if($('syncPill').classList.contains('err'))syncNow();});
 
 /* ===== Stats range toggle (presentation only) ===== */
 /* ===== Monitor tab — simulated Bluetooth HR demo (professional flow) =====
